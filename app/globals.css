@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+:root {
+  --font-cormorant: 'Cormorant Garamond', serif;
+  --font-inter: 'Inter', sans-serif;
+}
+
+body {
+  font-family: var(--font-inter), sans-serif;
+}
+
+.font-serif {
+  font-family: var(--font-cormorant), serif;
+}
