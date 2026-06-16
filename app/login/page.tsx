@@ -22,28 +22,29 @@ export default function LoginPage() {
     setLoading(true)
     setMessage('')
     if (isRegister) {
-      const { data, error } = await supabase.auth.signUp({
-        email: form.email, password: form.password,
-        options: { data: { jmeno: form.jmeno, prijmeni: form.prijmeni } }
+      const { error } = await supabase.auth.signUp({
+        email: form.email,
+        password: form.password,
+        options: {
+          data: {
+            jmeno: form.jmeno,
+            prijmeni: form.prijmeni,
+            prezdivka: form.prezdivka,
+            pohlavie: form.pohlavie,
+            telefon: form.telefon,
+            datum_narozeni: form.datum_narozeni,
+            preferovany_jazyk: form.preferovany_jazyk,
+            alergie: form.alergie,
+            newsletter: String(form.newsletter),
+            notifikace_nabidky: String(form.notifikace_nabidky),
+            notifikace_novinky: String(form.notifikace_novinky),
+            souhlas_podminky: String(form.souhlas_podminky),
+            souhlas_gdpr: String(form.souhlas_gdpr)
+          }
+        }
       })
-      if (error) { setMessage(error.message); setLoading(false); return }
-      if (data.user) {
-        await supabase.from('profiles').upsert({
-          id: data.user.id, email: form.email,
-          jmeno: form.jmeno, prijmeni: form.prijmeni,
-          prezdivka: form.prezdivka,
-          pohlavie: form.pohlavie, telefon: form.telefon,
-          datum_narozeni: form.datum_narozeni || null,
-          preferovany_jazyk: form.preferovany_jazyk,
-          alergie: form.alergie,
-          newsletter: form.newsletter,
-          notifikace_nabidky: form.notifikace_nabidky,
-          notifikace_novinky: form.notifikace_novinky,
-          souhlas_podminky: form.souhlas_podminky,
-          souhlas_gdpr: form.souhlas_gdpr
-        })
-      }
-      setMessage('Zkontroluj e-mail pro potvrzení registrace.')
+      if (error) setMessage(error.message)
+      else setMessage('Zkontroluj e-mail pro potvrzení registrace.')
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email: form.email, password: form.password })
       if (error) setMessage(error.message)
@@ -68,7 +69,6 @@ export default function LoginPage() {
   return (
     <main style={{minHeight:'100vh',background:'#f7f3ec',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Inter,sans-serif',padding:'20px',boxSizing:'border-box'}}>
       <div style={{background:'white',borderRadius:'20px',padding:'32px 28px',width:'100%',maxWidth:'400px',boxShadow:'0 2px 24px rgba(0,0,0,0.07)'}}>
-
         <h1 style={{fontSize:'24px',fontWeight:'300',letterSpacing:'0.3em',color:'#1a1208',margin:'0 0 2px'}}>BRAVO</h1>
         <p style={{fontSize:'11px',color:'#8a7f70',letterSpacing:'0.1em',margin:'0 0 20px'}}>Luxembourg · místo pro zastavení</p>
 
@@ -76,7 +76,7 @@ export default function LoginPage() {
           <div style={{background:'#f7f3ec',borderRadius:'12px',padding:'16px',marginBottom:'20px'}}>
             <p style={{fontSize:'13px',color:'#1a1208',lineHeight:'1.6',margin:'0 0 6px',fontWeight:'500'}}>Proč tě prosíme o tyto informace?</p>
             <p style={{fontSize:'12px',color:'#6b6057',lineHeight:'1.6',margin:0}}>
-              BRAVO není jen kiosek — je to pozvánka k zastavení. Chceme tě poznat, pamatovat si tvé preference a překvapit tě ve správný moment. Tvoje data jsou v bezpečí, nikdy je nesdílíme a slouží výhradně k tomu, aby tvoje návštěva byla vždy o něco osobnější.
+              BRAVO není jen kiosek — je to pozvánka k zastavení. Chceme tě poznat, pamatovat si tvé preference a překvapit tě ve správný moment. Tvoje data jsou v bezpečí, nikdy je nesdílíme.
             </p>
           </div>
         )}
@@ -102,7 +102,7 @@ export default function LoginPage() {
           <input type="date" value={form.datum_narozeni} onChange={e => set('datum_narozeni', e.target.value)}
             style={{width:'100%',padding:'12px 14px',border:'1px solid #e0d9d0',borderRadius:'10px',fontSize:'14px',marginBottom:'10px',boxSizing:'border-box',outline:'none',color:form.datum_narozeni?'#1a1208':'#aaa'}} />
           <select value={form.preferovany_jazyk} onChange={e => set('preferovany_jazyk', e.target.value)}
-            style={{width:'100%',padding:'12px 14px',border:'1px solid #e0d9d0',borderRadius:'10px',fontSize:'14px',marginBottom:'10px',boxSizing:'border-box',outline:'none',background:'white',color:'#1a1208'}}>
+            style={{width:'100%',padding:'12px 14px',border:'1px solid #e0d9d0',borderRadius:'10px',fontSize:'14px',marginBottom:'10px',boxSizing:'border-box',outline:'none',background:'white'}}>
             <option value="cs">Čeština</option>
             <option value="en">English</option>
             <option value="fr">Français</option>
@@ -129,7 +129,7 @@ export default function LoginPage() {
           {loading ? 'Načítám...' : isRegister ? 'Zaregistrovat se' : 'Přihlásit se'}
         </button>
 
-        {message && <p style={{fontSize:'13px',color:message.includes('Zkontroluj')?'#2e7d32':'#c0392b',textAlign:'center',margin:'0 0 10px'}}>{message}</p>}
+        {message && <p style={{fontSize:'13px',color:message.includes('Zkontroluj')||message.includes('podmínkami')||message.includes('údajů')?message.includes('Zkontroluj')?'#2e7d32':'#c0392b':'#c0392b',textAlign:'center',margin:'0 0 10px'}}>{message}</p>}
 
         <p style={{fontSize:'13px',color:'#8a7f70',textAlign:'center',margin:0}}>
           {isRegister ? 'Už máš účet?' : 'Nemáš účet?'}{' '}
