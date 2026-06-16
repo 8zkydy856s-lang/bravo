@@ -17,6 +17,18 @@ export default function LoginPage() {
 
   const set = (k: string, v: any) => setForm(f => ({...f, [k]: v}))
 
+  // Vytáhne z chyby čitelný text a celou chybu vypíše do konzole prohlížeče.
+  // (Otevři DevTools -> Console, najdeš tam úplný objekt včetně status/code.)
+  function describeError(err: any): string {
+    console.error('Supabase chyba:', err)
+    if (!err) return 'Neznámá chyba.'
+    if (typeof err === 'string') return err
+    const parts = [err.message, err.error_description, err.code, err.status]
+      .filter(v => v !== undefined && v !== null && v !== '')
+    if (parts.length) return parts.join(' · ')
+    try { return JSON.stringify(err) } catch { return String(err) }
+  }
+
   async function handleSubmit() {
     if (isRegister && !form.souhlas_podminky) { setMsgOk(false); setMessage('Musíš souhlasit s podmínkami.'); return }
     if (isRegister && !form.souhlas_gdpr) { setMsgOk(false); setMessage('Musíš souhlasit se zpracováním osobních údajů.'); return }
@@ -42,8 +54,9 @@ export default function LoginPage() {
       })
       if (error) {
         setMsgOk(false)
-        if (error.message.includes('already')) setMessage('Tento e-mail je již zaregistrován.')
-        else setMessage(error.message)
+        if (error.message?.includes('already')) setMessage('Tento e-mail je již zaregistrován.')
+        else if (error.message?.includes('Database error')) setMessage('Chyba při ukládání profilu (trigger v databázi). Podrobnosti najdeš v Supabase → Logs → Postgres Logs.')
+        else setMessage(describeError(error))
       } else {
         // Profil naplní databázový trigger handle_new_user z metadat výše.
         // Ruční update tady nefunguje: po signUp uživatel ještě není přihlášený

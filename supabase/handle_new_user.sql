@@ -19,7 +19,7 @@ as $$
 begin
   insert into public.profiles (
     id, email, jmeno, prijmeni, prezdivka, pohlavie, telefon,
-    datum_narozeni, preferovany_jazyk, alergie,
+    datum_narozeni, preferovany_jazyk, intolerance,
     newsletter, notifikace_nabidky, notifikace_novinky,
     souhlas_podminky, souhlas_gdpr
   )
@@ -34,6 +34,7 @@ begin
     -- prázdný řetězec z nevyplněného data -> NULL, jinak by ::date spadlo
     nullif(new.raw_user_meta_data->>'datum_narozeni', '')::date,
     coalesce(new.raw_user_meta_data->>'preferovany_jazyk', 'cs'),
+    -- formulář posílá pole pod klíčem 'alergie', sloupec v DB se jmenuje 'intolerance'
     new.raw_user_meta_data->>'alergie',
     -- ->> vrátí text "true"/"false", ::boolean ho převede; chybí-li, dá false
     coalesce((new.raw_user_meta_data->>'newsletter')::boolean, false),
