@@ -32,11 +32,11 @@ export default function LoginPage() {
             pohlavie: form.pohlavie, telefon: form.telefon,
             datum_narozeni: form.datum_narozeni,
             preferovany_jazyk: form.preferovany_jazyk, alergie: form.alergie,
-            newsletter: String(form.newsletter),
-            notifikace_nabidky: String(form.notifikace_nabidky),
-            notifikace_novinky: String(form.notifikace_novinky),
-            souhlas_podminky: String(form.souhlas_podminky),
-            souhlas_gdpr: String(form.souhlas_gdpr)
+            newsletter: form.newsletter,
+            notifikace_nabidky: form.notifikace_nabidky,
+            notifikace_novinky: form.notifikace_novinky,
+            souhlas_podminky: form.souhlas_podminky,
+            souhlas_gdpr: form.souhlas_gdpr
           }
         }
       })
@@ -45,19 +45,9 @@ export default function LoginPage() {
         if (error.message.includes('already')) setMessage('Tento e-mail je již zaregistrován.')
         else setMessage(error.message)
       } else {
-        if (data.user) {
-          await supabase.from('profiles').update({
-            jmeno: form.jmeno, prijmeni: form.prijmeni, prezdivka: form.prezdivka,
-            pohlavie: form.pohlavie, telefon: form.telefon,
-            datum_narozeni: form.datum_narozeni || null,
-            preferovany_jazyk: form.preferovany_jazyk, alergie: form.alergie,
-            newsletter: form.newsletter,
-            notifikace_nabidky: form.notifikace_nabidky,
-            notifikace_novinky: form.notifikace_novinky,
-            souhlas_podminky: form.souhlas_podminky,
-            souhlas_gdpr: form.souhlas_gdpr
-          }).eq('id', data.user.id)
-        }
+        // Profil naplní databázový trigger handle_new_user z metadat výše.
+        // Ruční update tady nefunguje: po signUp uživatel ještě není přihlášený
+        // (potvrzování emailem) a RLS zápis tiše zablokuje.
         setMsgOk(true)
         setMessage('Zkontroluj e-mail pro potvrzení registrace.')
       }
