@@ -7,7 +7,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [form, setForm] = useState({
-    email: '', password: '', jmeno: '', prijmeni: '',
+    email: '', password: '', jmeno: '', prijmeni: '', prezdivka: '',
     pohlavie: '', telefon: '', datum_narozeni: '',
     preferovany_jazyk: 'cs', alergie: '',
     newsletter: false, notifikace_nabidky: false, notifikace_novinky: false,
@@ -31,6 +31,7 @@ export default function LoginPage() {
         await supabase.from('profiles').upsert({
           id: data.user.id, email: form.email,
           jmeno: form.jmeno, prijmeni: form.prijmeni,
+          prezdivka: form.prezdivka,
           pohlavie: form.pohlavie, telefon: form.telefon,
           datum_narozeni: form.datum_narozeni || null,
           preferovany_jazyk: form.preferovany_jazyk,
@@ -69,13 +70,11 @@ export default function LoginPage() {
       <div style={{background:'white',borderRadius:'20px',padding:'32px 28px',width:'100%',maxWidth:'400px',boxShadow:'0 2px 24px rgba(0,0,0,0.07)'}}>
 
         <h1 style={{fontSize:'24px',fontWeight:'300',letterSpacing:'0.3em',color:'#1a1208',margin:'0 0 2px'}}>BRAVO</h1>
-        <p style={{fontSize:'11px',color:'#8a7f70',letterSpacing:'0.12em',margin:'0 0 20px'}}>Luxembourg · specialty coffee</p>
+        <p style={{fontSize:'11px',color:'#8a7f70',letterSpacing:'0.1em',margin:'0 0 20px'}}>Luxembourg · místo pro zastavení</p>
 
         {isRegister && (
           <div style={{background:'#f7f3ec',borderRadius:'12px',padding:'16px',marginBottom:'20px'}}>
-            <p style={{fontSize:'13px',color:'#1a1208',lineHeight:'1.6',margin:'0 0 8px',fontWeight:'500'}}>
-              Proč tě prosíme o tyto informace?
-            </p>
+            <p style={{fontSize:'13px',color:'#1a1208',lineHeight:'1.6',margin:'0 0 6px',fontWeight:'500'}}>Proč tě prosíme o tyto informace?</p>
             <p style={{fontSize:'12px',color:'#6b6057',lineHeight:'1.6',margin:0}}>
               BRAVO není jen kiosek — je to pozvánka k zastavení. Chceme tě poznat, pamatovat si tvé preference a překvapit tě ve správný moment. Tvoje data jsou v bezpečí, nikdy je nesdílíme a slouží výhradně k tomu, aby tvoje návštěva byla vždy o něco osobnější.
             </p>
@@ -91,6 +90,7 @@ export default function LoginPage() {
             <input type="text" placeholder="Příjmení *" value={form.prijmeni} onChange={e => set('prijmeni', e.target.value)}
               style={{width:'50%',padding:'12px 14px',border:'1px solid #e0d9d0',borderRadius:'10px',fontSize:'14px',marginBottom:'10px',boxSizing:'border-box',outline:'none'}} />
           </div>
+          {inp('Přezdívka / jméno na kelímek (volitelné)', 'prezdivka')}
           <select value={form.pohlavie} onChange={e => set('pohlavie', e.target.value)}
             style={{width:'100%',padding:'12px 14px',border:'1px solid #e0d9d0',borderRadius:'10px',fontSize:'14px',marginBottom:'10px',boxSizing:'border-box',outline:'none',background:'white',color:form.pohlavie?'#1a1208':'#aaa'}}>
             <option value="">Oslovení</option>
@@ -109,9 +109,8 @@ export default function LoginPage() {
             <option value="de">Deutsch</option>
             <option value="lu">Lëtzebuergesch</option>
           </select>
-          <input type="text" placeholder="Alergie nebo stravovací omezení (volitelné)" value={form.alergie} onChange={e => set('alergie', e.target.value)}
-            style={{width:'100%',padding:'12px 14px',border:'1px solid #e0d9d0',borderRadius:'10px',fontSize:'14px',marginBottom:'16px',boxSizing:'border-box',outline:'none'}} />
-          <p style={{fontSize:'12px',color:'#8a7f70',margin:'0 0 8px',fontWeight:'500'}}>Notifikace</p>
+          {inp('Alergie nebo stravovací omezení (volitelné)', 'alergie')}
+          <p style={{fontSize:'12px',color:'#8a7f70',margin:'4px 0 8px',fontWeight:'500'}}>Notifikace</p>
           {chk('newsletter', 'Chci dostávat novinky a inspiraci od BRAVO')}
           {chk('notifikace_nabidky', 'Upozornit mě na speciální nabídky a akce')}
           {chk('notifikace_novinky', 'Novinky v menu a seasonal specials')}
