@@ -8,6 +8,7 @@
 -- Profil se NEPLNÍ z prohlížeče - při potvrzování emailem není uživatel
 -- po signUp přihlášený a RLS by zápis tiše zablokoval.
 --
+-- Názvy sloupců jsou ověřené přímo proti databázi (information_schema).
 -- Záměrně ZDE NENÍ "EXCEPTION WHEN OTHERS" - kdyby něco selhalo, chceme to
 -- vidět nahlas v Postgres Logs, ne tiše spolknout.
 
@@ -19,7 +20,8 @@ as $$
 begin
   insert into public.profiles (
     id, email, jmeno, prijmeni, prezdivka, pohlavie, telefon,
-    datum_narozeni, preferovany_jazyk, intolerance,
+    datum_narozeni, svatek, preferovany_jazyk, oblibeny_napoj,
+    preference_mleka, intolerance,
     newsletter, notifikace_nabidky, notifikace_novinky,
     souhlas_podminky, souhlas_gdpr
   )
@@ -33,9 +35,12 @@ begin
     new.raw_user_meta_data->>'telefon',
     -- prázdný řetězec z nevyplněného data -> NULL, jinak by ::date spadlo
     nullif(new.raw_user_meta_data->>'datum_narozeni', '')::date,
+    nullif(new.raw_user_meta_data->>'svatek', '')::date,
     coalesce(new.raw_user_meta_data->>'preferovany_jazyk', 'cs'),
-    -- formulář posílá pole pod klíčem 'alergie', sloupec v DB se jmenuje 'intolerance'
-    new.raw_user_meta_data->>'alergie',
+    new.raw_user_meta_data->>'oblibeny_napoj',
+    new.raw_user_meta_data->>'preference_mleka',
+    -- dietní omezení formulář spojí do jednoho textu pod klíčem 'intolerance'
+    new.raw_user_meta_data->>'intolerance',
     -- ->> vrátí text "true"/"false", ::boolean ho převede; chybí-li, dá false
     coalesce((new.raw_user_meta_data->>'newsletter')::boolean, false),
     coalesce((new.raw_user_meta_data->>'notifikace_nabidky')::boolean, false),
