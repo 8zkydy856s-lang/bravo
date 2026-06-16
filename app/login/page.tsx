@@ -9,7 +9,7 @@ export default function LoginPage() {
   const [form, setForm] = useState({
     email: '', password: '', jmeno: '', prijmeni: '',
     pohlavie: '', telefon: '', datum_narozeni: '',
-    preferovany_jazyk: 'cs', oblibeny_napoj: '', preference_mleka: '',
+    preferovany_jazyk: 'cs', alergie: '',
     newsletter: false, notifikace_nabidky: false, notifikace_novinky: false,
     souhlas_podminky: false, souhlas_gdpr: false
   })
@@ -34,8 +34,7 @@ export default function LoginPage() {
           pohlavie: form.pohlavie, telefon: form.telefon,
           datum_narozeni: form.datum_narozeni || null,
           preferovany_jazyk: form.preferovany_jazyk,
-          oblibeny_napoj: form.oblibeny_napoj,
-          preference_mleka: form.preference_mleka,
+          alergie: form.alergie,
           newsletter: form.newsletter,
           notifikace_nabidky: form.notifikace_nabidky,
           notifikace_novinky: form.notifikace_novinky,
@@ -68,8 +67,21 @@ export default function LoginPage() {
   return (
     <main style={{minHeight:'100vh',background:'#f7f3ec',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Inter,sans-serif',padding:'20px',boxSizing:'border-box'}}>
       <div style={{background:'white',borderRadius:'20px',padding:'32px 28px',width:'100%',maxWidth:'400px',boxShadow:'0 2px 24px rgba(0,0,0,0.07)'}}>
+
         <h1 style={{fontSize:'24px',fontWeight:'300',letterSpacing:'0.3em',color:'#1a1208',margin:'0 0 2px'}}>BRAVO</h1>
-        <p style={{fontSize:'11px',color:'#8a7f70',letterSpacing:'0.12em',margin:'0 0 24px'}}>Luxembourg · specialty coffee</p>
+        <p style={{fontSize:'11px',color:'#8a7f70',letterSpacing:'0.12em',margin:'0 0 20px'}}>Luxembourg · specialty coffee</p>
+
+        {isRegister && (
+          <div style={{background:'#f7f3ec',borderRadius:'12px',padding:'16px',marginBottom:'20px'}}>
+            <p style={{fontSize:'13px',color:'#1a1208',lineHeight:'1.6',margin:'0 0 8px',fontWeight:'500'}}>
+              Proč tě prosíme o tyto informace?
+            </p>
+            <p style={{fontSize:'12px',color:'#6b6057',lineHeight:'1.6',margin:0}}>
+              BRAVO není jen kiosek — je to pozvánka k zastavení. Chceme tě poznat, pamatovat si tvé preference a překvapit tě ve správný moment. Tvoje data jsou v bezpečí, nikdy je nesdílíme a slouží výhradně k tomu, aby tvoje návštěva byla vždy o něco osobnější.
+            </p>
+          </div>
+        )}
+
         <h2 style={{fontSize:'15px',fontWeight:'600',color:'#1a1208',margin:'0 0 16px'}}>{isRegister ? 'Vytvořit účet' : 'Přihlásit se'}</h2>
 
         {isRegister && <>
@@ -81,10 +93,10 @@ export default function LoginPage() {
           </div>
           <select value={form.pohlavie} onChange={e => set('pohlavie', e.target.value)}
             style={{width:'100%',padding:'12px 14px',border:'1px solid #e0d9d0',borderRadius:'10px',fontSize:'14px',marginBottom:'10px',boxSizing:'border-box',outline:'none',background:'white',color:form.pohlavie?'#1a1208':'#aaa'}}>
-            <option value="">Pohlaví</option>
-            <option value="muz">Muž</option>
-            <option value="zena">Žena</option>
-            <option value="jine">Jiné / nechci uvést</option>
+            <option value="">Oslovení</option>
+            <option value="pan">Pan</option>
+            <option value="pani">Paní</option>
+            <option value="jine">Bez oslovení</option>
           </select>
           {inp('Telefon', 'telefon', 'tel')}
           <input type="date" value={form.datum_narozeni} onChange={e => set('datum_narozeni', e.target.value)}
@@ -97,34 +109,15 @@ export default function LoginPage() {
             <option value="de">Deutsch</option>
             <option value="lu">Lëtzebuergesch</option>
           </select>
-          <select value={form.oblibeny_napoj} onChange={e => set('oblibeny_napoj', e.target.value)}
-            style={{width:'100%',padding:'12px 14px',border:'1px solid #e0d9d0',borderRadius:'10px',fontSize:'14px',marginBottom:'10px',boxSizing:'border-box',outline:'none',background:'white',color:form.oblibeny_napoj?'#1a1208':'#aaa'}}>
-            <option value="">Oblíbený nápoj (volitelné)</option>
-            <option value="espresso">Espresso</option>
-            <option value="cappuccino">Cappuccino</option>
-            <option value="flat_white">Flat White</option>
-            <option value="filter">Filtrovaná káva</option>
-            <option value="matcha">Matcha</option>
-            <option value="caj">Čaj</option>
-            <option value="jine">Jiné</option>
-          </select>
-          <select value={form.preference_mleka} onChange={e => set('preference_mleka', e.target.value)}
-            style={{width:'100%',padding:'12px 14px',border:'1px solid #e0d9d0',borderRadius:'10px',fontSize:'14px',marginBottom:'16px',boxSizing:'border-box',outline:'none',background:'white',color:form.preference_mleka?'#1a1208':'#aaa'}}>
-            <option value="">Preference mléka (volitelné)</option>
-            <option value="kravske">Kravské</option>
-            <option value="ovsene">Ovesné</option>
-            <option value="mandlove">Mandlové</option>
-            <option value="sojove">Sójové</option>
-            <option value="kokosove">Kokosové</option>
-            <option value="bez_mleka">Bez mléka</option>
-          </select>
+          <input type="text" placeholder="Alergie nebo stravovací omezení (volitelné)" value={form.alergie} onChange={e => set('alergie', e.target.value)}
+            style={{width:'100%',padding:'12px 14px',border:'1px solid #e0d9d0',borderRadius:'10px',fontSize:'14px',marginBottom:'16px',boxSizing:'border-box',outline:'none'}} />
           <p style={{fontSize:'12px',color:'#8a7f70',margin:'0 0 8px',fontWeight:'500'}}>Notifikace</p>
-          {chk('newsletter', 'Chci dostávat newsletter a novinky')}
+          {chk('newsletter', 'Chci dostávat novinky a inspiraci od BRAVO')}
           {chk('notifikace_nabidky', 'Upozornit mě na speciální nabídky a akce')}
           {chk('notifikace_novinky', 'Novinky v menu a seasonal specials')}
           <div style={{height:'1px',background:'#f0ebe3',margin:'12px 0'}} />
           <p style={{fontSize:'12px',color:'#8a7f70',margin:'0 0 8px',fontWeight:'500'}}>Povinné souhlasy *</p>
-          {chk('souhlas_podminky', 'Souhlasím s obchodními podmínkami a věrnostním programem BRAVO')}
+          {chk('souhlas_podminky', 'Souhlasím s podmínkami věrnostního programu BRAVO')}
           {chk('souhlas_gdpr', 'Souhlasím se zpracováním osobních údajů dle GDPR')}
           <div style={{height:'1px',background:'#f0ebe3',margin:'12px 0'}} />
         </>}
