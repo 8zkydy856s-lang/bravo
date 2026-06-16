@@ -6,6 +6,7 @@ export default function LoginPage() {
   const [isRegister, setIsRegister] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [msgOk, setMsgOk] = useState(false)
   const [form, setForm] = useState({
     email: '', password: '', jmeno: '', prijmeni: '', prezdivka: '',
     pohlavie: '', telefon: '', datum_narozeni: '',
@@ -17,8 +18,8 @@ export default function LoginPage() {
   const set = (k: string, v: any) => setForm(f => ({...f, [k]: v}))
 
   async function handleSubmit() {
-    if (isRegister && !form.souhlas_podminky) { setMessage('Musíš souhlasit s podmínkami.'); return }
-    if (isRegister && !form.souhlas_gdpr) { setMessage('Musíš souhlasit se zpracováním osobních údajů.'); return }
+    if (isRegister && !form.souhlas_podminky) { setMsgOk(false); setMessage('Musíš souhlasit s podmínkami věrnostního programu.'); return }
+    if (isRegister && !form.souhlas_gdpr) { setMsgOk(false); setMessage('Musíš souhlasit se zpracováním osobních údajů.'); return }
     setLoading(true)
     setMessage('')
     if (isRegister) {
@@ -43,11 +44,20 @@ export default function LoginPage() {
           }
         }
       })
-      if (error) setMessage(error.message)
-      else setMessage('Zkontroluj e-mail pro potvrzení registrace.')
+      if (error) {
+        setMsgOk(false)
+        if (error.message.includes('already registered') || error.message.includes('already been registered')) {
+          setMessage('Tento e-mail je již zaregistrován. Přihlaš se.')
+        } else {
+          setMessage(error.message)
+        }
+      } else {
+        setMsgOk(true)
+        setMessage('Zkontroluj e-mail pro potvrzení registrace.')
+      }
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email: form.email, password: form.password })
-      if (error) setMessage(error.message)
+      if (error) { setMsgOk(false); setMessage('Nesprávný e-mail nebo heslo.') }
       else window.location.href = '/'
     }
     setLoading(false)
@@ -129,7 +139,7 @@ export default function LoginPage() {
           {loading ? 'Načítám...' : isRegister ? 'Zaregistrovat se' : 'Přihlásit se'}
         </button>
 
-        {message && <p style={{fontSize:'13px',color:message.includes('Zkontroluj')||message.includes('podmínkami')||message.includes('údajů')?message.includes('Zkontroluj')?'#2e7d32':'#c0392b':'#c0392b',textAlign:'center',margin:'0 0 10px'}}>{message}</p>}
+        {message && <p style={{fontSize:'13px',color:msgOk?'#2e7d32':'#c0392b',textAlign:'center',margin:'0 0 10px'}}>{message}</p>}
 
         <p style={{fontSize:'13px',color:'#8a7f70',textAlign:'center',margin:0}}>
           {isRegister ? 'Už máš účet?' : 'Nemáš účet?'}{' '}
