@@ -64,9 +64,9 @@ export default function AuthBar() {
     <div style={bar}>
       {email ? (
         <>
-          <span style={{ color: '#6b6057' }}>
-            Přihlášen: <strong style={{ color: '#1a1208', fontWeight: 600 }}>{displayName}</strong>
-          </span>
+          <a href="/profil" style={{ color: '#6b6057', textDecoration: 'none' }}>
+            Přihlášen: <strong style={{ color: '#1a1208', fontWeight: 600, textDecoration: 'underline' }}>{displayName}</strong>
+          </a>
           <button onClick={handleLogout}
             style={{ background: 'none', border: '1px solid #e0d9d0', borderRadius: '8px', padding: '5px 12px', fontSize: '12px', color: '#1a1208', cursor: 'pointer', fontFamily: 'Inter,sans-serif' }}>
             Odhlásit se
