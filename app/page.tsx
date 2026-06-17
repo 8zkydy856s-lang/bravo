@@ -1,4 +1,5 @@
 import AuthBar from "./AuthBar";
+import TrustCard from "./TrustCard";
 
 export default function Home() {
   return (
@@ -47,23 +48,7 @@ export default function Home() {
         <button style={{width:"32px",height:"32px",borderRadius:"50%",background:"#b8954a",border:"none",color:"white",fontSize:"14px",cursor:"pointer"}}>▶</button>
       </div>
 
-      <div style={{margin:"12px 16px 0",background:"#1a1208",borderRadius:"16px",padding:"16px",border:"1px solid rgba(184,149,74,0.2)"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"12px"}}>
-          <div>
-            <p style={{fontSize:"9px",color:"rgba(255,255,255,0.3)",letterSpacing:"0.15em",margin:"0 0 4px"}}>KARTA DŮVĚRY</p>
-            <p style={{fontSize:"17px",color:"#d4a96a",fontWeight:"300",margin:0}}>Marie Dupont</p>
-          </div>
-          <div style={{textAlign:"right"}}>
-            <p style={{fontSize:"24px",color:"#d4a96a",fontWeight:"300",margin:0}}>240</p>
-            <p style={{fontSize:"9px",color:"rgba(255,255,255,0.3)",margin:0}}>BODŮ</p>
-          </div>
-        </div>
-        <div style={{display:"flex",gap:"6px",flexWrap:"wrap"}}>
-          {[...Array(10)].map((_,i) => (
-            <div key={i} style={{width:"14px",height:"14px",borderRadius:"50%",background:i<7?"#b8954a":"transparent",border:i<7?"none":"1px solid rgba(184,149,74,0.3)"}}/>
-          ))}
-        </div>
-      </div>
+      <TrustCard />
 
       <div style={{margin:"12px 16px 0"}}>
         <button style={{width:"100%",background:"#1a1208",color:"#d4a96a",border:"none",borderRadius:"12px",padding:"14px",fontSize:"13px",fontWeight:"500",cursor:"pointer"}}>
