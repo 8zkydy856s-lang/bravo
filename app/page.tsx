@@ -1,6 +1,10 @@
+import AuthBar from "./AuthBar";
+
 export default function Home() {
   return (
     <main style={{minHeight:"100vh",background:"#f7f3ec",display:"flex",flexDirection:"column",paddingBottom:"80px",fontFamily:"Inter,sans-serif"}}>
+
+      <AuthBar />
 
       <header style={{background:"#f7f3ec",padding:"24px 20px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"0.5px solid rgba(0,0,0,0.08)"}}>
         <div>
