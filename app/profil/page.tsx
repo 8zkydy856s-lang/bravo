@@ -155,7 +155,7 @@ export default function ProfilPage() {
 
   return (
     <main style={{ minHeight: '100vh', background: '#f7f3ec', fontFamily: 'Inter,sans-serif', padding: '20px', boxSizing: 'border-box', display: 'flex', justifyContent: 'center' }}>
-      <div style={{ width: '100%', maxWidth: '440px' }}>
+      <div style={{ width: '100%', maxWidth: '480px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
           <a href="/" style={{ fontSize: '13px', color: '#8a7f70', textDecoration: 'none' }}>← Zpět</a>
           <span style={{ fontSize: '20px', fontWeight: 300, letterSpacing: '0.3em', color: '#1a1208' }}>BRAVO</span>

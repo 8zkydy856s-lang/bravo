@@ -3,7 +3,7 @@ import TrustCard from "./TrustCard";
 
 export default function Home() {
   return (
-    <main style={{minHeight:"100vh",background:"#f7f3ec",display:"flex",flexDirection:"column",paddingBottom:"80px",fontFamily:"Inter,sans-serif"}}>
+    <main style={{minHeight:"100vh",background:"#f7f3ec",display:"flex",flexDirection:"column",paddingBottom:"80px",fontFamily:"Inter,sans-serif",width:"100%",maxWidth:"480px",margin:"0 auto"}}>
 
       <AuthBar />
 
@@ -95,7 +95,7 @@ export default function Home() {
         ))}
       </div>
 
-      <nav style={{position:"fixed",bottom:0,left:0,right:0,background:"#1a1208",borderTop:"0.5px solid rgba(255,255,255,0.07)",display:"flex"}}>
+      <nav style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:"480px",background:"#1a1208",borderTop:"0.5px solid rgba(255,255,255,0.07)",display:"flex"}}>
         {["DOMOV","MENU","KVETY","KOSIK","PROFIL"].map((tab,i) => (
           <button key={tab} style={{flex:1,padding:"10px 4px 14px",border:"none",background:"none",fontSize:"8px",letterSpacing:"0.06em",cursor:"pointer",color:i===0?"#d4a96a":"rgba(255,255,255,0.3)"}}>
             {tab}
