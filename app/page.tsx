@@ -1,5 +1,6 @@
 import AuthBar from "./AuthBar";
 import TrustCard from "./TrustCard";
+import KioskStatus from "./KioskStatus";
 
 export default function Home() {
   return (
@@ -20,13 +21,7 @@ export default function Home() {
 
       <div style={{margin:"14px 16px 0",background:"white",borderRadius:"16px",border:"0.5px solid rgba(0,0,0,0.08)",overflow:"hidden"}}>
         <div style={{padding:"12px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"0.5px solid rgba(0,0,0,0.06)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
-            <div style={{width:"8px",height:"8px",borderRadius:"50%",background:"#4caf50"}}></div>
-            <div>
-              <p style={{fontSize:"13px",fontWeight:"500",color:"#1a1208",margin:0}}>Otevřeno dnes</p>
-              <p style={{fontSize:"11px",color:"#8a7f70",margin:0}}>7:30 – 18:00</p>
-            </div>
-          </div>
+          <KioskStatus />
           <div style={{textAlign:"right"}}>
             <p style={{fontSize:"22px",margin:0}}>⛅</p>
             <p style={{fontSize:"11px",color:"#8a7f70",margin:0}}>22 °C</p>
