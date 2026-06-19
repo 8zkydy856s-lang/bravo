@@ -92,7 +92,7 @@ export default function Home() {
 
       <nav style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:"480px",background:"#1a1208",borderTop:"0.5px solid rgba(255,255,255,0.07)",display:"flex"}}>
         {["DOMOV","MENU","KVETY","KOSIK","PROFIL"].map((tab,i) => (
-          <button key={tab} style={{flex:1,padding:"10px 4px 14px",border:"none",background:"none",fontSize:"8px",letterSpacing:"0.06em",cursor:"pointer",color:i===0?"#d4a96a":"rgba(255,255,255,0.3)"}}>
+          <button key={tab} style={{flex:1,padding:"16px 6px 20px",border:"none",background:"none",fontSize:"8px",letterSpacing:"0.06em",cursor:"pointer",color:i===0?"#d4a96a":"rgba(255,255,255,0.3)"}}>
             {tab}
           </button>
         ))}
