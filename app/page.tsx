@@ -28,9 +28,9 @@ export default function Home() {
         <p style={{fontSize:"12px",color:"#8a7f70",letterSpacing:"0.14em",marginTop:"6px"}}>místo k zastavení</p>
       </header>
 
-      {/* 3) Foto vozíku BRAVO - celá ilustrace, neoříznutá (width 100% / height auto) */}
-      <div className="landing-photo" style={{borderRadius:"16px",overflow:"hidden",border:"0.5px solid rgba(0,0,0,0.08)",lineHeight:0}}>
-        <Image src="/vozik.jpg" alt="Vozík BRAVO" width={1025} height={750} priority style={{width:"100%",height:"auto",display:"block"}} />
+      {/* 3) Vozík BRAVO - průhledné PNG bez rámečku, splývá s krémovým pozadím */}
+      <div className="landing-photo" style={{lineHeight:0}}>
+        <Image src="/vozik-ikona.png" alt="Vozík BRAVO" width={1025} height={750} priority style={{width:"100%",height:"auto",display:"block"}} />
       </div>
 
       {/* 4+5) Vlídný text o provozu + karta stavu (na desktopu vedle sebe) */}
