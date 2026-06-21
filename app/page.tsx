@@ -1,6 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
 import KioskStatus from "./KioskStatus";
-import { WebObsahProvider, Sdeleni, ZitraVyhled } from "./WebObsah";
+import Pocasi from "./Pocasi";
+import { WebObsahProvider, Sdeleni, ZitraVyhled, ProvozText, PopisText, NavigujOdkaz } from "./WebObsah";
 // Fáze 1: AuthBar a TrustCard zůstávají v projektu, na veřejné úvodní stránce se zatím nevykreslují.
 // import AuthBar from "./AuthBar";
 // import TrustCard from "./TrustCard";
@@ -9,12 +11,16 @@ import { WebObsahProvider, Sdeleni, ZitraVyhled } from "./WebObsah";
 const ZOBRAZIT_EMAIL = false;
 const EMAIL = "hello@bra-vo.com";
 
-// Počasí jsou zatím jen placeholder (ne reálná data) - skryto. Nemazat, jen vypnuto.
-const ZOBRAZIT_POCASI = false;
+// Společný styl pro tři odkazy dole.
+const odkazStyle: React.CSSProperties = {
+  flex: 1, textAlign: "center", padding: "11px 6px", borderRadius: "12px",
+  border: "0.5px solid rgba(120,90,40,0.16)", background: "#fffdf8", fontSize: "12px",
+  color: "#1a1208", textDecoration: "none"
+};
 
 export default function Home() {
   return (
-    <main className="landing" style={{minHeight:"100vh",background:"#f7f3ec",fontFamily:"Inter,sans-serif"}}>
+    <main className="landing" style={{minHeight:"100vh",background:"#f6f1e6",fontFamily:"Inter,sans-serif"}}>
       <WebObsahProvider>
 
       {/* 1) Přepínač jazyků - zatím jen vizuální placeholder (nefunkční) */}
@@ -25,7 +31,7 @@ export default function Home() {
       {/* 2) Hlavička */}
       <header style={{padding:"20px 20px 16px",textAlign:"center"}}>
         <h1 className="landing-title" style={{fontWeight:300,letterSpacing:"0.35em",color:"#1a1208",margin:0}}>BRAVO</h1>
-        <p style={{fontSize:"12px",color:"#8a7f70",letterSpacing:"0.14em",marginTop:"6px"}}>místo k zastavení</p>
+        <p style={{fontSize:"12px",color:"#9b8d76",letterSpacing:"0.14em",marginTop:"6px"}}>místo k zastavení</p>
       </header>
 
       {/* 3) Vozík BRAVO - průhledné PNG bez rámečku, splývá s krémovým pozadím */}
@@ -35,37 +41,26 @@ export default function Home() {
 
       {/* 4+5) Vlídný text o provozu + karta stavu (na desktopu vedle sebe) */}
       <div className="landing-band">
-        {/* 4) Vlídné vysvětlení provozu (text, ne tlačítko) */}
-        <p className="landing-band-text" style={{fontSize:"13px",lineHeight:1.7,color:"#6b6057"}}>
-          Otevírací doba je přibližná a závisí na počasí. Než vyrazíš za BRAVEM, vždy se podívej na aktuální stav, ať mě tu najdeš. Děkuji za pochopení.
-        </p>
+        {/* 4) Vlídné vysvětlení provozu (text z DB, editovatelné v adminu) */}
+        <ProvozText />
 
         {/* pravý sloupec: sdělení 1 (nad statusem) + karta stavu */}
         <div className="landing-band-status">
           {/* Sdělení 1 - nad statusem */}
           <Sdeleni pozice={1} style={{margin:"0 0 10px"}} />
 
-          {/* 5) Stav kiosku (+ počasí - zatím skryté placeholdery) */}
-          <div style={{background:"white",borderRadius:"16px",border:"0.5px solid rgba(0,0,0,0.08)",overflow:"hidden"}}>
-            <div style={{padding:"12px 16px",display:"flex",alignItems:"flex-start",justifyContent:"space-between",borderBottom:ZOBRAZIT_POCASI?"0.5px solid rgba(0,0,0,0.06)":"none"}}>
+          {/* 5) Stav kiosku + reálné počasí */}
+          <div style={{background:"#fffdf8",borderRadius:"18px",border:"0.5px solid rgba(120,90,40,0.12)",overflow:"hidden"}}>
+            <div style={{padding:"14px 16px",display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
               <div>
-                <p style={{fontSize:"9px",letterSpacing:"0.15em",color:"#8a7f70",margin:"0 0 6px"}}>PRÁVĚ TEĎ</p>
+                <p style={{fontSize:"9px",letterSpacing:"0.15em",color:"#9b8d76",margin:"0 0 6px"}}>PRÁVĚ TEĎ</p>
                 <KioskStatus />
-                {/* Výhled na zítřek - text z web_obsah (nahrazuje dřívější pevný řádek) */}
+                {/* Výhled na zítřek - text z web_obsah */}
                 <ZitraVyhled />
               </div>
-              {ZOBRAZIT_POCASI && (
-                <div style={{textAlign:"right"}}>
-                  <p style={{fontSize:"22px",margin:0}}>⛅</p>
-                  <p style={{fontSize:"11px",color:"#8a7f70",margin:0}}>22 °C</p>
-                </div>
-              )}
+              {/* Reálné počasí (Open-Meteo); při výpadku se nezobrazí */}
+              <Pocasi />
             </div>
-            {ZOBRAZIT_POCASI && (
-              <div style={{padding:"8px 16px",background:"rgba(251,191,36,0.08)"}}>
-                <p style={{fontSize:"11px",color:"#92400e",margin:0}}>Zítra: 18 °C · možný déšť</p>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -73,32 +68,26 @@ export default function Home() {
       {/* Sdělení 2 - mezi statusem a popisem */}
       <Sdeleni pozice={2} className="landing-sdeleni" />
 
-      {/* 6) Krátký popis kurzívou - tichý dotyk */}
+      {/* 6) Krátký popis kurzívou - z DB, editovatelné v adminu */}
       <div className="landing-desc">
-        <p style={{fontSize:"13px",lineHeight:1.8,color:"#8a7f70",fontStyle:"italic",margin:0}}>
-          Speciální káva, čaj, květiny a klasická hudba.<br/>
-          Nápoje laděné na míru, podle tvé chuti.<br/>
-          Pozvánka k zastavení v každém všedním dni.
-        </p>
+        <PopisText />
       </div>
 
       {/* Sdělení 3 - pod popisem */}
       <Sdeleni pozice={3} className="landing-sdeleni" />
 
-      {/* 7) Placeholder tlačítko Nápojový lístek (zatím bez funkce) */}
+      {/* 7) Nápojový lístek -> /listek */}
       <div className="landing-cta">
-        <button style={{width:"100%",background:"none",color:"#1a1208",border:"1px solid #d8cdbb",borderRadius:"12px",padding:"13px",fontSize:"13px",fontWeight:500,cursor:"pointer",fontFamily:"Inter,sans-serif"}}>
+        <Link href="/listek" style={{display:"block",width:"100%",boxSizing:"border-box",textAlign:"center",background:"none",color:"#1a1208",border:"1px solid #d8c8ad",borderRadius:"14px",padding:"13px",fontSize:"13px",fontWeight:500,textDecoration:"none",fontFamily:"Inter,sans-serif"}}>
           Nápojový lístek
-        </button>
+        </Link>
       </div>
 
-      {/* 8) Tři odkazy vedle sebe (zatím placeholdery) */}
+      {/* 8) Tři odkazy vedle sebe (Instagram, Google natvrdo; Naviguj z DB) */}
       <div className="landing-links">
-        {[{label:"Instagram",href:"#"},{label:"Google",href:"#"},{label:"Naviguj",href:"#"}].map(l => (
-          <a key={l.label} href={l.href} style={{flex:1,textAlign:"center",padding:"11px 6px",borderRadius:"10px",border:"0.5px solid rgba(0,0,0,0.08)",background:"white",fontSize:"12px",color:"#1a1208",textDecoration:"none"}}>
-            {l.label}
-          </a>
-        ))}
+        <a href="https://www.instagram.com/bravo_cafe_luxembourg/" target="_blank" rel="noopener noreferrer" style={odkazStyle}>Instagram</a>
+        <a href="https://share.google/Ch9TWlQZ4HTd6gRpP" target="_blank" rel="noopener noreferrer" style={odkazStyle}>Google</a>
+        <NavigujOdkaz style={odkazStyle} />
       </div>
 
       {/* 9) E-mail - řízený konstantou ZOBRAZIT_EMAIL */}

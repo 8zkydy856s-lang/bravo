@@ -15,8 +15,23 @@ create table if not exists public.web_obsah (
   sdeleni3_text text,
   zitra_zap     boolean not null default true,
   zitra_text    text not null default 'Zítra: pravděpodobně otevřeno',
+  sdeleni1_vzhled text not null default 'splynout' check (sdeleni1_vzhled in ('splynout','zvyraznit')),
+  sdeleni2_vzhled text not null default 'splynout' check (sdeleni2_vzhled in ('splynout','zvyraznit')),
+  sdeleni3_vzhled text not null default 'splynout' check (sdeleni3_vzhled in ('splynout','zvyraznit')),
+  maps_odkaz    text not null default 'https://maps.app.goo.gl/2gwzhh7xnpfEp7Lt9',
+  provoz_text   text not null default 'Otevírací doba je přibližná a závisí na počasí. Než vyrazíš za BRAVEM, vždy se podívej na aktuální stav, ať mě tu najdeš. Děkuji za pochopení.',
+  popis_text    text not null default E'Speciální káva, čaj, květiny a klasická hudba.\nNápoje laděné na míru, podle tvé chuti.\nPozvánka k zastavení v každém všedním dni.',
   updated_at    timestamptz not null default now()
 );
+
+-- Nová pole pro existující tabulku (dávka: vzhled sdělení, mapový odkaz, texty provozu/popisu).
+-- add column if not exists s defaultem dopní existující řádek 'hlavni' výchozími hodnotami.
+alter table public.web_obsah add column if not exists sdeleni1_vzhled text not null default 'splynout' check (sdeleni1_vzhled in ('splynout','zvyraznit'));
+alter table public.web_obsah add column if not exists sdeleni2_vzhled text not null default 'splynout' check (sdeleni2_vzhled in ('splynout','zvyraznit'));
+alter table public.web_obsah add column if not exists sdeleni3_vzhled text not null default 'splynout' check (sdeleni3_vzhled in ('splynout','zvyraznit'));
+alter table public.web_obsah add column if not exists maps_odkaz text not null default 'https://maps.app.goo.gl/2gwzhh7xnpfEp7Lt9';
+alter table public.web_obsah add column if not exists provoz_text text not null default 'Otevírací doba je přibližná a závisí na počasí. Než vyrazíš za BRAVEM, vždy se podívej na aktuální stav, ať mě tu najdeš. Děkuji za pochopení.';
+alter table public.web_obsah add column if not exists popis_text text not null default E'Speciální káva, čaj, květiny a klasická hudba.\nNápoje laděné na míru, podle tvé chuti.\nPozvánka k zastavení v každém všedním dni.';
 
 -- updated_at se automaticky aktualizuje při každé změně (funkce sdílená s ostatními tabulkami)
 create or replace function public.set_updated_at()

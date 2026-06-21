@@ -2,10 +2,10 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../lib/supabase'
-import { SdeleniRadek, ZitraRadek } from '../../WebObsahView'
+import { SdeleniRadek, ZitraRadek, SdeleniVzhled } from '../../WebObsahView'
 
 // Admin "Sdělení na web" - /admin/sdeleni (jen pro přihlášené, jinak redirect na /login).
-// Ovládá volitelná sdělení (3) a výhled na zítřek; ukládá do řádku web_obsah (klic = 'hlavni').
+// Ovládá obsah úvodní stránky uložený v řádku web_obsah (klic = 'hlavni').
 
 const KLIC = 'hlavni'
 
@@ -15,17 +15,21 @@ const inputStyle: React.CSSProperties = {
 }
 
 type FormState = {
-  sdeleni1_zap: boolean; sdeleni1_text: string
-  sdeleni2_zap: boolean; sdeleni2_text: string
-  sdeleni3_zap: boolean; sdeleni3_text: string
+  sdeleni1_zap: boolean; sdeleni1_text: string; sdeleni1_vzhled: SdeleniVzhled
+  sdeleni2_zap: boolean; sdeleni2_text: string; sdeleni2_vzhled: SdeleniVzhled
+  sdeleni3_zap: boolean; sdeleni3_text: string; sdeleni3_vzhled: SdeleniVzhled
   zitra_zap: boolean; zitra_text: string
+  maps_odkaz: string
+  provoz_text: string
+  popis_text: string
 }
 
 const EMPTY: FormState = {
-  sdeleni1_zap: false, sdeleni1_text: '',
-  sdeleni2_zap: false, sdeleni2_text: '',
-  sdeleni3_zap: false, sdeleni3_text: '',
+  sdeleni1_zap: false, sdeleni1_text: '', sdeleni1_vzhled: 'splynout',
+  sdeleni2_zap: false, sdeleni2_text: '', sdeleni2_vzhled: 'splynout',
+  sdeleni3_zap: false, sdeleni3_text: '', sdeleni3_vzhled: 'splynout',
   zitra_zap: true, zitra_text: 'Zítra: pravděpodobně otevřeno',
+  maps_odkaz: '', provoz_text: '', popis_text: '',
 }
 
 export default function AdminSdeleniPage() {
@@ -56,17 +60,21 @@ export default function AdminSdeleniPage() {
       if (!active) return
       const { data: row, error } = await supabase
         .from('web_obsah')
-        .select('sdeleni1_zap, sdeleni1_text, sdeleni2_zap, sdeleni2_text, sdeleni3_zap, sdeleni3_text, zitra_zap, zitra_text')
+        .select('sdeleni1_zap, sdeleni1_text, sdeleni1_vzhled, sdeleni2_zap, sdeleni2_text, sdeleni2_vzhled, sdeleni3_zap, sdeleni3_text, sdeleni3_vzhled, zitra_zap, zitra_text, maps_odkaz, provoz_text, popis_text')
         .eq('klic', KLIC)
         .maybeSingle()
       if (!active) return
       if (error) { fail(describeError(error)); setLoading(false); return }
       if (row) {
+        const vz = (v: any): SdeleniVzhled => (v === 'zvyraznit' ? 'zvyraznit' : 'splynout')
         setForm({
-          sdeleni1_zap: !!row.sdeleni1_zap, sdeleni1_text: row.sdeleni1_text ?? '',
-          sdeleni2_zap: !!row.sdeleni2_zap, sdeleni2_text: row.sdeleni2_text ?? '',
-          sdeleni3_zap: !!row.sdeleni3_zap, sdeleni3_text: row.sdeleni3_text ?? '',
+          sdeleni1_zap: !!row.sdeleni1_zap, sdeleni1_text: row.sdeleni1_text ?? '', sdeleni1_vzhled: vz(row.sdeleni1_vzhled),
+          sdeleni2_zap: !!row.sdeleni2_zap, sdeleni2_text: row.sdeleni2_text ?? '', sdeleni2_vzhled: vz(row.sdeleni2_vzhled),
+          sdeleni3_zap: !!row.sdeleni3_zap, sdeleni3_text: row.sdeleni3_text ?? '', sdeleni3_vzhled: vz(row.sdeleni3_vzhled),
           zitra_zap: !!row.zitra_zap, zitra_text: row.zitra_text ?? '',
+          maps_odkaz: row.maps_odkaz ?? '',
+          provoz_text: row.provoz_text ?? '',
+          popis_text: row.popis_text ?? '',
         })
       }
       setLoading(false)
@@ -79,10 +87,11 @@ export default function AdminSdeleniPage() {
     setMessage('')
     try {
       const { error } = await supabase.from('web_obsah').update({
-        sdeleni1_zap: form.sdeleni1_zap, sdeleni1_text: form.sdeleni1_text || null,
-        sdeleni2_zap: form.sdeleni2_zap, sdeleni2_text: form.sdeleni2_text || null,
-        sdeleni3_zap: form.sdeleni3_zap, sdeleni3_text: form.sdeleni3_text || null,
+        sdeleni1_zap: form.sdeleni1_zap, sdeleni1_text: form.sdeleni1_text || null, sdeleni1_vzhled: form.sdeleni1_vzhled,
+        sdeleni2_zap: form.sdeleni2_zap, sdeleni2_text: form.sdeleni2_text || null, sdeleni2_vzhled: form.sdeleni2_vzhled,
+        sdeleni3_zap: form.sdeleni3_zap, sdeleni3_text: form.sdeleni3_text || null, sdeleni3_vzhled: form.sdeleni3_vzhled,
         zitra_zap: form.zitra_zap, zitra_text: form.zitra_text,
+        maps_odkaz: form.maps_odkaz, provoz_text: form.provoz_text, popis_text: form.popis_text,
       }).eq('klic', KLIC)
       if (error) fail(describeError(error))
       else { setMsgOk(true); setMessage('Uloženo') }
@@ -95,19 +104,19 @@ export default function AdminSdeleniPage() {
 
   if (loading) {
     return (
-      <main style={{ minHeight: '100vh', background: '#f7f3ec', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter,sans-serif', color: '#8a7f70', fontSize: '14px' }}>
+      <main style={{ minHeight: '100vh', background: '#f6f1e6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter,sans-serif', color: '#8a7f70', fontSize: '14px' }}>
         Načítám…
       </main>
     )
   }
 
-  // segment Zapnuto / Vypnuto
-  const toggle = (zapKey: keyof FormState) => (
+  // obecný segmentový přepínač (dvě hodnoty)
+  const segment = (current: any, options: [string, any][], onPick: (v: any) => void) => (
     <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-      {[['Zapnuto', true], ['Vypnuto', false]].map(([label, val]) => {
-        const active = form[zapKey] === val
+      {options.map(([label, val]) => {
+        const active = current === val
         return (
-          <button key={String(label)} onClick={() => set(zapKey, val)}
+          <button key={String(label)} onClick={() => onPick(val)}
             style={{
               flex: 1, padding: '10px', borderRadius: '10px', fontSize: '13px', fontWeight: 500, cursor: 'pointer', fontFamily: 'Inter,sans-serif',
               border: active ? '1px solid #1a1208' : '1px solid #e0d9d0',
@@ -125,16 +134,30 @@ export default function AdminSdeleniPage() {
     <p style={{ fontSize: '12px', color: '#8a7f70', margin: '16px 0 8px', fontWeight: 500 }}>{t}</p>
   )
 
-  const radek = (nadpis: string, zapKey: keyof FormState, textKey: keyof FormState, placeholder: string) => (
-    <>
-      {sectionLabel(nadpis)}
-      {toggle(zapKey)}
-      <input type="text" placeholder={placeholder} value={form[textKey] as string} onChange={e => set(textKey, e.target.value)} style={inputStyle} />
-    </>
+  const malyLabel = (t: string) => (
+    <p style={{ fontSize: '11px', color: '#b0a48f', margin: '6px 0 6px' }}>{t}</p>
   )
 
+  // blok jednoho sdělení: zap/vyp + text + vzhled
+  const sdeleniBlok = (n: 1 | 2 | 3, nadpis: string) => {
+    const zapKey = `sdeleni${n}_zap` as keyof FormState
+    const textKey = `sdeleni${n}_text` as keyof FormState
+    const vzKey = `sdeleni${n}_vzhled` as keyof FormState
+    return (
+      <>
+        {sectionLabel(nadpis)}
+        {segment(form[zapKey], [['Zapnuto', true], ['Vypnuto', false]], v => set(zapKey, v))}
+        <input type="text" placeholder={`Text sdělení ${n}`} value={form[textKey] as string} onChange={e => set(textKey, e.target.value)} style={inputStyle} />
+        {malyLabel('Vzhled')}
+        {segment(form[vzKey], [['Splynout', 'splynout'], ['Zvýraznit', 'zvyraznit']], v => set(vzKey, v))}
+      </>
+    )
+  }
+
+  const previewLines = (form.popis_text || '').split('\n')
+
   return (
-    <main style={{ minHeight: '100vh', background: '#f7f3ec', fontFamily: 'Inter,sans-serif', padding: '20px', boxSizing: 'border-box', display: 'flex', justifyContent: 'center' }}>
+    <main style={{ minHeight: '100vh', background: '#f6f1e6', fontFamily: 'Inter,sans-serif', padding: '20px', boxSizing: 'border-box', display: 'flex', justifyContent: 'center' }}>
       <div style={{ width: '100%', maxWidth: '480px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
           <a href="/" style={{ fontSize: '13px', color: '#8a7f70', textDecoration: 'none' }}>← Zpět</a>
@@ -143,30 +166,59 @@ export default function AdminSdeleniPage() {
 
         <div style={{ background: 'white', borderRadius: '20px', padding: '28px 24px', boxShadow: '0 2px 24px rgba(0,0,0,0.07)' }}>
           <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#1a1208', margin: '0 0 4px' }}>Sdělení na web</h1>
-          <p style={{ fontSize: '12px', color: '#8a7f70', margin: '0 0 8px' }}>Volitelná sdělení na úvodní stránce a výhled na zítřek.</p>
+          <p style={{ fontSize: '12px', color: '#8a7f70', margin: '0 0 8px' }}>Obsah úvodní stránky: sdělení, výhled na zítřek, texty a odkaz.</p>
 
-          {radek('Sdělení 1 (nad statusem)', 'sdeleni1_zap', 'sdeleni1_text', 'Text sdělení 1')}
-          {radek('Sdělení 2 (mezi statusem a popisem)', 'sdeleni2_zap', 'sdeleni2_text', 'Text sdělení 2')}
-          {radek('Sdělení 3 (pod popisem)', 'sdeleni3_zap', 'sdeleni3_text', 'Text sdělení 3')}
-          {radek('Výhled na zítřek', 'zitra_zap', 'zitra_text', 'Zítra: pravděpodobně otevřeno')}
+          {sdeleniBlok(1, 'Sdělení 1 (nad statusem)')}
+          {sdeleniBlok(2, 'Sdělení 2 (mezi statusem a popisem)')}
+          {sdeleniBlok(3, 'Sdělení 3 (pod popisem)')}
+
+          {sectionLabel('Výhled na zítřek')}
+          {segment(form.zitra_zap, [['Zapnuto', true], ['Vypnuto', false]], v => set('zitra_zap', v))}
+          <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
+            <button onClick={() => set('zitra_text', 'Zítra: pravděpodobně otevřeno')}
+              style={{ flex: 1, padding: '8px 10px', borderRadius: '999px', fontSize: '12px', cursor: 'pointer', fontFamily: 'Inter,sans-serif', border: '1px solid #e0d9d0', background: 'white', color: '#1a1208' }}>
+              pravděpodobně otevřeno
+            </button>
+            <button onClick={() => set('zitra_text', 'Zítra: pravděpodobně zavřeno')}
+              style={{ flex: 1, padding: '8px 10px', borderRadius: '999px', fontSize: '12px', cursor: 'pointer', fontFamily: 'Inter,sans-serif', border: '1px solid #e0d9d0', background: 'white', color: '#1a1208' }}>
+              pravděpodobně zavřeno
+            </button>
+          </div>
+          <input type="text" placeholder="Zítra: …" value={form.zitra_text} onChange={e => set('zitra_text', e.target.value)} style={inputStyle} />
+
+          {sectionLabel('Text o provozu')}
+          <textarea placeholder="Text o provozu" value={form.provoz_text} onChange={e => set('provoz_text', e.target.value)} rows={3} style={{ ...inputStyle, resize: 'vertical' }} />
+
+          {sectionLabel('Popis (3 řádky, každý na nový řádek)')}
+          <textarea placeholder="Řádek 1&#10;Řádek 2&#10;Řádek 3" value={form.popis_text} onChange={e => set('popis_text', e.target.value)} rows={3} style={{ ...inputStyle, resize: 'vertical' }} />
+
+          {sectionLabel('Odkaz Naviguj (poloha vozíku)')}
+          <input type="text" placeholder="https://maps.app.goo.gl/…" value={form.maps_odkaz} onChange={e => set('maps_odkaz', e.target.value)} style={inputStyle} />
 
           {/* Živý náhled */}
           <p style={{ fontSize: '11px', color: '#8a7f70', margin: '20px 0 6px', fontStyle: 'italic' }}>Náhled — takto to uvidí zákazník</p>
-          <div style={{ background: '#f7f3ec', borderRadius: '12px', padding: '14px' }}>
-            {form.sdeleni1_zap && form.sdeleni1_text.trim() && (
-              <div style={{ marginBottom: '10px' }}><SdeleniRadek text={form.sdeleni1_text} /></div>
+          <div style={{ background: '#f6f1e6', borderRadius: '12px', padding: '14px' }}>
+            {form.provoz_text.trim() && (
+              <p style={{ fontSize: '12px', lineHeight: 1.6, color: '#6f6253', textAlign: 'center', margin: '0 0 10px', whiteSpace: 'pre-wrap' }}>{form.provoz_text}</p>
             )}
-            <div style={{ background: 'white', border: '0.5px solid rgba(0,0,0,0.08)', borderRadius: '12px', padding: '12px 14px' }}>
-              <p style={{ fontSize: '9px', letterSpacing: '0.15em', color: '#8a7f70', margin: '0 0 6px' }}>PRÁVĚ TEĎ</p>
+            {form.sdeleni1_zap && form.sdeleni1_text.trim() && (
+              <div style={{ marginBottom: '10px' }}><SdeleniRadek text={form.sdeleni1_text} vzhled={form.sdeleni1_vzhled} /></div>
+            )}
+            <div style={{ background: '#fffdf8', border: '0.5px solid rgba(120,90,40,0.12)', borderRadius: '14px', padding: '12px 14px' }}>
+              <p style={{ fontSize: '9px', letterSpacing: '0.15em', color: '#9b8d76', margin: '0 0 6px' }}>PRÁVĚ TEĎ</p>
               <p style={{ fontSize: '13px', fontWeight: 500, color: '#1a1208', margin: 0 }}>Stav kiosku (živě)</p>
               {form.zitra_zap && form.zitra_text.trim() && <ZitraRadek text={form.zitra_text} />}
             </div>
             {form.sdeleni2_zap && form.sdeleni2_text.trim() && (
-              <div style={{ marginTop: '10px' }}><SdeleniRadek text={form.sdeleni2_text} /></div>
+              <div style={{ marginTop: '10px' }}><SdeleniRadek text={form.sdeleni2_text} vzhled={form.sdeleni2_vzhled} /></div>
             )}
-            <p style={{ fontSize: '12px', color: '#8a7f70', fontStyle: 'italic', textAlign: 'center', margin: '12px 0' }}>… popis kurzívou …</p>
+            {form.popis_text.trim() && (
+              <p style={{ fontSize: '12px', color: '#8c7f6a', fontStyle: 'italic', textAlign: 'center', margin: '12px 0' }}>
+                {previewLines.map((ln, i) => <span key={i}>{ln}{i < previewLines.length - 1 ? <br /> : null}</span>)}
+              </p>
+            )}
             {form.sdeleni3_zap && form.sdeleni3_text.trim() && (
-              <div><SdeleniRadek text={form.sdeleni3_text} /></div>
+              <div><SdeleniRadek text={form.sdeleni3_text} vzhled={form.sdeleni3_vzhled} /></div>
             )}
           </div>
 

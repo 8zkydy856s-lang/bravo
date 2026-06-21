@@ -1,16 +1,25 @@
 'use client'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from './lib/supabase'
-import { SdeleniRadek, ZitraRadek } from './WebObsahView'
+import { SdeleniRadek, ZitraRadek, SdeleniVzhled } from './WebObsahView'
 
-// Načte řádek web_obsah jednou a sdílí ho přes context konzumentům (Sdeleni, ZitraVyhled).
-// Tím se data čtou živě (jako KioskStatus), ale jen jedním dotazem pro celou stránku.
+// Načte řádek web_obsah jednou a sdílí ho přes context konzumentům.
+// Data se čtou živě (jako KioskStatus), ale jen jedním dotazem pro celou stránku.
+
+// Výchozí texty = stejné jako defaulty v DB. Slouží jako fallback, než se data načtou,
+// aby na úvodní stránce neproblikla prázdná místa.
+export const DEFAULT_PROVOZ = 'Otevírací doba je přibližná a závisí na počasí. Než vyrazíš za BRAVEM, vždy se podívej na aktuální stav, ať mě tu najdeš. Děkuji za pochopení.'
+export const DEFAULT_POPIS = 'Speciální káva, čaj, květiny a klasická hudba.\nNápoje laděné na míru, podle tvé chuti.\nPozvánka k zastavení v každém všedním dni.'
+export const DEFAULT_MAPS = 'https://maps.app.goo.gl/2gwzhh7xnpfEp7Lt9'
 
 type WebObsahData = {
-  sdeleni1_zap: boolean; sdeleni1_text: string | null
-  sdeleni2_zap: boolean; sdeleni2_text: string | null
-  sdeleni3_zap: boolean; sdeleni3_text: string | null
+  sdeleni1_zap: boolean; sdeleni1_text: string | null; sdeleni1_vzhled: SdeleniVzhled
+  sdeleni2_zap: boolean; sdeleni2_text: string | null; sdeleni2_vzhled: SdeleniVzhled
+  sdeleni3_zap: boolean; sdeleni3_text: string | null; sdeleni3_vzhled: SdeleniVzhled
   zitra_zap: boolean; zitra_text: string | null
+  maps_odkaz: string | null
+  provoz_text: string | null
+  popis_text: string | null
 }
 
 const Ctx = createContext<WebObsahData | null>(null)
@@ -21,7 +30,7 @@ export function WebObsahProvider({ children }: { children: React.ReactNode }) {
     let active = true
     supabase
       .from('web_obsah')
-      .select('sdeleni1_zap, sdeleni1_text, sdeleni2_zap, sdeleni2_text, sdeleni3_zap, sdeleni3_text, zitra_zap, zitra_text')
+      .select('sdeleni1_zap, sdeleni1_text, sdeleni1_vzhled, sdeleni2_zap, sdeleni2_text, sdeleni2_vzhled, sdeleni3_zap, sdeleni3_text, sdeleni3_vzhled, zitra_zap, zitra_text, maps_odkaz, provoz_text, popis_text')
       .eq('klic', 'hlavni')
       .maybeSingle()
       .then(({ data }) => { if (active) setData((data as WebObsahData | null) ?? null) })
@@ -30,23 +39,51 @@ export function WebObsahProvider({ children }: { children: React.ReactNode }) {
   return <Ctx.Provider value={data}>{children}</Ctx.Provider>
 }
 
-// Jedno sdělení podle pozice (1 nad statusem, 2 mezi statusem a popisem, 3 pod popisem).
-// Vykreslí se jen když je zapnuté a má text.
+// Jedno sdělení podle pozice. Vykreslí se jen když je zapnuté a má text; vzhled dle DB.
 export function Sdeleni({ pozice, className, style }: { pozice: 1 | 2 | 3; className?: string; style?: React.CSSProperties }) {
   const data = useContext(Ctx)
   if (!data) return null
   const zap = pozice === 1 ? data.sdeleni1_zap : pozice === 2 ? data.sdeleni2_zap : data.sdeleni3_zap
   const raw = pozice === 1 ? data.sdeleni1_text : pozice === 2 ? data.sdeleni2_text : data.sdeleni3_text
+  const vzhled = pozice === 1 ? data.sdeleni1_vzhled : pozice === 2 ? data.sdeleni2_vzhled : data.sdeleni3_vzhled
   const text = raw?.trim() || ''
   if (!zap || !text) return null
-  return <div className={className} style={style}><SdeleniRadek text={text} /></div>
+  return <div className={className} style={style}><SdeleniRadek text={text} vzhled={vzhled === 'zvyraznit' ? 'zvyraznit' : 'splynout'} /></div>
 }
 
-// Výhled na zítřek uvnitř karty stavu (nahrazuje dřívější pevný řádek).
+// Výhled na zítřek uvnitř karty stavu.
 export function ZitraVyhled() {
   const data = useContext(Ctx)
   if (!data) return null
   const text = data.zitra_text?.trim() || ''
   if (!data.zitra_zap || !text) return null
   return <ZitraRadek text={text} />
+}
+
+// Text o provozu (levý sloupec) - z DB, fallback na výchozí text.
+export function ProvozText() {
+  const data = useContext(Ctx)
+  const text = data?.provoz_text?.trim() || DEFAULT_PROVOZ
+  return (
+    <p className="landing-band-text" style={{ fontSize: '13px', lineHeight: 1.7, color: '#6f6253', whiteSpace: 'pre-wrap' }}>{text}</p>
+  )
+}
+
+// Třířádkový popis kurzívou - z DB (řádky oddělené \n), fallback na výchozí.
+export function PopisText() {
+  const data = useContext(Ctx)
+  const text = data?.popis_text?.trim() || DEFAULT_POPIS
+  const lines = text.split('\n')
+  return (
+    <p style={{ fontSize: '13px', lineHeight: 1.8, color: '#8c7f6a', fontStyle: 'italic', margin: 0 }}>
+      {lines.map((ln, i) => <span key={i}>{ln}{i < lines.length - 1 ? <br /> : null}</span>)}
+    </p>
+  )
+}
+
+// Odkaz "Naviguj" (mapový odkaz z DB, fallback default). Styl se předá zvenčí.
+export function NavigujOdkaz({ style }: { style?: React.CSSProperties }) {
+  const data = useContext(Ctx)
+  const href = data?.maps_odkaz?.trim() || DEFAULT_MAPS
+  return <a href={href} target="_blank" rel="noopener noreferrer" style={style}>Naviguj</a>
 }
