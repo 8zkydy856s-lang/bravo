@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../lib/supabase'
+import KioskStatusView from '../../KioskStatusView'
 
 // Ovládání stavu kiosku pro majitele - /admin/stav (jen pro přihlášené, jinak redirect na /login).
 // Stav kiosku se ukládá tlačítkem Uložit do řádku kiosk_status (pobocka_id = 'hlavni').
@@ -138,6 +139,17 @@ export default function AdminStavPage() {
     ok('Hláška smazána')
   }
 
+  // posun hlášky v pořadí - prohodí poradi se sousedem a uloží hned
+  async function presunHlasku(index: number, dir: -1 | 1) {
+    const a = hlasky[index]
+    const b = hlasky[index + dir]
+    if (!a || !b) return
+    const e1 = (await supabase.from('rychle_hlasky').update({ poradi: b.poradi }).eq('id', a.id)).error
+    const e2 = (await supabase.from('rychle_hlasky').update({ poradi: a.poradi }).eq('id', b.id)).error
+    if (e1 || e2) { fail(describeError(e1 || e2)); return }
+    await loadHlasky()
+  }
+
   // klik na rychlou hlášku = toggle (druhý klik na aktivní vyprázdní poznámku)
   const klikniHlasku = (text: string) => set('poznamka', form.poznamka === text ? '' : text)
 
@@ -226,6 +238,19 @@ export default function AdminStavPage() {
           )}
           <input type="text" placeholder="…nebo napiš vlastní poznámku" value={form.poznamka} onChange={e => set('poznamka', e.target.value)} style={inputStyle} />
 
+          <p style={{ fontSize: '11px', color: '#8a7f70', margin: '14px 0 6px', fontStyle: 'italic' }}>Náhled — takto to uvidí zákazník</p>
+          <div style={{ background: '#f7f3ec', borderRadius: '12px', padding: '12px' }}>
+            <div style={{ background: 'white', border: '0.5px solid rgba(0,0,0,0.08)', borderRadius: '12px', padding: '12px 14px' }}>
+              <KioskStatusView
+                je_otevreno={form.je_otevreno}
+                oteviraci_cas={form.oteviraci_cas}
+                zaviraci_cas={form.zaviraci_cas}
+                poznamka={form.poznamka}
+                dnesni_vyjimka={form.dnesni_vyjimka}
+              />
+            </div>
+          </div>
+
           <button onClick={handleSave} disabled={saving}
             style={{ width: '100%', padding: '13px', background: '#1a1208', color: '#d4a96a', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: 500, cursor: saving ? 'default' : 'pointer', marginTop: '14px', fontFamily: 'Inter,sans-serif', opacity: saving ? 0.7 : 1 }}>
             {saving ? 'Ukládám…' : 'Uložit'}
@@ -238,12 +263,18 @@ export default function AdminStavPage() {
           <h2 style={{ fontSize: '15px', fontWeight: 600, color: '#1a1208', margin: '0 0 4px' }}>Správa hlášek</h2>
           <p style={{ fontSize: '12px', color: '#8a7f70', margin: '0 0 12px' }}>Změny se ukládají hned. Vypnutá hláška se nenabízí jako rychlá volba.</p>
 
-          {hlasky.map(h => (
-            <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+          {hlasky.map((h, i) => (
+            <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <button onClick={() => presunHlasku(i, -1)} disabled={i === 0} title="Nahoru"
+                  style={{ padding: '2px 8px', borderRadius: '6px', fontSize: '13px', lineHeight: 1.2, cursor: i === 0 ? 'default' : 'pointer', fontFamily: 'Inter,sans-serif', border: '1px solid #e0d9d0', background: 'white', color: '#1a1208', opacity: i === 0 ? 0.3 : 1 }}>↑</button>
+                <button onClick={() => presunHlasku(i, 1)} disabled={i === hlasky.length - 1} title="Dolů"
+                  style={{ padding: '2px 8px', borderRadius: '6px', fontSize: '13px', lineHeight: 1.2, cursor: i === hlasky.length - 1 ? 'default' : 'pointer', fontFamily: 'Inter,sans-serif', border: '1px solid #e0d9d0', background: 'white', color: '#1a1208', opacity: i === hlasky.length - 1 ? 0.3 : 1 }}>↓</button>
+              </div>
               <input type="text" defaultValue={h.text}
                 onChange={e => setHlasky(list => list.map(x => x.id === h.id ? { ...x, text: e.target.value } : x))}
                 onBlur={e => prejmenujHlasku(h.id, e.target.value)}
-                style={{ ...inputStyle, marginBottom: 0, flex: 1, opacity: h.aktivni ? 1 : 0.5 }} />
+                style={{ ...inputStyle, marginBottom: 0, flex: 1, minWidth: 0, opacity: h.aktivni ? 1 : 0.5 }} />
               <button onClick={() => prepniAktivni(h.id, h.aktivni)}
                 title={h.aktivni ? 'Vypnout' : 'Zapnout'}
                 style={{

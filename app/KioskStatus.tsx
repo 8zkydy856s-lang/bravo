@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from './lib/supabase'
+import KioskStatusView from './KioskStatusView'
 
 // Zobrazení stavu kiosku pro zákazníky (levá část karty na úvodní stránce).
 // - otevřeno -> "Otevřeno" + časy (jsou-li vyplněné)
@@ -40,31 +41,16 @@ export default function KioskStatus() {
   // viditelnost: zatím reálně počítáme s "viditelne", ale pole čteme a respektujeme
   if (status.viditelnost !== 'viditelne') return null
 
-  const open = status.je_otevreno
-  const dotColor = open ? '#4caf50' : '#c0392b'   // otevřeno = zelená, zavřeno = červená
-  const title = open ? 'Otevřeno' : 'Dnes zavřeno'
-
-  // časy jen když je otevřeno A NENÍ dnešní výjimka (výjimka skryje běžnou otevírací dobu)
-  let casy = ''
-  if (open && !status.dnesni_vyjimka) {
-    const o = status.oteviraci_cas?.trim()
-    const z = status.zaviraci_cas?.trim()
-    if (o && z) casy = `${o} – ${z}`
-    else if (o) casy = `od ${o}`
-    else if (z) casy = `do ${z}`
-  }
-
-  // poznámka se zobrazuje v OBOU stavech (pro hladký přechod fallback na starou duvod)
+  // poznámka: nově poznamka, pro hladký přechod fallback na starou duvod
   const poznamka = (status.poznamka?.trim() || status.duvod?.trim() || '')
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: dotColor }} />
-      <div>
-        <p style={{ fontSize: '13px', fontWeight: 500, color: '#1a1208', margin: 0 }}>{title}</p>
-        {casy && <p style={{ fontSize: '11px', color: '#8a7f70', margin: 0 }}>{casy}</p>}
-        {poznamka && <p style={{ fontSize: '11px', color: '#8a7f70', margin: 0 }}>{poznamka}</p>}
-      </div>
-    </div>
+    <KioskStatusView
+      je_otevreno={status.je_otevreno}
+      oteviraci_cas={status.oteviraci_cas}
+      zaviraci_cas={status.zaviraci_cas}
+      poznamka={poznamka}
+      dnesni_vyjimka={status.dnesni_vyjimka}
+    />
   )
 }
