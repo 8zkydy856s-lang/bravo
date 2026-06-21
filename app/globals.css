@@ -13,3 +13,39 @@ body {
 .font-serif {
   font-family: var(--font-cormorant), serif;
 }
+
+/* Fáze 1 - responzivní úvodní vizitka.
+   Mobil = úzký sloupec jako dřív; desktop (od 860px) = širší, vzdušnější. */
+.landing {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+.landing-title { font-size: 32px; }
+.landing-photo { margin: 4px 16px 0; height: 170px; }
+.landing-band-text { margin: 18px 20px 0; text-align: center; }
+.landing-band-status { margin: 18px 16px 0; }
+.landing-desc { margin: 20px 20px 0; text-align: center; }
+.landing-cta { margin: 22px 16px 0; }
+.landing-links { margin: 18px 16px 0; display: flex; gap: 8px; }
+
+@media (min-width: 860px) {
+  .landing { max-width: 960px; padding-bottom: 48px; }
+  .landing-title { font-size: 44px; }
+  .landing-photo { height: 340px; margin: 10px 24px 0; }
+  .landing-band {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    padding: 0 24px;
+  }
+  .landing-band-text { flex: 1; margin: 30px 0 0; text-align: left; }
+  .landing-band-status { flex: 1; margin: 28px 0 0; }
+  .landing-desc { max-width: 620px; margin: 32px auto 0; }
+  .landing-cta { width: 100%; max-width: 340px; margin: 26px auto 0; }
+  .landing-links { max-width: 560px; margin: 28px auto 0; gap: 16px; }
+}

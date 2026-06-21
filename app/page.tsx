@@ -7,9 +7,12 @@ import KioskStatus from "./KioskStatus";
 const ZOBRAZIT_EMAIL = false;
 const EMAIL = "hello@bra-vo.com";
 
+// Počasí jsou zatím jen placeholder (ne reálná data) - skryto. Nemazat, jen vypnuto.
+const ZOBRAZIT_POCASI = false;
+
 export default function Home() {
   return (
-    <main style={{minHeight:"100vh",background:"#f7f3ec",display:"flex",flexDirection:"column",paddingBottom:"32px",fontFamily:"Inter,sans-serif",width:"100%",maxWidth:"480px",margin:"0 auto"}}>
+    <main className="landing" style={{minHeight:"100vh",background:"#f7f3ec",fontFamily:"Inter,sans-serif"}}>
 
       {/* 1) Přepínač jazyků - zatím jen vizuální placeholder (nefunkční) */}
       <div style={{display:"flex",justifyContent:"flex-end",padding:"12px 20px 0"}}>
@@ -18,40 +21,47 @@ export default function Home() {
 
       {/* 2) Hlavička */}
       <header style={{padding:"20px 20px 16px",textAlign:"center"}}>
-        <h1 style={{fontSize:"32px",fontWeight:300,letterSpacing:"0.35em",color:"#1a1208",margin:0}}>BRAVO</h1>
+        <h1 className="landing-title" style={{fontWeight:300,letterSpacing:"0.35em",color:"#1a1208",margin:0}}>BRAVO</h1>
         <p style={{fontSize:"12px",color:"#8a7f70",letterSpacing:"0.14em",marginTop:"6px"}}>místo k zastavení</p>
       </header>
 
       {/* 3) Placeholder pro foto/logo kiosku */}
-      <div style={{margin:"4px 16px 0",height:"170px",background:"#efe9df",border:"1px dashed #d8cdbb",borderRadius:"16px",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <div className="landing-photo" style={{background:"#efe9df",border:"1px dashed #d8cdbb",borderRadius:"16px",display:"flex",alignItems:"center",justifyContent:"center"}}>
         <span style={{fontSize:"12px",letterSpacing:"0.12em",color:"#b6ab9b"}}>foto / logo</span>
       </div>
 
-      {/* 4) Vlídné vysvětlení provozu (text, ne tlačítko) */}
-      <p style={{margin:"18px 20px 0",fontSize:"13px",lineHeight:1.7,color:"#6b6057",textAlign:"center"}}>
-        Otevírací doba je přibližná a závisí na počasí. Než vyrazíš za BRAVEM, vždy se podívej na aktuální stav, ať mě tu najdeš. Děkuji za pochopení.
-      </p>
+      {/* 4+5) Vlídný text o provozu + karta stavu (na desktopu vedle sebe) */}
+      <div className="landing-band">
+        {/* 4) Vlídné vysvětlení provozu (text, ne tlačítko) */}
+        <p className="landing-band-text" style={{fontSize:"13px",lineHeight:1.7,color:"#6b6057"}}>
+          Otevírací doba je přibližná a závisí na počasí. Než vyrazíš za BRAVEM, vždy se podívej na aktuální stav, ať mě tu najdeš. Děkuji za pochopení.
+        </p>
 
-      {/* 5) Stav kiosku + počasí */}
-      <div style={{margin:"18px 16px 0",background:"white",borderRadius:"16px",border:"0.5px solid rgba(0,0,0,0.08)",overflow:"hidden"}}>
-        <div style={{padding:"12px 16px",display:"flex",alignItems:"flex-start",justifyContent:"space-between",borderBottom:"0.5px solid rgba(0,0,0,0.06)"}}>
-          <div>
-            <p style={{fontSize:"9px",letterSpacing:"0.15em",color:"#8a7f70",margin:"0 0 6px"}}>PRÁVĚ TEĎ</p>
-            <KioskStatus />
-            <p style={{fontSize:"11px",color:"#8a7f70",margin:"8px 0 0"}}>Zítra: pravděpodobně otevřeno</p>
+        {/* 5) Stav kiosku (+ počasí - zatím skryté placeholdery) */}
+        <div className="landing-band-status" style={{background:"white",borderRadius:"16px",border:"0.5px solid rgba(0,0,0,0.08)",overflow:"hidden"}}>
+          <div style={{padding:"12px 16px",display:"flex",alignItems:"flex-start",justifyContent:"space-between",borderBottom:ZOBRAZIT_POCASI?"0.5px solid rgba(0,0,0,0.06)":"none"}}>
+            <div>
+              <p style={{fontSize:"9px",letterSpacing:"0.15em",color:"#8a7f70",margin:"0 0 6px"}}>PRÁVĚ TEĎ</p>
+              <KioskStatus />
+              <p style={{fontSize:"11px",color:"#8a7f70",margin:"8px 0 0"}}>Zítra: pravděpodobně otevřeno</p>
+            </div>
+            {ZOBRAZIT_POCASI && (
+              <div style={{textAlign:"right"}}>
+                <p style={{fontSize:"22px",margin:0}}>⛅</p>
+                <p style={{fontSize:"11px",color:"#8a7f70",margin:0}}>22 °C</p>
+              </div>
+            )}
           </div>
-          <div style={{textAlign:"right"}}>
-            <p style={{fontSize:"22px",margin:0}}>⛅</p>
-            <p style={{fontSize:"11px",color:"#8a7f70",margin:0}}>22 °C</p>
-          </div>
-        </div>
-        <div style={{padding:"8px 16px",background:"rgba(251,191,36,0.08)"}}>
-          <p style={{fontSize:"11px",color:"#92400e",margin:0}}>Zítra: 18 °C · možný déšť</p>
+          {ZOBRAZIT_POCASI && (
+            <div style={{padding:"8px 16px",background:"rgba(251,191,36,0.08)"}}>
+              <p style={{fontSize:"11px",color:"#92400e",margin:0}}>Zítra: 18 °C · možný déšť</p>
+            </div>
+          )}
         </div>
       </div>
 
       {/* 6) Krátký popis kurzívou - tichý dotyk */}
-      <div style={{margin:"20px 20px 0",textAlign:"center"}}>
+      <div className="landing-desc">
         <p style={{fontSize:"13px",lineHeight:1.8,color:"#8a7f70",fontStyle:"italic",margin:0}}>
           Speciální káva, čaj, květiny a klasická hudba.<br/>
           Nápoje laděné na míru, podle tvé chuti.<br/>
@@ -60,14 +70,14 @@ export default function Home() {
       </div>
 
       {/* 7) Placeholder tlačítko Nápojový lístek (zatím bez funkce) */}
-      <div style={{margin:"22px 16px 0"}}>
+      <div className="landing-cta">
         <button style={{width:"100%",background:"none",color:"#1a1208",border:"1px solid #d8cdbb",borderRadius:"12px",padding:"13px",fontSize:"13px",fontWeight:500,cursor:"pointer",fontFamily:"Inter,sans-serif"}}>
           Nápojový lístek
         </button>
       </div>
 
       {/* 8) Tři odkazy vedle sebe (zatím placeholdery) */}
-      <div style={{margin:"18px 16px 0",display:"flex",gap:"8px"}}>
+      <div className="landing-links">
         {[{label:"Instagram",href:"#"},{label:"Google",href:"#"},{label:"Naviguj",href:"#"}].map(l => (
           <a key={l.label} href={l.href} style={{flex:1,textAlign:"center",padding:"11px 6px",borderRadius:"10px",border:"0.5px solid rgba(0,0,0,0.08)",background:"white",fontSize:"12px",color:"#1a1208",textDecoration:"none"}}>
             {l.label}

@@ -138,7 +138,7 @@ export default function LoginPage() {
     <main style={{ minHeight: '100vh', background: '#f7f3ec', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter,sans-serif', padding: '20px', boxSizing: 'border-box' }}>
       <div style={{ background: 'white', borderRadius: '20px', padding: '32px 28px', width: '100%', maxWidth: '400px', boxShadow: '0 2px 24px rgba(0,0,0,0.07)' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 300, letterSpacing: '0.3em', color: '#1a1208', margin: '0 0 2px' }}>BRAVO</h1>
-        <p style={{ fontSize: '11px', color: '#8a7f70', letterSpacing: '0.1em', margin: '0 0 20px' }}>Luxembourg · místo pro zastavení</p>
+        <p style={{ fontSize: '11px', color: '#8a7f70', letterSpacing: '0.1em', margin: '0 0 20px' }}>místo k zastavení</p>
 
         {isRegister && (
           <div style={{ background: '#f7f3ec', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
