@@ -1,3 +1,4 @@
+import Image from "next/image";
 import KioskStatus from "./KioskStatus";
 import { WebObsahProvider, Sdeleni, ZitraVyhled } from "./WebObsah";
 // Fáze 1: AuthBar a TrustCard zůstávají v projektu, na veřejné úvodní stránce se zatím nevykreslují.
@@ -27,9 +28,9 @@ export default function Home() {
         <p style={{fontSize:"12px",color:"#8a7f70",letterSpacing:"0.14em",marginTop:"6px"}}>místo k zastavení</p>
       </header>
 
-      {/* 3) Placeholder pro foto/logo kiosku */}
-      <div className="landing-photo" style={{background:"#efe9df",border:"1px dashed #d8cdbb",borderRadius:"16px",display:"flex",alignItems:"center",justifyContent:"center"}}>
-        <span style={{fontSize:"12px",letterSpacing:"0.12em",color:"#b6ab9b"}}>foto / logo</span>
+      {/* 3) Foto vozíku BRAVO - celá ilustrace, neoříznutá (width 100% / height auto) */}
+      <div className="landing-photo" style={{borderRadius:"16px",overflow:"hidden",border:"0.5px solid rgba(0,0,0,0.08)",lineHeight:0}}>
+        <Image src="/vozik.jpg" alt="Vozík BRAVO" width={1025} height={750} priority style={{width:"100%",height:"auto",display:"block"}} />
       </div>
 
       {/* 4+5) Vlídný text o provozu + karta stavu (na desktopu vedle sebe) */}

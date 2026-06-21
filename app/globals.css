@@ -26,7 +26,7 @@ body {
   box-sizing: border-box;
 }
 .landing-title { font-size: 32px; }
-.landing-photo { margin: 4px 16px 0; height: 170px; }
+.landing-photo { margin: 4px 16px 0; }
 .landing-band-text { margin: 18px 20px 0; text-align: center; }
 .landing-band-status { margin: 18px 16px 0; }
 .landing-desc { margin: 20px 20px 0; text-align: center; }
@@ -37,7 +37,7 @@ body {
 @media (min-width: 860px) {
   .landing { max-width: 960px; padding-bottom: 48px; }
   .landing-title { font-size: 44px; }
-  .landing-photo { height: 340px; margin: 10px 24px 0; }
+  .landing-photo { max-width: 720px; margin: 12px auto 0; }
   .landing-band {
     display: flex;
     gap: 32px;
