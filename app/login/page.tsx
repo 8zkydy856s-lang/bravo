@@ -2,6 +2,9 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 
+// Fáze 1: veřejná registrace skrytá. Registrační kód zůstává, jen na něj nevede odkaz.
+const ZOBRAZIT_REGISTRACI = false
+
 // Hodnoty se ukládají do stejnojmenných sloupců v public.profiles (ověřeno proti DB).
 // Ukládání řeší VÝHRADNĚ databázový trigger handle_new_user z metadat (options.data) -
 // žádný client-side zápis do profiles (po signUp není uživatel přihlášený a RLS by ho zablokovala).
@@ -195,12 +198,14 @@ export default function LoginPage() {
 
         {message && <p style={{ fontSize: '13px', color: msgOk ? '#2e7d32' : '#c0392b', textAlign: 'center', margin: '0 0 10px', lineHeight: 1.5 }}>{message}</p>}
 
-        <p style={{ fontSize: '13px', color: '#8a7f70', textAlign: 'center', margin: 0 }}>
-          {isRegister ? 'Už máš účet?' : 'Nemáš účet?'}{' '}
-          <span onClick={() => { setIsRegister(!isRegister); setMessage('') }} style={{ color: '#1a1208', cursor: 'pointer', fontWeight: 600 }}>
-            {isRegister ? 'Přihlásit se' : 'Registrovat'}
-          </span>
-        </p>
+        {ZOBRAZIT_REGISTRACI && (
+          <p style={{ fontSize: '13px', color: '#8a7f70', textAlign: 'center', margin: 0 }}>
+            {isRegister ? 'Už máš účet?' : 'Nemáš účet?'}{' '}
+            <span onClick={() => { setIsRegister(!isRegister); setMessage('') }} style={{ color: '#1a1208', cursor: 'pointer', fontWeight: 600 }}>
+              {isRegister ? 'Přihlásit se' : 'Registrovat'}
+            </span>
+          </p>
+        )}
       </div>
     </main>
   )
