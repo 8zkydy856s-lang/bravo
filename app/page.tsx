@@ -1,4 +1,5 @@
 import KioskStatus from "./KioskStatus";
+import { WebObsahProvider, Sdeleni, ZitraVyhled } from "./WebObsah";
 // Fáze 1: AuthBar a TrustCard zůstávají v projektu, na veřejné úvodní stránce se zatím nevykreslují.
 // import AuthBar from "./AuthBar";
 // import TrustCard from "./TrustCard";
@@ -13,6 +14,7 @@ const ZOBRAZIT_POCASI = false;
 export default function Home() {
   return (
     <main className="landing" style={{minHeight:"100vh",background:"#f7f3ec",fontFamily:"Inter,sans-serif"}}>
+      <WebObsahProvider>
 
       {/* 1) Přepínač jazyků - zatím jen vizuální placeholder (nefunkční) */}
       <div style={{display:"flex",justifyContent:"flex-end",padding:"12px 20px 0"}}>
@@ -37,28 +39,38 @@ export default function Home() {
           Otevírací doba je přibližná a závisí na počasí. Než vyrazíš za BRAVEM, vždy se podívej na aktuální stav, ať mě tu najdeš. Děkuji za pochopení.
         </p>
 
-        {/* 5) Stav kiosku (+ počasí - zatím skryté placeholdery) */}
-        <div className="landing-band-status" style={{background:"white",borderRadius:"16px",border:"0.5px solid rgba(0,0,0,0.08)",overflow:"hidden"}}>
-          <div style={{padding:"12px 16px",display:"flex",alignItems:"flex-start",justifyContent:"space-between",borderBottom:ZOBRAZIT_POCASI?"0.5px solid rgba(0,0,0,0.06)":"none"}}>
-            <div>
-              <p style={{fontSize:"9px",letterSpacing:"0.15em",color:"#8a7f70",margin:"0 0 6px"}}>PRÁVĚ TEĎ</p>
-              <KioskStatus />
-              <p style={{fontSize:"11px",color:"#8a7f70",margin:"8px 0 0"}}>Zítra: pravděpodobně otevřeno</p>
+        {/* pravý sloupec: sdělení 1 (nad statusem) + karta stavu */}
+        <div className="landing-band-status">
+          {/* Sdělení 1 - nad statusem */}
+          <Sdeleni pozice={1} style={{margin:"0 0 10px"}} />
+
+          {/* 5) Stav kiosku (+ počasí - zatím skryté placeholdery) */}
+          <div style={{background:"white",borderRadius:"16px",border:"0.5px solid rgba(0,0,0,0.08)",overflow:"hidden"}}>
+            <div style={{padding:"12px 16px",display:"flex",alignItems:"flex-start",justifyContent:"space-between",borderBottom:ZOBRAZIT_POCASI?"0.5px solid rgba(0,0,0,0.06)":"none"}}>
+              <div>
+                <p style={{fontSize:"9px",letterSpacing:"0.15em",color:"#8a7f70",margin:"0 0 6px"}}>PRÁVĚ TEĎ</p>
+                <KioskStatus />
+                {/* Výhled na zítřek - text z web_obsah (nahrazuje dřívější pevný řádek) */}
+                <ZitraVyhled />
+              </div>
+              {ZOBRAZIT_POCASI && (
+                <div style={{textAlign:"right"}}>
+                  <p style={{fontSize:"22px",margin:0}}>⛅</p>
+                  <p style={{fontSize:"11px",color:"#8a7f70",margin:0}}>22 °C</p>
+                </div>
+              )}
             </div>
             {ZOBRAZIT_POCASI && (
-              <div style={{textAlign:"right"}}>
-                <p style={{fontSize:"22px",margin:0}}>⛅</p>
-                <p style={{fontSize:"11px",color:"#8a7f70",margin:0}}>22 °C</p>
+              <div style={{padding:"8px 16px",background:"rgba(251,191,36,0.08)"}}>
+                <p style={{fontSize:"11px",color:"#92400e",margin:0}}>Zítra: 18 °C · možný déšť</p>
               </div>
             )}
           </div>
-          {ZOBRAZIT_POCASI && (
-            <div style={{padding:"8px 16px",background:"rgba(251,191,36,0.08)"}}>
-              <p style={{fontSize:"11px",color:"#92400e",margin:0}}>Zítra: 18 °C · možný déšť</p>
-            </div>
-          )}
         </div>
       </div>
+
+      {/* Sdělení 2 - mezi statusem a popisem */}
+      <Sdeleni pozice={2} className="landing-sdeleni" />
 
       {/* 6) Krátký popis kurzívou - tichý dotyk */}
       <div className="landing-desc">
@@ -68,6 +80,9 @@ export default function Home() {
           Pozvánka k zastavení v každém všedním dni.
         </p>
       </div>
+
+      {/* Sdělení 3 - pod popisem */}
+      <Sdeleni pozice={3} className="landing-sdeleni" />
 
       {/* 7) Placeholder tlačítko Nápojový lístek (zatím bez funkce) */}
       <div className="landing-cta">
@@ -125,6 +140,7 @@ export default function Home() {
         </nav>
       */}
 
+      </WebObsahProvider>
     </main>
   );
 }
