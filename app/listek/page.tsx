@@ -1,3 +1,4 @@
+import BravoNapis from "../BravoNapis";
 // Nápojový lístek BRAVO (/listek) - statická stránka, anglicky, bez cen.
 // Krémové pozadí, klidný vzhled, responzivní (čtecí sloupec), zpět na úvod.
 
@@ -70,35 +71,35 @@ export default function ListekPage() {
       <div style={{ width: '100%', maxWidth: '640px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
           <a href="/" style={{ fontSize: '13px', color: '#8a7f70', textDecoration: 'none' }}>← Zpět</a>
-          <span style={{ fontSize: '20px', fontWeight: 300, letterSpacing: '0.3em', color: '#1a1208' }}>BRAVO</span>
+          <BravoNapis height={24} />
         </div>
 
         <h1 style={{ fontSize: '26px', fontWeight: 300, letterSpacing: '0.06em', color: '#1a1208', textAlign: 'center', margin: '0 0 28px' }}>Drinks</h1>
 
         {SEKCE.map(s => (
-          <section key={s.nadpis} style={{ marginBottom: '28px' }}>
+          <section key={s.nadpis} style={{ marginBottom: '22px' }}>
             <Nadpis>{s.nadpis}</Nadpis>
             {s.podnadpis && <p style={{ fontSize: '12px', color: '#9b8d76', fontStyle: 'italic', margin: '-6px 0 12px' }}>{s.podnadpis}</p>}
             {s.polozky.map((p, i) => (
-              <div key={i} style={{ margin: '0 0 9px' }}>
-                <span style={{ fontSize: '14px', color: '#1a1208' }}>{p.name}</span>
-                {p.popis && <span style={{ fontSize: '12px', color: '#9b8d76', fontStyle: 'italic' }}>{'  '}… {p.popis}</span>}
+              <div key={i} style={{ margin: '0 0 5px' }}>
+                <span style={{ fontSize: '16px', color: '#1a1208' }}>{p.name}</span>
+                {p.popis && <span style={{ fontSize: '13px', color: '#9b8d76', fontStyle: 'italic' }}>{'  '}… {p.popis}</span>}
               </div>
             ))}
           </section>
         ))}
 
-        <section style={{ marginBottom: '28px' }}>
+        <section style={{ marginBottom: '22px' }}>
           <Nadpis>Milk</Nadpis>
           <p style={{ fontSize: '13px', color: '#6f6253', lineHeight: 1.7, margin: 0 }}>{MILK}</p>
         </section>
 
-        <section style={{ marginBottom: '28px' }}>
+        <section style={{ marginBottom: '22px' }}>
           <Nadpis>Free spices</Nadpis>
           <p style={{ fontSize: '13px', color: '#6f6253', lineHeight: 1.7, margin: 0 }}>{FREE_SPICES}</p>
         </section>
 
-        <section style={{ marginBottom: '28px' }}>
+        <section style={{ marginBottom: '22px' }}>
           <Nadpis>Extra</Nadpis>
           <p style={{ fontSize: '13px', color: '#6f6253', lineHeight: 1.7, margin: 0 }}>{EXTRA}</p>
         </section>

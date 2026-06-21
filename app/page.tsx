@@ -1,5 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
+import BravoNapis from "./BravoNapis";
 import KioskStatus from "./KioskStatus";
 import Pocasi from "./Pocasi";
 import { WebObsahProvider, Sdeleni, ZitraVyhled, ProvozText, PopisText, NavigujOdkaz } from "./WebObsah";
@@ -11,11 +12,11 @@ import { WebObsahProvider, Sdeleni, ZitraVyhled, ProvozText, PopisText, NavigujO
 const ZOBRAZIT_EMAIL = false;
 const EMAIL = "hello@bra-vo.com";
 
-// Společný styl pro tři odkazy dole.
+// Společný styl pro tři odkazy dole - tmavé, kontrastní, světlý text.
 const odkazStyle: React.CSSProperties = {
-  flex: 1, textAlign: "center", padding: "11px 6px", borderRadius: "12px",
-  border: "0.5px solid rgba(120,90,40,0.16)", background: "#fffdf8", fontSize: "12px",
-  color: "#1a1208", textDecoration: "none"
+  flex: 1, textAlign: "center", padding: "12px 6px", borderRadius: "12px",
+  border: "none", background: "#2e2418", fontSize: "12px",
+  color: "#f6f1e6", textDecoration: "none"
 };
 
 export default function Home() {
@@ -24,14 +25,14 @@ export default function Home() {
       <WebObsahProvider>
 
       {/* 1) Přepínač jazyků - zatím jen vizuální placeholder (nefunkční) */}
-      <div style={{display:"flex",justifyContent:"flex-end",padding:"12px 20px 0"}}>
-        <span style={{fontSize:"11px",letterSpacing:"0.1em",color:"#b6ab9b"}}>EN · FR · DE · LU · CS</span>
+      <div style={{display:"flex",justifyContent:"flex-end",padding:"8px 16px 0"}}>
+        <span style={{fontSize:"11px",letterSpacing:"0.1em",color:"#b6ab9b"}}>EN · FR · DE · LU · CZ</span>
       </div>
 
-      {/* 2) Hlavička */}
-      <header style={{padding:"20px 20px 16px",textAlign:"center"}}>
-        <h1 className="landing-title" style={{fontWeight:300,letterSpacing:"0.35em",color:"#1a1208",margin:0}}>BRAVO</h1>
-        <p style={{fontSize:"12px",color:"#9b8d76",letterSpacing:"0.14em",marginTop:"6px"}}>místo k zastavení</p>
+      {/* 2) Hlavička - nápis BraVo + podtitul, vycentrované */}
+      <header style={{padding:"8px 20px 6px",display:"flex",flexDirection:"column",alignItems:"center"}}>
+        <BravoNapis className="bravo-napis" priority />
+        <p style={{fontSize:"12px",color:"#9b8d76",letterSpacing:"0.14em",marginTop:"8px"}}>místo k zastavení</p>
       </header>
 
       {/* 3) Vozík BRAVO - průhledné PNG bez rámečku, splývá s krémovým pozadím */}
@@ -47,11 +48,11 @@ export default function Home() {
         {/* pravý sloupec: sdělení 1 (nad statusem) + karta stavu */}
         <div className="landing-band-status">
           {/* Sdělení 1 - nad statusem */}
-          <Sdeleni pozice={1} style={{margin:"0 0 10px"}} />
+          <Sdeleni pozice={1} style={{margin:"0 0 8px"}} />
 
-          {/* 5) Stav kiosku + reálné počasí */}
+          {/* 5) Stav kiosku + reálné počasí (svisle vycentrované) */}
           <div style={{background:"#fffdf8",borderRadius:"18px",border:"0.5px solid rgba(120,90,40,0.12)",overflow:"hidden"}}>
-            <div style={{padding:"14px 16px",display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
+            <div style={{padding:"14px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
               <div>
                 <p style={{fontSize:"9px",letterSpacing:"0.15em",color:"#9b8d76",margin:"0 0 6px"}}>PRÁVĚ TEĎ</p>
                 <KioskStatus />
@@ -76,14 +77,14 @@ export default function Home() {
       {/* Sdělení 3 - pod popisem */}
       <Sdeleni pozice={3} className="landing-sdeleni" />
 
-      {/* 7) Nápojový lístek -> /listek */}
+      {/* 7+8) Nápojový lístek -> /listek, užší a vycentrovaný */}
       <div className="landing-cta">
-        <Link href="/listek" style={{display:"block",width:"100%",boxSizing:"border-box",textAlign:"center",background:"none",color:"#1a1208",border:"1px solid #d8c8ad",borderRadius:"14px",padding:"13px",fontSize:"13px",fontWeight:500,textDecoration:"none",fontFamily:"Inter,sans-serif"}}>
+        <Link href="/listek" style={{display:"inline-block",boxSizing:"border-box",textAlign:"center",background:"none",color:"#1a1208",border:"1px solid #d8c8ad",borderRadius:"14px",padding:"12px 34px",fontSize:"13px",fontWeight:500,textDecoration:"none",fontFamily:"Inter,sans-serif"}}>
           Nápojový lístek
         </Link>
       </div>
 
-      {/* 8) Tři odkazy vedle sebe (Instagram, Google natvrdo; Naviguj z DB) */}
+      {/* 8) Tři odkazy vedle sebe - tmavé (Instagram, Google natvrdo; Naviguj z DB) */}
       <div className="landing-links">
         <a href="https://www.instagram.com/bravo_cafe_luxembourg/" target="_blank" rel="noopener noreferrer" style={odkazStyle}>Instagram</a>
         <a href="https://share.google/Ch9TWlQZ4HTd6gRpP" target="_blank" rel="noopener noreferrer" style={odkazStyle}>Google</a>
@@ -92,18 +93,18 @@ export default function Home() {
 
       {/* 9) E-mail - řízený konstantou ZOBRAZIT_EMAIL */}
       {ZOBRAZIT_EMAIL && (
-        <p style={{margin:"18px 20px 0",textAlign:"center",fontSize:"13px"}}>
+        <p style={{margin:"14px 20px 0",textAlign:"center",fontSize:"13px"}}>
           <a href={`mailto:${EMAIL}`} style={{color:"#b8954a",textDecoration:"none"}}>{EMAIL}</a>
         </p>
       )}
 
-      {/* 10) Jemné "Brzy přijde víc." */}
-      <p style={{margin:"24px 20px 0",textAlign:"center",fontSize:"12px",color:"#b6ab9b",letterSpacing:"0.04em"}}>
-        Brzy přijde víc.
+      {/* 7) Jemné "... a brzy přijde víc" - sjednocená barva #6f6253 */}
+      <p style={{margin:"16px 20px 0",textAlign:"center",fontSize:"12px",color:"#6f6253",letterSpacing:"0.02em"}}>
+        … a brzy přijde víc 😌
       </p>
 
-      {/* 11) Nenápadný vstup pro majitele */}
-      <div style={{marginTop:"28px",textAlign:"center"}}>
+      {/* 5) Nenápadný vstup pro majitele - posunutý níž */}
+      <div style={{marginTop:"56px",textAlign:"center"}}>
         <a href="/login" style={{fontSize:"11px",color:"#b6ab9b",textDecoration:"none",letterSpacing:"0.04em"}}>Vstup pro majitele</a>
       </div>
 

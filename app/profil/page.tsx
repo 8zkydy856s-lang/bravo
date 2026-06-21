@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabase'
+import BravoNapis from '../BravoNapis'
 
 // Stránka profilu /profil - jen pro přihlášeného uživatele.
 // Zobrazuje a ukládá vybraná pole tabulky profiles. Profilovou fotku, body,
@@ -158,7 +159,7 @@ export default function ProfilPage() {
       <div style={{ width: '100%', maxWidth: '480px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
           <a href="/" style={{ fontSize: '13px', color: '#8a7f70', textDecoration: 'none' }}>← Zpět</a>
-          <span style={{ fontSize: '20px', fontWeight: 300, letterSpacing: '0.3em', color: '#1a1208' }}>BRAVO</span>
+          <BravoNapis height={24} />
         </div>
 
         <div style={{ background: 'white', borderRadius: '20px', padding: '28px 24px', boxShadow: '0 2px 24px rgba(0,0,0,0.07)' }}>

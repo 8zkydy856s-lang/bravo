@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../lib/supabase'
 import { SdeleniRadek, ZitraRadek, SdeleniVzhled } from '../../WebObsahView'
+import BravoNapis from '../../BravoNapis'
 
 // Admin "Sdělení na web" - /admin/sdeleni (jen pro přihlášené, jinak redirect na /login).
 // Ovládá obsah úvodní stránky uložený v řádku web_obsah (klic = 'hlavni').
@@ -161,7 +162,7 @@ export default function AdminSdeleniPage() {
       <div style={{ width: '100%', maxWidth: '480px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
           <a href="/" style={{ fontSize: '13px', color: '#8a7f70', textDecoration: 'none' }}>← Zpět</a>
-          <span style={{ fontSize: '20px', fontWeight: 300, letterSpacing: '0.3em', color: '#1a1208' }}>BRAVO</span>
+          <BravoNapis height={24} />
         </div>
 
         <div style={{ background: 'white', borderRadius: '20px', padding: '28px 24px', boxShadow: '0 2px 24px rgba(0,0,0,0.07)' }}>

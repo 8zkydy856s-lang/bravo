@@ -75,7 +75,7 @@ export function PopisText() {
   const text = data?.popis_text?.trim() || DEFAULT_POPIS
   const lines = text.split('\n')
   return (
-    <p style={{ fontSize: '13px', lineHeight: 1.8, color: '#8c7f6a', fontStyle: 'italic', margin: 0 }}>
+    <p style={{ fontSize: '13px', lineHeight: 1.8, color: '#6f6253', fontStyle: 'italic', margin: 0 }}>
       {lines.map((ln, i) => <span key={i}>{ln}{i < lines.length - 1 ? <br /> : null}</span>)}
     </p>
   )
