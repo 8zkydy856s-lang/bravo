@@ -12,6 +12,7 @@ type Status = {
   zaviraci_cas: string | null
   poznamka: string | null
   duvod: string | null
+  dnesni_vyjimka: boolean
   viditelnost: string
 }
 
@@ -23,7 +24,7 @@ export default function KioskStatus() {
     let active = true
     supabase
       .from('kiosk_status')
-      .select('je_otevreno, oteviraci_cas, zaviraci_cas, poznamka, duvod, viditelnost')
+      .select('je_otevreno, oteviraci_cas, zaviraci_cas, poznamka, duvod, dnesni_vyjimka, viditelnost')
       .eq('pobocka_id', 'hlavni')
       .maybeSingle()
       .then(({ data }) => {
@@ -40,12 +41,12 @@ export default function KioskStatus() {
   if (status.viditelnost !== 'viditelne') return null
 
   const open = status.je_otevreno
-  const dotColor = open ? '#4caf50' : '#b0a89a'
+  const dotColor = open ? '#4caf50' : '#c0392b'   // otevřeno = zelená, zavřeno = červená
   const title = open ? 'Otevřeno' : 'Dnes zavřeno'
 
-  // časy jen když je otevřeno
+  // časy jen když je otevřeno A NENÍ dnešní výjimka (výjimka skryje běžnou otevírací dobu)
   let casy = ''
-  if (open) {
+  if (open && !status.dnesni_vyjimka) {
     const o = status.oteviraci_cas?.trim()
     const z = status.zaviraci_cas?.trim()
     if (o && z) casy = `${o} – ${z}`

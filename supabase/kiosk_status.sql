@@ -13,15 +13,17 @@ create table if not exists public.kiosk_status (
   je_otevreno   boolean not null default true,
   oteviraci_cas text,
   zaviraci_cas  text,
-  duvod         text,  -- ponecháno kvůli kompatibilitě, nově se používá poznamka
-  poznamka      text,
-  viditelnost   text not null default 'viditelne'
-                  check (viditelnost in ('viditelne', 'skryte', 'vypnuto')),
-  updated_at    timestamptz not null default now()
+  duvod          text,  -- ponecháno kvůli kompatibilitě, nově se používá poznamka
+  poznamka       text,
+  dnesni_vyjimka boolean not null default false,
+  viditelnost    text not null default 'viditelne'
+                   check (viditelnost in ('viditelne', 'skryte', 'vypnuto')),
+  updated_at     timestamptz not null default now()
 );
 
--- pro existující tabulku jen doplní sloupec poznamka (nic nepřepíše)
+-- pro existující tabulku jen doplní nové sloupce (nic nepřepíše)
 alter table public.kiosk_status add column if not exists poznamka text;
+alter table public.kiosk_status add column if not exists dnesni_vyjimka boolean not null default false;
 
 -- updated_at se automaticky aktualizuje při každé změně řádku
 create or replace function public.set_updated_at()
