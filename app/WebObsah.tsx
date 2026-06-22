@@ -63,13 +63,18 @@ export function ZitraVyhled() {
   return <ZitraRadek text={text} />
 }
 
+// Text mezi *…* vykreslí kurzívou; ostatní normálně.
+function sKurzivou(text: string) {
+  return text.split('*').map((cast, i) => (i % 2 === 1 ? <em key={i}>{cast}</em> : <span key={i}>{cast}</span>))
+}
+
 // Text o provozu - na webu primárně ze slovníku dle jazyka, DB jako fallback.
 export function ProvozText() {
   const { lang } = useLang()
   const data = useContext(Ctx)
   const text = DICT.provozText[lang] || data?.provoz_text?.trim() || DEFAULT_PROVOZ
   return (
-    <p className="landing-band-text" style={{ fontSize: '13px', lineHeight: 1.7, color: '#6f6253', whiteSpace: 'pre-wrap' }}>{text}</p>
+    <p className="landing-band-text" style={{ fontSize: '13px', lineHeight: 1.7, color: '#6f6253', whiteSpace: 'pre-wrap' }}>{sKurzivou(text)}</p>
   )
 }
 
