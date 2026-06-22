@@ -3,110 +3,110 @@ import Image from "next/image";
 import BravoNapis from "./BravoNapis";
 import KioskStatus from "./KioskStatus";
 import Pocasi from "./Pocasi";
+import { LangProvider, T } from "./LangContext";
+import JazykPrepinac from "./JazykPrepinac";
+import { InstagramIkona, GoogleIkona } from "./Ikony";
 import { WebObsahProvider, Sdeleni, ZitraVyhled, ProvozText, PopisText, NavigujOdkaz } from "./WebObsah";
 // Fáze 1: AuthBar a TrustCard zůstávají v projektu, na veřejné úvodní stránce se zatím nevykreslují.
 // import AuthBar from "./AuthBar";
 // import TrustCard from "./TrustCard";
 
-// E-mail jde snadno skrýt/zobrazit touto jednou konstantou. Fáze 1: skrytý.
-const ZOBRAZIT_EMAIL = false;
+// E-mail dole - odkrytý.
+const ZOBRAZIT_EMAIL = true;
 const EMAIL = "hello@bra-vo.com";
 
-// Společný styl pro tři odkazy dole - tmavé, kontrastní, světlý text.
+// Společný styl pro tři odkazy dole - tmavé, kontrastní, s ikonkou.
 const odkazStyle: React.CSSProperties = {
-  flex: 1, textAlign: "center", padding: "12px 6px", borderRadius: "12px",
-  border: "none", background: "#574836", fontSize: "12px",
-  color: "#f6f1e6", textDecoration: "none"
+  flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
+  padding: "12px 6px", borderRadius: "12px", border: "none", background: "#4d4030",
+  fontSize: "12px", color: "#f6f1e6", textDecoration: "none"
 };
 
 export default function Home() {
   return (
-    <main className="landing" style={{minHeight:"100vh",background:"#f6f1e6",fontFamily:"Inter,sans-serif"}}>
+    <main className="landing" style={{minHeight:"100vh",fontFamily:"Inter,sans-serif"}}>
+      <LangProvider>
       <WebObsahProvider>
 
-      {/* 1) Přepínač jazyků - zatím jen vizuální placeholder (nefunkční) */}
-      <div style={{display:"flex",justifyContent:"flex-end",padding:"8px 16px 0"}}>
-        <span style={{fontSize:"11px",letterSpacing:"0.1em",color:"#b6ab9b"}}>EN · FR · DE · LU · CZ</span>
+      {/* 1) Přepínač jazyků - funkční */}
+      <div style={{display:"flex",justifyContent:"flex-end",padding:"6px 16px 0"}}>
+        <JazykPrepinac />
       </div>
 
-      {/* 2) Hlavička - nápis BraVo + podtitul, vycentrované na společné ose */}
-      <header style={{padding:"6px 20px 2px",display:"flex",flexDirection:"column",alignItems:"center"}}>
+      {/* 2) Hlavička - nápis BraVo + podtitul, vycentrované na 50% osy, výš a těsně */}
+      <header style={{padding:"2px 20px 8px",display:"flex",flexDirection:"column",alignItems:"center"}}>
         <BravoNapis className="bravo-napis" priority />
-        {/* paddingLeft kompenzuje optický posun z letter-spacingu (mezera za posledním písmenem) */}
-        <p style={{fontSize:"12px",color:"#9b8d76",letterSpacing:"0.14em",paddingLeft:"0.14em",marginTop:"3px"}}>místo k zastavení</p>
+        <p style={{fontSize:"12px",color:"#9b8d76",letterSpacing:"0.14em",paddingLeft:"0.14em",marginTop:"1px"}}><T k="mistoKeSpocinuti" /></p>
       </header>
 
-      {/* 3) Vozík BRAVO - průhledné PNG bez rámečku, splývá s krémovým pozadím */}
+      {/* 3) Vozík BRAVO - průhledné PNG bez rámečku */}
       <div className="landing-photo" style={{lineHeight:0}}>
         <Image src="/vozik-ikona.png" alt="Vozík BRAVO" width={1025} height={750} priority style={{width:"100%",height:"auto",display:"block"}} />
       </div>
 
-      {/* 4+5) Vlídný text o provozu + karta stavu (na desktopu vedle sebe) */}
+      {/* 4+5) Vlídný text o provozu + karta stavu */}
       <div className="landing-band">
-        {/* 4) Vlídné vysvětlení provozu (text z DB, editovatelné v adminu) */}
+        {/* 4) Text o provozu - přeložený ze slovníku */}
         <ProvozText />
 
-        {/* pravý sloupec: sdělení 1 (nad statusem) + karta stavu */}
+        {/* pravý sloupec: sdělení 1 + karta stavu */}
         <div className="landing-band-status">
-          {/* Sdělení 1 - nad statusem */}
           <Sdeleni pozice={1} style={{margin:"0 0 8px"}} />
 
-          {/* 5) Stav kiosku + reálné počasí (svisle vycentrované) */}
+          {/* 5) Stav kiosku + reálné počasí */}
           <div style={{background:"#fffdf8",borderRadius:"18px",border:"0.5px solid rgba(120,90,40,0.12)",overflow:"hidden"}}>
             <div style={{padding:"14px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
               <div>
-                <p style={{fontSize:"9px",letterSpacing:"0.15em",color:"#9b8d76",margin:"0 0 6px"}}>PRÁVĚ TEĎ</p>
+                <p style={{fontSize:"9px",letterSpacing:"0.15em",color:"#9b8d76",margin:"0 0 6px"}}><T k="praveTed" /></p>
                 <KioskStatus />
-                {/* Výhled na zítřek - text z web_obsah */}
                 <ZitraVyhled />
               </div>
-              {/* Reálné počasí (Open-Meteo); při výpadku se nezobrazí */}
               <Pocasi />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Sdělení 2 - mezi statusem a popisem */}
+      {/* Sdělení 2 */}
       <Sdeleni pozice={2} className="landing-sdeleni" />
 
-      {/* 6) Krátký popis kurzívou - z DB, editovatelné v adminu */}
+      {/* 6) Popis kurzívou - přeložený ze slovníku */}
       <div className="landing-desc">
         <PopisText />
       </div>
 
-      {/* Sdělení 3 - pod popisem */}
+      {/* Sdělení 3 */}
       <Sdeleni pozice={3} className="landing-sdeleni" />
 
-      {/* 7+8) Nápojový lístek -> /listek, užší a vycentrovaný */}
+      {/* 7) Nápojový lístek -> /listek, užší a vycentrovaný */}
       <div className="landing-cta">
         <Link href="/listek" style={{display:"inline-block",boxSizing:"border-box",textAlign:"center",background:"none",color:"#1a1208",border:"1px solid #d8c8ad",borderRadius:"14px",padding:"12px 56px",fontSize:"13px",fontWeight:500,textDecoration:"none",fontFamily:"Inter,sans-serif"}}>
-          Nápojový lístek
+          <T k="napojovyListek" />
         </Link>
       </div>
 
-      {/* 8) Tři odkazy vedle sebe - tmavé (Instagram, Google natvrdo; Naviguj z DB) */}
+      {/* 8) Tři odkazy - tmavé, s ikonkami (Instagram, Google natvrdo; Následuj mě z DB) */}
       <div className="landing-links">
-        <a href="https://www.instagram.com/bravo_cafe_luxembourg/" target="_blank" rel="noopener noreferrer" style={odkazStyle}>Instagram</a>
-        <a href="https://share.google/Ch9TWlQZ4HTd6gRpP" target="_blank" rel="noopener noreferrer" style={odkazStyle}>Google</a>
+        <a href="https://www.instagram.com/bravo_cafe_luxembourg/" target="_blank" rel="noopener noreferrer" style={odkazStyle}><InstagramIkona /><span>Instagram</span></a>
+        <a href="https://share.google/Ch9TWlQZ4HTd6gRpP" target="_blank" rel="noopener noreferrer" style={odkazStyle}><GoogleIkona /><span>Google</span></a>
         <NavigujOdkaz style={odkazStyle} />
       </div>
 
-      {/* 9) E-mail - řízený konstantou ZOBRAZIT_EMAIL */}
+      {/* 9) E-mail - odkrytý */}
       {ZOBRAZIT_EMAIL && (
-        <p style={{margin:"14px 20px 0",textAlign:"center",fontSize:"13px"}}>
+        <p style={{margin:"16px 20px 0",textAlign:"center",fontSize:"13px"}}>
           <a href={`mailto:${EMAIL}`} style={{color:"#b8954a",textDecoration:"none"}}>{EMAIL}</a>
         </p>
       )}
 
-      {/* 7) Jemné "... a brzy přijde víc" - sjednocená barva #6f6253 */}
+      {/* 10) Jemné "... a brzy přijde víc" - přeložené */}
       <p style={{margin:"16px 20px 0",textAlign:"center",fontSize:"12px",color:"#6f6253",letterSpacing:"0.02em"}}>
-        … a brzy přijde víc 😌
+        <T k="aBrzyPrijdeVic" />
       </p>
 
-      {/* 5) Nenápadný vstup pro majitele - posunutý níž */}
+      {/* 11) Nenápadný vstup pro majitele - přeložený, posunutý níž */}
       <div style={{marginTop:"56px",textAlign:"center"}}>
-        <a href="/login" style={{fontSize:"11px",color:"#b6ab9b",textDecoration:"none",letterSpacing:"0.04em"}}>Vstup pro majitele</a>
+        <a href="/login" style={{fontSize:"11px",color:"#b6ab9b",textDecoration:"none",letterSpacing:"0.04em"}}><T k="vstupProMajitele" /></a>
       </div>
 
       {/*
@@ -133,6 +133,7 @@ export default function Home() {
       */}
 
       </WebObsahProvider>
+      </LangProvider>
     </main>
   );
 }

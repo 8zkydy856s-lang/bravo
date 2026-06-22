@@ -1,8 +1,9 @@
 import BravoNapis from "../BravoNapis";
-// Nápojový lístek BRAVO (/listek) - statická stránka, anglicky, bez cen.
+import ZpetOdkaz from "../ZpetOdkaz";
+// Nápojový lístek BRAVO (/listek) - statická stránka, anglicky.
 // Krémové pozadí, klidný vzhled, responzivní (čtecí sloupec), zpět na úvod.
 
-type Polozka = { name: string; popis?: string }
+type Polozka = { name: string; popis?: string; cena?: string }
 type Sekce = { nadpis: string; podnadpis?: string; polozky: Polozka[] }
 
 const SEKCE: Sekce[] = [
@@ -70,7 +71,7 @@ export default function ListekPage() {
     <main style={{ minHeight: '100vh', background: '#f6f1e6', fontFamily: 'Inter,sans-serif', padding: '20px', boxSizing: 'border-box' }}>
       <div style={{ width: '100%', maxWidth: '640px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-          <a href="/" style={{ fontSize: '13px', color: '#8a7f70', textDecoration: 'none' }}>← Zpět</a>
+          <ZpetOdkaz />
           <BravoNapis height={34} />
         </div>
 
@@ -81,9 +82,12 @@ export default function ListekPage() {
             <Nadpis>{s.nadpis}</Nadpis>
             {s.podnadpis && <p style={{ fontSize: '12px', color: '#9b8d76', fontStyle: 'italic', margin: '-6px 0 12px' }}>{s.podnadpis}</p>}
             {s.polozky.map((p, i) => (
-              <div key={i} style={{ margin: '0 0 5px' }}>
-                <span style={{ fontSize: '16px', color: '#1a1208' }}>{p.name}</span>
-                {p.popis && <span style={{ fontSize: '13px', color: '#9b8d76', fontStyle: 'italic' }}>{'  '}… {p.popis}</span>}
+              <div key={i} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '12px', margin: '0 0 6px' }}>
+                <span style={{ flex: '1 1 auto', minWidth: 0, fontSize: '16px', color: '#1a1208' }}>
+                  {p.name}
+                  {p.popis && <span style={{ fontSize: '13px', color: '#9b8d76', fontStyle: 'italic' }}>{'  '}… {p.popis}</span>}
+                </span>
+                <span style={{ flex: '0 0 auto', whiteSpace: 'nowrap', fontSize: '14px', color: '#6f6253' }}>{p.cena ?? '—'}</span>
               </div>
             ))}
           </section>

@@ -8,17 +8,21 @@ export type SdeleniVzhled = 'splynout' | 'zvyraznit'
 // - zvyraznit = jemné béžovo-zlatavé pozadí + tenký okraj (vystoupí, klidně)
 export function SdeleniRadek({ text, vzhled = 'splynout' }: { text: string; vzhled?: SdeleniVzhled }) {
   const zvyraznit = vzhled === 'zvyraznit'
+  // Vnější obal centruje; vnitřní badge je inline-block, takže obepne JEN text (ne celou šířku).
   return (
-    <div style={{
-      background: zvyraznit ? 'rgba(184,149,74,0.10)' : 'transparent',
-      border: zvyraznit ? '1px solid rgba(184,149,74,0.35)' : 'none',
-      borderRadius: '14px',
-      padding: zvyraznit ? '11px 15px' : '4px 8px',
-    }}>
-      <p style={{
-        fontSize: '13px', lineHeight: 1.6, color: '#6f6253', margin: 0, textAlign: 'center',
-        overflowWrap: 'anywhere', whiteSpace: 'pre-wrap',
-      }}>{text}</p>
+    <div style={{ textAlign: 'center' }}>
+      <div style={{
+        display: 'inline-block', maxWidth: '100%', boxSizing: 'border-box',
+        background: zvyraznit ? 'rgba(184,149,74,0.10)' : 'transparent',
+        border: zvyraznit ? '1px solid rgba(184,149,74,0.35)' : 'none',
+        borderRadius: '14px',
+        padding: zvyraznit ? '11px 18px' : '4px 8px',
+      }}>
+        <p style={{
+          fontSize: '13px', lineHeight: 1.6, color: '#6f6253', margin: 0, textAlign: 'center',
+          overflowWrap: 'anywhere', whiteSpace: 'pre-wrap',
+        }}>{text}</p>
+      </div>
     </div>
   )
 }

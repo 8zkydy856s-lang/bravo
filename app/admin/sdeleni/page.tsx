@@ -173,7 +173,7 @@ export default function AdminSdeleniPage() {
       <div style={{ width: '100%', maxWidth: '480px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
           <a href="/" style={{ fontSize: '13px', color: '#8a7f70', textDecoration: 'none' }}>← Zpět</a>
-          <BravoNapis height={34} />
+          <BravoNapis height={26} />
         </div>
 
         <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#1a1208', margin: '0 0 4px' }}>Sdělení na web</h1>

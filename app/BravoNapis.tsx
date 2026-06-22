@@ -6,13 +6,13 @@ import Image from "next/image";
 export default function BravoNapis({ height, className, priority }: { height?: number; className?: string; priority?: boolean }) {
   return (
     <Image
-      src="/bravo-napis.png"
+      src="/bravo-napis.png?v=3"
       alt="BRAVO"
       width={1200}
       height={202}
       priority={priority}
       className={className}
-      style={{ height: height ? `${height}px` : undefined, width: "auto", display: "block" }}
+      style={{ height: height ? `${height}px` : undefined, width: "auto", display: "block", opacity: 0.88 }}
     />
   );
 }

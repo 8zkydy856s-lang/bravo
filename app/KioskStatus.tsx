@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from './lib/supabase'
 import KioskStatusView from './KioskStatusView'
+import { useLang } from './LangContext'
+import { DICT } from './i18n'
 
 // Zobrazení stavu kiosku pro zákazníky (levá část karty na úvodní stránce).
 // - otevřeno -> "Otevřeno" + časy (jsou-li vyplněné)
@@ -18,6 +20,7 @@ type Status = {
 }
 
 export default function KioskStatus() {
+  const { lang } = useLang()
   const [status, setStatus] = useState<Status | null>(null)
   const [loaded, setLoaded] = useState(false)
 
@@ -44,6 +47,11 @@ export default function KioskStatus() {
   // poznámka: nově poznamka, pro hladký přechod fallback na starou duvod
   const poznamka = (status.poznamka?.trim() || status.duvod?.trim() || '')
 
+  const labels = {
+    otevreno: DICT.otevreno[lang], dnesZavreno: DICT.dnesZavreno[lang],
+    od: DICT.od[lang], do: DICT.do[lang],
+  }
+
   return (
     <KioskStatusView
       je_otevreno={status.je_otevreno}
@@ -51,6 +59,7 @@ export default function KioskStatus() {
       zaviraci_cas={status.zaviraci_cas}
       poznamka={poznamka}
       dnesni_vyjimka={status.dnesni_vyjimka}
+      labels={labels}
     />
   )
 }

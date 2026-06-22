@@ -2,6 +2,9 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from './lib/supabase'
 import { SdeleniRadek, ZitraRadek, SdeleniVzhled } from './WebObsahView'
+import { useLang } from './LangContext'
+import { DICT } from './i18n'
+import { PinIkona } from './Ikony'
 
 // Načte řádek web_obsah jednou a sdílí ho přes context konzumentům.
 // Data se čtou živě (jako KioskStatus), ale jen jedním dotazem pro celou stránku.
@@ -60,20 +63,20 @@ export function ZitraVyhled() {
   return <ZitraRadek text={text} />
 }
 
-// Text o provozu (levý sloupec) - z DB, fallback na výchozí text.
+// Text o provozu - na webu primárně ze slovníku dle jazyka, DB jako fallback.
 export function ProvozText() {
+  const { lang } = useLang()
   const data = useContext(Ctx)
-  const text = data?.provoz_text?.trim() || DEFAULT_PROVOZ
+  const text = DICT.provozText[lang] || data?.provoz_text?.trim() || DEFAULT_PROVOZ
   return (
     <p className="landing-band-text" style={{ fontSize: '13px', lineHeight: 1.7, color: '#6f6253', whiteSpace: 'pre-wrap' }}>{text}</p>
   )
 }
 
-// Třířádkový popis kurzívou - z DB (řádky oddělené \n), fallback na výchozí.
+// Třířádkový popis kurzívou - ze slovníku dle jazyka.
 export function PopisText() {
-  const data = useContext(Ctx)
-  const text = data?.popis_text?.trim() || DEFAULT_POPIS
-  const lines = text.split('\n')
+  const { lang } = useLang()
+  const lines = [DICT.popisRadek1[lang], DICT.popisRadek2[lang], DICT.popisRadek3[lang]]
   return (
     <p style={{ fontSize: '13px', lineHeight: 1.8, color: '#6f6253', fontStyle: 'italic', margin: 0 }}>
       {lines.map((ln, i) => <span key={i}>{ln}{i < lines.length - 1 ? <br /> : null}</span>)}
@@ -81,9 +84,14 @@ export function PopisText() {
   )
 }
 
-// Odkaz "Naviguj" (mapový odkaz z DB, fallback default). Styl se předá zvenčí.
+// Odkaz "Následuj mě" (mapový odkaz z DB, fallback default; label ze slovníku). Styl zvenčí.
 export function NavigujOdkaz({ style }: { style?: React.CSSProperties }) {
+  const { lang } = useLang()
   const data = useContext(Ctx)
   const href = data?.maps_odkaz?.trim() || DEFAULT_MAPS
-  return <a href={href} target="_blank" rel="noopener noreferrer" style={style}>Naviguj</a>
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" style={style}>
+      <PinIkona /><span>{DICT.nasledujMe[lang]}</span>
+    </a>
+  )
 }
