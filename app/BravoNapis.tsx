@@ -9,7 +9,7 @@ export default function BravoNapis({ height, className, priority }: { height?: n
       src="/bravo-napis.png"
       alt="BRAVO"
       width={1200}
-      height={274}
+      height={202}
       priority={priority}
       className={className}
       style={{ height: height ? `${height}px` : undefined, width: "auto", display: "block" }}

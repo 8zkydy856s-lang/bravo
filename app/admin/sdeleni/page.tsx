@@ -12,7 +12,12 @@ const KLIC = 'hlavni'
 
 const inputStyle: React.CSSProperties = {
   width: '100%', padding: '12px 14px', border: '1px solid #e0d9d0', borderRadius: '10px',
-  fontSize: '14px', marginBottom: '10px', boxSizing: 'border-box', outline: 'none', fontFamily: 'Inter,sans-serif'
+  fontSize: '14px', marginBottom: '0', boxSizing: 'border-box', outline: 'none', fontFamily: 'Inter,sans-serif'
+}
+
+const blokStyle: React.CSSProperties = {
+  background: '#fffdf8', border: '0.5px solid rgba(120,90,40,0.16)', borderRadius: '14px',
+  padding: '16px', marginBottom: '14px'
 }
 
 type FormState = {
@@ -111,9 +116,9 @@ export default function AdminSdeleniPage() {
     )
   }
 
-  // obecný segmentový přepínač (dvě hodnoty)
+  // segmentový přepínač (dvě hodnoty)
   const segment = (current: any, options: [string, any][], onPick: (v: any) => void) => (
-    <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+    <div style={{ display: 'flex', gap: '8px' }}>
       {options.map(([label, val]) => {
         const active = current === val
         return (
@@ -131,27 +136,33 @@ export default function AdminSdeleniPage() {
     </div>
   )
 
-  const sectionLabel = (t: string) => (
-    <p style={{ fontSize: '12px', color: '#8a7f70', margin: '16px 0 8px', fontWeight: 500 }}>{t}</p>
+  // nadpis bloku (karty)
+  const blokNadpis = (t: string, podtitul?: string) => (
+    <div style={{ marginBottom: '12px' }}>
+      <p style={{ fontSize: '14px', fontWeight: 600, color: '#1a1208', margin: 0 }}>{t}</p>
+      {podtitul && <p style={{ fontSize: '11px', color: '#b0a48f', margin: '2px 0 0' }}>{podtitul}</p>}
+    </div>
   )
 
   const malyLabel = (t: string) => (
-    <p style={{ fontSize: '11px', color: '#b0a48f', margin: '6px 0 6px' }}>{t}</p>
+    <p style={{ fontSize: '11px', color: '#9b8d76', margin: '12px 0 6px', fontWeight: 500 }}>{t}</p>
   )
 
-  // blok jednoho sdělení: zap/vyp + text + vzhled
-  const sdeleniBlok = (n: 1 | 2 | 3, nadpis: string) => {
+  // karta jednoho sdělení: zap/vyp + text + vzhled
+  const sdeleniBlok = (n: 1 | 2 | 3, nadpis: string, podtitul: string) => {
     const zapKey = `sdeleni${n}_zap` as keyof FormState
     const textKey = `sdeleni${n}_text` as keyof FormState
     const vzKey = `sdeleni${n}_vzhled` as keyof FormState
     return (
-      <>
-        {sectionLabel(nadpis)}
+      <div style={blokStyle}>
+        {blokNadpis(nadpis, podtitul)}
         {segment(form[zapKey], [['Zapnuto', true], ['Vypnuto', false]], v => set(zapKey, v))}
-        <input type="text" placeholder={`Text sdělení ${n}`} value={form[textKey] as string} onChange={e => set(textKey, e.target.value)} style={inputStyle} />
+        <div style={{ marginTop: '10px' }}>
+          <input type="text" placeholder={`Text sdělení ${n}`} value={form[textKey] as string} onChange={e => set(textKey, e.target.value)} style={inputStyle} />
+        </div>
         {malyLabel('Vzhled')}
         {segment(form[vzKey], [['Splynout', 'splynout'], ['Zvýraznit', 'zvyraznit']], v => set(vzKey, v))}
-      </>
+      </div>
     )
   }
 
@@ -160,22 +171,23 @@ export default function AdminSdeleniPage() {
   return (
     <main style={{ minHeight: '100vh', background: '#f6f1e6', fontFamily: 'Inter,sans-serif', padding: '20px', boxSizing: 'border-box', display: 'flex', justifyContent: 'center' }}>
       <div style={{ width: '100%', maxWidth: '480px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
           <a href="/" style={{ fontSize: '13px', color: '#8a7f70', textDecoration: 'none' }}>← Zpět</a>
-          <BravoNapis height={24} />
+          <BravoNapis height={34} />
         </div>
 
-        <div style={{ background: 'white', borderRadius: '20px', padding: '28px 24px', boxShadow: '0 2px 24px rgba(0,0,0,0.07)' }}>
-          <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#1a1208', margin: '0 0 4px' }}>Sdělení na web</h1>
-          <p style={{ fontSize: '12px', color: '#8a7f70', margin: '0 0 8px' }}>Obsah úvodní stránky: sdělení, výhled na zítřek, texty a odkaz.</p>
+        <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#1a1208', margin: '0 0 4px' }}>Sdělení na web</h1>
+        <p style={{ fontSize: '12px', color: '#8a7f70', margin: '0 0 18px' }}>Obsah úvodní stránky — vše se ukládá tlačítkem dole.</p>
 
-          {sdeleniBlok(1, 'Sdělení 1 (nad statusem)')}
-          {sdeleniBlok(2, 'Sdělení 2 (mezi statusem a popisem)')}
-          {sdeleniBlok(3, 'Sdělení 3 (pod popisem)')}
+        {sdeleniBlok(1, 'Sdělení 1', 'nad statusem')}
+        {sdeleniBlok(2, 'Sdělení 2', 'mezi statusem a popisem')}
+        {sdeleniBlok(3, 'Sdělení 3', 'pod popisem')}
 
-          {sectionLabel('Výhled na zítřek')}
+        {/* Výhled na zítřek */}
+        <div style={blokStyle}>
+          {blokNadpis('Výhled na zítřek', 'malý řádek v kartě stavu')}
           {segment(form.zitra_zap, [['Zapnuto', true], ['Vypnuto', false]], v => set('zitra_zap', v))}
-          <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', gap: '6px', margin: '10px 0' }}>
             <button onClick={() => set('zitra_text', 'Zítra: pravděpodobně otevřeno')}
               style={{ flex: 1, padding: '8px 10px', borderRadius: '999px', fontSize: '12px', cursor: 'pointer', fontFamily: 'Inter,sans-serif', border: '1px solid #e0d9d0', background: 'white', color: '#1a1208' }}>
               pravděpodobně otevřeno
@@ -186,50 +198,56 @@ export default function AdminSdeleniPage() {
             </button>
           </div>
           <input type="text" placeholder="Zítra: …" value={form.zitra_text} onChange={e => set('zitra_text', e.target.value)} style={inputStyle} />
-
-          {sectionLabel('Text o provozu')}
-          <textarea placeholder="Text o provozu" value={form.provoz_text} onChange={e => set('provoz_text', e.target.value)} rows={3} style={{ ...inputStyle, resize: 'vertical' }} />
-
-          {sectionLabel('Popis (3 řádky, každý na nový řádek)')}
-          <textarea placeholder="Řádek 1&#10;Řádek 2&#10;Řádek 3" value={form.popis_text} onChange={e => set('popis_text', e.target.value)} rows={3} style={{ ...inputStyle, resize: 'vertical' }} />
-
-          {sectionLabel('Odkaz Naviguj (poloha vozíku)')}
-          <input type="text" placeholder="https://maps.app.goo.gl/…" value={form.maps_odkaz} onChange={e => set('maps_odkaz', e.target.value)} style={inputStyle} />
-
-          {/* Živý náhled */}
-          <p style={{ fontSize: '11px', color: '#8a7f70', margin: '20px 0 6px', fontStyle: 'italic' }}>Náhled — takto to uvidí zákazník</p>
-          <div style={{ background: '#f6f1e6', borderRadius: '12px', padding: '14px' }}>
-            {form.provoz_text.trim() && (
-              <p style={{ fontSize: '12px', lineHeight: 1.6, color: '#6f6253', textAlign: 'center', margin: '0 0 10px', whiteSpace: 'pre-wrap' }}>{form.provoz_text}</p>
-            )}
-            {form.sdeleni1_zap && form.sdeleni1_text.trim() && (
-              <div style={{ marginBottom: '10px' }}><SdeleniRadek text={form.sdeleni1_text} vzhled={form.sdeleni1_vzhled} /></div>
-            )}
-            <div style={{ background: '#fffdf8', border: '0.5px solid rgba(120,90,40,0.12)', borderRadius: '14px', padding: '12px 14px' }}>
-              <p style={{ fontSize: '9px', letterSpacing: '0.15em', color: '#9b8d76', margin: '0 0 6px' }}>PRÁVĚ TEĎ</p>
-              <p style={{ fontSize: '13px', fontWeight: 500, color: '#1a1208', margin: 0 }}>Stav kiosku (živě)</p>
-              {form.zitra_zap && form.zitra_text.trim() && <ZitraRadek text={form.zitra_text} />}
-            </div>
-            {form.sdeleni2_zap && form.sdeleni2_text.trim() && (
-              <div style={{ marginTop: '10px' }}><SdeleniRadek text={form.sdeleni2_text} vzhled={form.sdeleni2_vzhled} /></div>
-            )}
-            {form.popis_text.trim() && (
-              <p style={{ fontSize: '12px', color: '#8c7f6a', fontStyle: 'italic', textAlign: 'center', margin: '12px 0' }}>
-                {previewLines.map((ln, i) => <span key={i}>{ln}{i < previewLines.length - 1 ? <br /> : null}</span>)}
-              </p>
-            )}
-            {form.sdeleni3_zap && form.sdeleni3_text.trim() && (
-              <div><SdeleniRadek text={form.sdeleni3_text} vzhled={form.sdeleni3_vzhled} /></div>
-            )}
-          </div>
-
-          <button onClick={handleSave} disabled={saving}
-            style={{ width: '100%', padding: '13px', background: '#1a1208', color: '#d4a96a', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: 500, cursor: saving ? 'default' : 'pointer', marginTop: '16px', fontFamily: 'Inter,sans-serif', opacity: saving ? 0.7 : 1 }}>
-            {saving ? 'Ukládám…' : 'Uložit'}
-          </button>
-
-          {message && <p style={{ fontSize: '13px', color: msgOk ? '#2e7d32' : '#c0392b', textAlign: 'center', margin: '12px 0 0', lineHeight: 1.5 }}>{message}</p>}
         </div>
+
+        {/* Texty na úvodní stránce */}
+        <div style={blokStyle}>
+          {blokNadpis('Texty na úvodní stránce')}
+          {malyLabel('Text o provozu')}
+          <textarea placeholder="Text o provozu" value={form.provoz_text} onChange={e => set('provoz_text', e.target.value)} rows={3} style={{ ...inputStyle, resize: 'vertical' }} />
+          {malyLabel('Popis (každý řádek zvlášť)')}
+          <textarea placeholder="Řádek 1&#10;Řádek 2&#10;Řádek 3" value={form.popis_text} onChange={e => set('popis_text', e.target.value)} rows={3} style={{ ...inputStyle, resize: 'vertical' }} />
+        </div>
+
+        {/* Odkaz Naviguj */}
+        <div style={blokStyle}>
+          {blokNadpis('Odkaz Naviguj', 'poloha vozíku na mapě')}
+          <input type="text" placeholder="https://maps.app.goo.gl/…" value={form.maps_odkaz} onChange={e => set('maps_odkaz', e.target.value)} style={inputStyle} />
+        </div>
+
+        {/* Živý náhled */}
+        <div style={{ ...blokStyle, background: '#f6f1e6' }}>
+          {blokNadpis('Náhled', 'takto to uvidí zákazník')}
+          {form.provoz_text.trim() && (
+            <p style={{ fontSize: '12px', lineHeight: 1.6, color: '#6f6253', textAlign: 'center', margin: '0 0 10px', whiteSpace: 'pre-wrap' }}>{form.provoz_text}</p>
+          )}
+          {form.sdeleni1_zap && form.sdeleni1_text.trim() && (
+            <div style={{ marginBottom: '10px' }}><SdeleniRadek text={form.sdeleni1_text} vzhled={form.sdeleni1_vzhled} /></div>
+          )}
+          <div style={{ background: '#fffdf8', border: '0.5px solid rgba(120,90,40,0.12)', borderRadius: '14px', padding: '12px 14px' }}>
+            <p style={{ fontSize: '9px', letterSpacing: '0.15em', color: '#9b8d76', margin: '0 0 6px' }}>PRÁVĚ TEĎ</p>
+            <p style={{ fontSize: '13px', fontWeight: 500, color: '#1a1208', margin: 0 }}>Stav kiosku (živě)</p>
+            {form.zitra_zap && form.zitra_text.trim() && <ZitraRadek text={form.zitra_text} />}
+          </div>
+          {form.sdeleni2_zap && form.sdeleni2_text.trim() && (
+            <div style={{ marginTop: '10px' }}><SdeleniRadek text={form.sdeleni2_text} vzhled={form.sdeleni2_vzhled} /></div>
+          )}
+          {form.popis_text.trim() && (
+            <p style={{ fontSize: '12px', color: '#6f6253', fontStyle: 'italic', textAlign: 'center', margin: '12px 0' }}>
+              {previewLines.map((ln, i) => <span key={i}>{ln}{i < previewLines.length - 1 ? <br /> : null}</span>)}
+            </p>
+          )}
+          {form.sdeleni3_zap && form.sdeleni3_text.trim() && (
+            <div><SdeleniRadek text={form.sdeleni3_text} vzhled={form.sdeleni3_vzhled} /></div>
+          )}
+        </div>
+
+        <button onClick={handleSave} disabled={saving}
+          style={{ width: '100%', padding: '14px', background: '#1a1208', color: '#d4a96a', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 500, cursor: saving ? 'default' : 'pointer', marginTop: '4px', fontFamily: 'Inter,sans-serif', opacity: saving ? 0.7 : 1 }}>
+          {saving ? 'Ukládám…' : 'Uložit'}
+        </button>
+
+        {message && <p style={{ fontSize: '13px', color: msgOk ? '#2e7d32' : '#c0392b', textAlign: 'center', margin: '12px 0 0', lineHeight: 1.5 }}>{message}</p>}
       </div>
     </main>
   )

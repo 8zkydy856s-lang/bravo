@@ -71,7 +71,7 @@ export default function ListekPage() {
       <div style={{ width: '100%', maxWidth: '640px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
           <a href="/" style={{ fontSize: '13px', color: '#8a7f70', textDecoration: 'none' }}>← Zpět</a>
-          <BravoNapis height={24} />
+          <BravoNapis height={34} />
         </div>
 
         <h1 style={{ fontSize: '26px', fontWeight: 300, letterSpacing: '0.06em', color: '#1a1208', textAlign: 'center', margin: '0 0 28px' }}>Drinks</h1>

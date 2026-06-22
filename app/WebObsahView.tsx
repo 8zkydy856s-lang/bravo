@@ -25,5 +25,6 @@ export function SdeleniRadek({ text, vzhled = 'splynout' }: { text: string; vzhl
 
 // Řádek "výhled na zítřek" - malý text jako uvnitř karty stavu.
 export function ZitraRadek({ text }: { text: string }) {
-  return <p style={{ fontSize: '11px', color: '#8a7f70', margin: '8px 0 0', overflowWrap: 'anywhere' }}>{text}</p>
+  // Velkými písmeny přes CSS - nezávislé na tom, jak je text uložený v DB.
+  return <p style={{ fontSize: '11px', color: '#8a7f70', margin: '8px 0 0', overflowWrap: 'anywhere', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{text}</p>
 }

@@ -15,7 +15,7 @@ const EMAIL = "hello@bra-vo.com";
 // Společný styl pro tři odkazy dole - tmavé, kontrastní, světlý text.
 const odkazStyle: React.CSSProperties = {
   flex: 1, textAlign: "center", padding: "12px 6px", borderRadius: "12px",
-  border: "none", background: "#2e2418", fontSize: "12px",
+  border: "none", background: "#574836", fontSize: "12px",
   color: "#f6f1e6", textDecoration: "none"
 };
 
@@ -29,10 +29,11 @@ export default function Home() {
         <span style={{fontSize:"11px",letterSpacing:"0.1em",color:"#b6ab9b"}}>EN · FR · DE · LU · CZ</span>
       </div>
 
-      {/* 2) Hlavička - nápis BraVo + podtitul, vycentrované */}
-      <header style={{padding:"8px 20px 6px",display:"flex",flexDirection:"column",alignItems:"center"}}>
+      {/* 2) Hlavička - nápis BraVo + podtitul, vycentrované na společné ose */}
+      <header style={{padding:"6px 20px 2px",display:"flex",flexDirection:"column",alignItems:"center"}}>
         <BravoNapis className="bravo-napis" priority />
-        <p style={{fontSize:"12px",color:"#9b8d76",letterSpacing:"0.14em",marginTop:"8px"}}>místo k zastavení</p>
+        {/* paddingLeft kompenzuje optický posun z letter-spacingu (mezera za posledním písmenem) */}
+        <p style={{fontSize:"12px",color:"#9b8d76",letterSpacing:"0.14em",paddingLeft:"0.14em",marginTop:"3px"}}>místo k zastavení</p>
       </header>
 
       {/* 3) Vozík BRAVO - průhledné PNG bez rámečku, splývá s krémovým pozadím */}
@@ -79,7 +80,7 @@ export default function Home() {
 
       {/* 7+8) Nápojový lístek -> /listek, užší a vycentrovaný */}
       <div className="landing-cta">
-        <Link href="/listek" style={{display:"inline-block",boxSizing:"border-box",textAlign:"center",background:"none",color:"#1a1208",border:"1px solid #d8c8ad",borderRadius:"14px",padding:"12px 34px",fontSize:"13px",fontWeight:500,textDecoration:"none",fontFamily:"Inter,sans-serif"}}>
+        <Link href="/listek" style={{display:"inline-block",boxSizing:"border-box",textAlign:"center",background:"none",color:"#1a1208",border:"1px solid #d8c8ad",borderRadius:"14px",padding:"12px 56px",fontSize:"13px",fontWeight:500,textDecoration:"none",fontFamily:"Inter,sans-serif"}}>
           Nápojový lístek
         </Link>
       </div>

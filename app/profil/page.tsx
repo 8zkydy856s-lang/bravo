@@ -159,7 +159,7 @@ export default function ProfilPage() {
       <div style={{ width: '100%', maxWidth: '480px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
           <a href="/" style={{ fontSize: '13px', color: '#8a7f70', textDecoration: 'none' }}>← Zpět</a>
-          <BravoNapis height={24} />
+          <BravoNapis height={34} />
         </div>
 
         <div style={{ background: 'white', borderRadius: '20px', padding: '28px 24px', boxShadow: '0 2px 24px rgba(0,0,0,0.07)' }}>
