@@ -39,9 +39,14 @@ export default function Home() {
         <p style={{fontSize:"12px",color:"#6f6253",letterSpacing:"0.14em",paddingLeft:"0.14em",marginTop:"1px"}}><T k="mistoKeSpocinuti" /></p>
       </header>
 
-      {/* 3) Vozík BRAVO - průhledné PNG bez rámečku */}
+      {/* 3) Vozík BRAVO - průhledné PNG, jemně oživené (dýchání + padající plátky) */}
       <div className="landing-photo" style={{lineHeight:0}}>
-        <Image src="/vozik-ikona.png" alt="Vozík BRAVO" width={1025} height={750} priority style={{width:"100%",height:"auto",display:"block"}} />
+        <Image className="fx-vozik" src="/vozik-ikona.png" alt="Vozík BRAVO" width={1025} height={750} priority />
+        <div className="vozik-zivot" aria-hidden="true">
+          <span className="vz-platek vz-platek-1" />
+          <span className="vz-platek vz-platek-2" />
+          <span className="vz-platek vz-platek-3" />
+        </div>
       </div>
 
       {/* 4+5) Vlídný text o provozu + karta stavu */}
