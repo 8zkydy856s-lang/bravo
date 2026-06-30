@@ -7,8 +7,8 @@ type Polozka = { name: string; popis?: string; hot?: string; ice?: string; plain
 type Sekce = { nadpis: string; podnadpis?: string; polozky: Polozka[] }
 type Blok = { nadpis: string; text: string }
 
-const HOT = '#c08a72'
-const ICE = '#84a6b0'
+const HOT = '#bd7962'
+const ICE = '#6f9eac'
 
 const SEKCE: Sekce[] = [
   {
