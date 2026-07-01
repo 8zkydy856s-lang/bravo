@@ -35,25 +35,25 @@ export default function Home() {
       </div>
 
       {/* 2) Hlavička - nápis BraVo + podtitul, vycentrované na 50% osy, výš a těsně */}
-      <header style={{padding:"2px 20px 8px",display:"flex",flexDirection:"column",alignItems:"center"}}>
+      <header style={{padding:"2px 20px 8px",display:"flex",flexDirection:"column",alignItems:"center",transform:"translate(-22px,-15px)"}}>
         <BravoNapis className="bravo-napis" priority />
         <p style={{fontSize:"12px",color:"#6f6253",letterSpacing:"0.14em",paddingLeft:"0.14em",marginTop:"1px"}}><T k="mistoKeSpocinuti" /></p>
       </header>
 
       {/* 3) Vozík BRAVO - průhledné PNG, jemně oživené (dýchání + padající plátky) */}
-      <div className="landing-photo" style={{lineHeight:0}}>
+      <div className="landing-photo" style={{lineHeight:0,transform:"translate(2px,-20px)"}}>
         <Image className="fx-vozik" src="/vozik-ikona.png" alt="Vozík BRAVO" width={1025} height={750} priority />
         <VozikZivot />
       </div>
 
       {/* 4+5) Vlídný text o provozu + karta stavu */}
-      <div className="landing-band">
+      <div className="landing-band" style={{transform:"translateY(-16px)"}}>
         {/* 4) Text o provozu - přeložený ze slovníku */}
-        <ProvozText />
+        <div style={{transform:"translateY(-16px)"}}><ProvozText /></div>
 
         {/* pravý sloupec: sdělení 1 + karta stavu */}
         <div className="landing-band-status">
-          <Sdeleni pozice={1} style={{margin:"0 0 8px"}} />
+          <div style={{transform:"translateY(-30px)"}}><Sdeleni pozice={1} style={{margin:"0 0 8px"}} /></div>
 
           {/* 5) Stav kiosku + reálné počasí */}
           <div style={{background:"#fffdf8",borderRadius:"18px",border:"0.5px solid rgba(120,90,40,0.12)",overflow:"hidden"}}>
@@ -73,7 +73,7 @@ export default function Home() {
       <Sdeleni pozice={2} className="landing-sdeleni" />
 
       {/* 6) Popis kurzívou - přeložený ze slovníku */}
-      <div className="landing-desc">
+      <div className="landing-desc" style={{transform:"translateY(-16px)"}}>
         <PopisText />
       </div>
 
@@ -81,14 +81,14 @@ export default function Home() {
       <Sdeleni pozice={3} className="landing-sdeleni" />
 
       {/* 7) Nápojový lístek -> /listek, užší a vycentrovaný */}
-      <div className="landing-cta">
+      <div className="landing-cta" style={{transform:"translateY(-10px)"}}>
         <Link href="/listek" style={{display:"inline-block",boxSizing:"border-box",textAlign:"center",background:"none",color:"#1a1208",border:"1px solid #d8c8ad",borderRadius:"14px",padding:"12px 56px",fontSize:"13px",fontWeight:500,textDecoration:"none",fontFamily:"Inter,sans-serif"}}>
           <T k="napojovyListek" />
         </Link>
       </div>
 
       {/* 8) Tři odkazy - tmavé, s ikonkami (Instagram, Google natvrdo; Následuj mě z DB) */}
-      <div className="landing-links">
+      <div className="landing-links" style={{transform:"translateY(-10px)"}}>
         <a href="https://www.instagram.com/bravo_cafe_luxembourg/" target="_blank" rel="noopener noreferrer" style={odkazStyle}><InstagramIkona /><span>Instagram</span></a>
         <a href="https://share.google/Ch9TWlQZ4HTd6gRpP" target="_blank" rel="noopener noreferrer" style={odkazStyle}><GoogleIkona /><span>Google</span></a>
         <NavigujOdkaz style={odkazStyle} />
@@ -96,18 +96,18 @@ export default function Home() {
 
       {/* 9) E-mail - odkrytý */}
       {ZOBRAZIT_EMAIL && (
-        <p style={{margin:"16px 20px 0",textAlign:"center",fontSize:"13px"}}>
+        <p style={{margin:"16px 20px 0",textAlign:"center",fontSize:"13px",transform:"translateY(-12px)"}}>
           <a href={`mailto:${EMAIL}`} style={{color:"#b8954a",textDecoration:"none"}}>{EMAIL}</a>
         </p>
       )}
 
       {/* 10) Jemné "... a brzy přijde víc" - přeložené */}
-      <p style={{margin:"16px 20px 0",textAlign:"center",fontSize:"12px",color:"#6f6253",letterSpacing:"0.02em"}}>
+      <p style={{margin:"16px 20px 0",textAlign:"center",fontSize:"12px",color:"#6f6253",letterSpacing:"0.02em",transform:"translateY(12px)"}}>
         <T k="aBrzyPrijdeVic" />
       </p>
 
       {/* 11) Nenápadný vstup pro majitele - přeložený, posunutý níž */}
-      <div style={{marginTop:"56px",textAlign:"center"}}>
+      <div style={{marginTop:"56px",textAlign:"center",transform:"translateY(-18px)"}}>
         <a href="/login" style={{fontSize:"11px",color:"#b6ab9b",textDecoration:"none",letterSpacing:"0.04em"}}><T k="vstupProMajitele" /></a>
       </div>
 
