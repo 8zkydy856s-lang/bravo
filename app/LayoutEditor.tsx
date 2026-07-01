@@ -1,9 +1,11 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 
-// Skrytý editor poloh — aktivní JEN když je v URL ?uprav (běžný návštěvník ho nevidí).
+// Skrytý editor poloh — aktivní JEN když je v URL ?uprav=bravo (tajné slovo).
+// Běžný návštěvník ho nevidí; ani ?uprav bez slova ho nespustí.
 // Vojtěch přetáhne prvky přesně kam chce (na SKUTEČNÉM webu), klikne „Kopírovat volby",
 // vloží text Claudovi → Claude hodnoty zabetonuje natrvalo. Konec hádání ze slov.
+const TAJNE_SLOVO = 'bravo'
 
 type Cil = { sel: string; label: string }
 const CILE: Cil[] = [
@@ -33,7 +35,7 @@ export default function LayoutEditor() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    if (!new URLSearchParams(window.location.search).has('uprav')) return
+    if (new URLSearchParams(window.location.search).get('uprav') !== TAJNE_SLOVO) return
     setActive(true)
 
     const cleanups: (() => void)[] = []

@@ -42,7 +42,7 @@ export default function Home() {
       </header>
 
       {/* 3) Vozík BRAVO - průhledné PNG, jemně oživené (dýchání + padající plátky) */}
-      <div className="landing-photo" style={{lineHeight:0}}>
+      <div className="landing-photo" style={{lineHeight:0,marginTop:"-6px"}}>
         <Image className="fx-vozik" src="/vozik-ikona.png" alt="Vozík BRAVO" width={1025} height={750} priority />
         <VozikZivot />
       </div>
