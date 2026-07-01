@@ -117,22 +117,23 @@ export default function ProvozZivot() {
     if (!D) return
     const order = D.order || D.vars.map((_, i) => i)
     const starts = D.startPositions || [0]
-    // Věty PŘILETÍ rovnou s NEJDELŠÍM tvarem (zaplní pevnou mezeru → ŽÁDNÁ díra na začátku).
-    // Střídá se návštěvu od návštěvy jeden ze 2 nejdelších; pak se od něj normálně cyklí.
+    // Věty PŘILETÍ rovnou s NEJDELŠÍM tvarem (zaplní mezeru, žádná díra) a ten se HNED JEDNOU ZOPAKUJE
+    // (nejplnější první dojem, než člověk zaostří a začne číst). Střídá se návštěvu od návštěvy jeden ze 2 nejdelších.
     const chosenLong = starts[Math.random() < 0.5 ? 0 : 1] ?? starts[0]
-    let pos = chosenLong
-    morphSet(root, D, order[pos])
+    let pos = (chosenLong - 1 + order.length) % order.length // 1. proměna dopadne ZNOVU na týž nejdelší (zopakuje se), pak cyklus
+    morphSet(root, D, order[chosenLong])
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) { morphSet(root, D, order[chosenLong]); return } // bez pohybu rovnou nejdelší
     // NASKAKOVÁNÍ při načtení: 1. a 3. věta jsou hned; PROSTŘEDNÍ (2.) věta má 3 dechy, které PŘILETÍ po sobě
     // (odliší tu důležitou prostřední větu). Běží i při přepnutí jazyka.
     const casts = Array.from(root.querySelectorAll<HTMLElement>('.veta2 .cast'))
-    // každá část = DECH: jemně se nadechne (lehké zvětšení + prolnutí), ne posun řádku zdola
-    casts.forEach((c) => { c.style.transition = 'none'; c.style.opacity = '0'; c.style.transformOrigin = 'center'; c.style.transform = 'scale(0.955)' })
+    // ROZEVŘENÍ PÍSMEN (var. 8): písmenka jsou nejdřív rozestoupená a stáhnou se + prolnou; nowrap během přechodu (žádný řádek navíc)
+    casts.forEach((c) => { c.style.transition = 'none'; c.style.opacity = '0'; c.style.whiteSpace = 'nowrap'; c.style.letterSpacing = '0.14em' })
     casts.forEach((c, i) => {
       window.setTimeout(() => {
-        c.style.transition = 'opacity .7s ease-out, transform .7s ease-out'
-        c.style.opacity = '1'; c.style.transform = 'scale(1)'
+        c.style.transition = 'opacity .75s ease-out, letter-spacing .75s ease-out'
+        c.style.opacity = '1'; c.style.letterSpacing = 'normal'
+        window.setTimeout(() => { c.style.whiteSpace = '' }, 800)
       }, 1000 + i * 480)
     })
     const onDissolve = () => { morphDissolve(root) }
