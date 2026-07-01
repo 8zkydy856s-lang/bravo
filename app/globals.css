@@ -37,7 +37,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .landing { animation: none; }
   .brzy-emoji { animation: none; }
-  .veta-blok .fx-symbol .l-svit { animation: none; opacity: 0; }
   .stav-kvet .rot, .stav-kvet .glyf, .stav-kvet::before { animation: none; }
 }
 .landing-title { font-size: 32px; }
@@ -60,30 +59,20 @@ body {
 .veta-blok .anchor { display: inline-block; transition: color 1.1s ease, text-shadow 1.1s ease; }
 .veta-blok .mark { background: none; box-shadow: none; padding: 0; margin: 0; border: 0; }
 /* SYMBOL VDĚČNOSTI za „pochopení": LAYOUT malý (neroztahuje řádek), vizuální velikost dělá transform scale.
-   VŽDY tmavě hnědá (barva webu). Dvě vrstvy: základ hnědý + zlatá „svit" vrstva, kterou v pravidelném
-   rytmu odhaluje pruh ZDOLA NAHORU (rozsvěcí se odspodu). Žádná radiální záře. */
-.veta-blok .fx-symbol { display: inline-block; width: 0.82em; height: 1.12em; margin-left: 0.5em; vertical-align: middle; line-height: 0; position: relative; color: #574b3a; transform: scale(1.75); transform-origin: center; }
-.veta-blok .fx-symbol .l-base, .veta-blok .fx-symbol .l-svit { position: absolute; inset: 0; }
+   VYPLNĚNÝ barevně (oranžová poupata/ruce 🙏 + zelené listy/rukávy 🍀), statický — barvy jsou přímo v SVG. */
+.veta-blok .fx-symbol { display: inline-block; width: 0.82em; height: 1.12em; margin-left: 0.5em; vertical-align: middle; line-height: 0; position: relative; transform: scale(1.75); transform-origin: center; }
 .veta-blok .fx-symbol svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.veta-blok .fx-symbol .l-svit { color: #e7ad3f; will-change: clip-path; animation: fx-symbol-svit 5s ease-in-out infinite; }
-.veta-blok .fx-symbol .l-svit svg { filter: drop-shadow(0 0 1.5px #e7ad3f) drop-shadow(0 0 3px rgba(226,168,60,0.5)); }
-/* pruh světla (~20 % výšky) putuje odspodu nahoru, pak krátká prodleva */
-@keyframes fx-symbol-svit {
-  0%, 8%   { clip-path: inset(100% 0 0 0); }
-  14%      { clip-path: inset(82% 0 0 0); }
-  76%      { clip-path: inset(0 0 82% 0); }
-  84%, 100% { clip-path: inset(0 0 100% 0); }
-}
 
 /* STAVOVÝ KVĚT (místo puntíku): červený zavřeno / zelený otevřeno; velikost ~ jako slunce naproti.
-   Otáčení (pomalé, plynulé) je ODDĚLENÉ; dech (zvětšování) a radiální ZÁŘE běží SOUBĚŽNĚ ve stejném rytmu. */
+   Otáčení (pomalé) ODDĚLENÉ; dech + radiální ZÁŘE běží SOUBĚŽNĚ; průhlednost se mění NEZÁVISLE v jiném rytmu. */
 .stav-kvet { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 17px; flex: 0 0 auto; color: var(--kv, #c0392b); line-height: 0; }
-.stav-kvet .rot { display: inline-flex; align-items: center; justify-content: center; transform-origin: center; animation: stav-kvet-rot 16s linear infinite; }
+.stav-kvet .rot { display: inline-flex; align-items: center; justify-content: center; transform-origin: center; animation: stav-kvet-rot 16s linear infinite, stav-kvet-pruh 8.5s ease-in-out infinite; }
 .stav-kvet .glyf { position: relative; z-index: 1; font-size: 23px; line-height: 1; display: inline-block; transform-origin: center; animation: stav-kvet-dech 5.5s ease-in-out infinite; }
 .stav-kvet::before { content: ""; position: absolute; left: 50%; top: 50%; width: 38px; height: 38px; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, var(--kvGlow, transparent) 0%, transparent 66%); z-index: 0; pointer-events: none; animation: stav-kvet-zar 5.5s ease-in-out infinite; }
 @keyframes stav-kvet-rot { to { transform: rotate(360deg); } }
 @keyframes stav-kvet-dech { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.22); } }
 @keyframes stav-kvet-zar { 0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); } 50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); } }
+@keyframes stav-kvet-pruh { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
 
 /* ===== ORCHESTRACE STRUNY — světlo (barva zlatá, laditelné) ===== */
 /* Morf-slot: pevná mezera, nový tvar se objeví VYCENTROVANÝ (šířku nastaví engine). */
