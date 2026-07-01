@@ -39,13 +39,13 @@ export default function Home() {
       </div>
 
       {/* 2) Hlavička - nápis BraVo + podtitul, vycentrované na 50% osy, výš a těsně */}
-      <header style={{padding:"0 20px 4px",display:"flex",flexDirection:"column",alignItems:"center",marginTop:"-6px",transform:"translate(-19px,-7px)"}}>
+      <header style={{padding:"0 20px 4px",display:"flex",flexDirection:"column",alignItems:"center",marginTop:"-6px",transform:"translate(-19px,-10px)"}}>
         <BravoNapis className="bravo-napis" priority />
         <PodtitulStruna />
       </header>
 
       {/* 3) Vozík BRAVO - průhledné PNG, jemně oživené (dýchání + padající plátky) */}
-      <div className="landing-photo" style={{lineHeight:0,marginTop:"-6px"}}>
+      <div className="landing-photo" style={{lineHeight:0,marginTop:"-9px",transform:"translateX(2px)"}}>
         <Image className="fx-vozik" src="/vozik-ikona.png" alt="Vozík BRAVO" width={1025} height={750} priority />
         <VozikZivot />
       </div>
@@ -105,9 +105,9 @@ export default function Home() {
         </p>
       )}
 
-      {/* 10) Jemné "... a brzy přijde víc" - přeložené */}
-      <p style={{margin:"16px 20px 0",textAlign:"center",fontSize:"12px",color:"#6f6253",letterSpacing:"0.02em"}}>
-        <T k="aBrzyPrijdeVic" />
+      {/* 10) Jemné "... a brzy přijde víc" - přeložené, s větším zářícím smajlíkem */}
+      <p style={{margin:"16px 20px 0",textAlign:"center",fontSize:"13.5px",color:"#6f6253",letterSpacing:"0.02em"}}>
+        <T k="aBrzyPrijdeVic" /> <span className="brzy-emoji" aria-hidden="true">😌</span>
       </p>
 
       {/* 11) Nenápadný vstup pro majitele - přeložený, posunutý níž */}

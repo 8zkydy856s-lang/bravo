@@ -56,11 +56,11 @@ export const DICT: Record<string, Record<Lang, string>> = {
     lu: "eng ANVITATIOUN op e Plaz, wou den Alldag verweilt.",
   },
   aBrzyPrijdeVic: {
-    cz: "… a brzy přijde víc 😌",
-    en: "… and more is on the way 😌",
-    fr: "… et bientôt davantage 😌",
-    de: "… und bald kommt mehr 😌",
-    lu: "… a geschwë kënnt méi 😌",
+    cz: "… a brzy přijde víc",
+    en: "… and more is on the way",
+    fr: "… et bientôt davantage",
+    de: "… und bald kommt mehr",
+    lu: "… a geschwë kënnt méi",
   },
   napojovyListek: {
     cz: "Nápojový lístek", en: "Drinks menu", fr: "Carte des boissons", de: "Getränkekarte", lu: "Gedrénkskaart",

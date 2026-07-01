@@ -17,8 +17,8 @@ const FILL_MS = 4000       // „spočinutí" se rozsvítí přírůstkově STEJ
 const HOLD_MS = 370        // celé rozsvícené chvilku drží (spočine)
 // KOTVY = jeden akt: rozsvítí se v kaskádě (skoro naráz) až po BraVo; jakmile svítí BraVo,
 // od prvních bodů se v téže řadě ZHASÍNÁ (BraVo poslední). Až BraVo úplně zhasne → nový puls.
-const ANCHOR_START = 900   // kdy (do zhasínání spočinutí) se začnou rozsvěcovat kotvy
-const ANCHOR_STAGGER = 380 // těsný rozestup — skoro naráz (o poloviční chlup pomaleji)
+const ANCHOR_START = 2200  // kotvy začnou později (menší průnik se spočinutím — ať spolu nesvítí dlouho)
+const ANCHOR_STAGGER = 550 // pozvolnější rozestup — jednotlivé body jako TÓNY (alikvóty) těsně po sobě, ne naráz
 const ANCHOR_FADE = 950    // doba rozsvícení / zhasnutí jedné kotvy (jemné, = CSS transition .95s)
 const MORF_DISSOLVE_AT = 370 // kdy (v anchor fázi) se morf rozplyne, ať je vedle BraVo prázdno, než BraVo zhasne
 const LOOP_GAP = 295       // těsná pauza po ÚPLNÉM zhasnutí BraVo, pak nový puls (jeden akt, bez překrytí)
@@ -69,7 +69,7 @@ export default function Orchestrace() {
       }, fillAt)
     }
 
-    later(cycle, 1000) // start orchestrace až PO vstupním zaostření (~0,85 s blur→sharp), pak teprve puls
+    later(cycle, 1200) // start orchestrace až PO vstupním zaostření (~1 s blur→sharp), pak teprve puls
     return () => { pending.forEach((id) => window.clearTimeout(id)); pending.clear() }
   }, [])
 

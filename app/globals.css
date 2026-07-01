@@ -20,7 +20,7 @@ body {
    Mobil = úzký sloupec jako dřív; desktop (od 860px) = širší, vzdušnější. */
 .landing {
   /* VSTUP: první zobrazení = chvilku zamlžená/poloprůhledná stránka → zaostří a oživne (pak teprve orchestrace). */
-  animation: bravo-prichod .85s ease-out backwards;
+  animation: bravo-prichod 1s ease-out backwards;
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
@@ -35,12 +35,13 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   .landing { animation: none; }
+  .brzy-emoji { animation: none; }
 }
 .landing-title { font-size: 32px; }
 .bravo-napis { height: 54px; width: auto; }
 .landing-photo { margin: 0 16px 0; }
 .landing-band-text { margin: 10px 20px 0; text-align: center; }
-.landing-band-status { margin: 10px 16px 0; padding-top: 8px; }
+.landing-band-status { margin: 5px 16px 0; padding-top: 8px; }
 
 /* Živý text provozu (ProvozZivot) — záměrné řádkování + morf věty 2. Kotva drží, řádek navíc nevzniká. */
 .veta-blok { white-space: normal; }
@@ -103,6 +104,12 @@ body {
    Dirigent řídí kaskádu (rozsvícení po řadě → od BraVo se v řadě zhasíná, BraVo poslední). */
 .anchor { transition: color .95s ease, text-shadow .95s ease; }
 .anchor.on { color: #c99a3a; text-shadow: 0 0 9px rgba(232,179,78,0.55); }
+/* Smajlík u „… a brzy přijde víc" — větší než text + jemná pulzující zlatá zář. */
+.brzy-emoji { font-size: 18px; display: inline-block; vertical-align: -1px; animation: brzy-zar 3.6s ease-in-out infinite; }
+@keyframes brzy-zar {
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(216,165,82,0.25)); }
+  50%      { filter: drop-shadow(0 0 6px rgba(216,165,82,0.7)); }
+}
 .landing-desc { margin: 10px 20px 0; text-align: center; }
 .landing-cta { margin: 12px 16px 0; text-align: center; }
 .landing-links { margin: 10px 16px 0; display: flex; gap: 8px; }
