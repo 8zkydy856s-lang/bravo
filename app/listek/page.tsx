@@ -51,10 +51,9 @@ const SEKCE: Sekce[] = [
   {
     nadpis: 'Chocolate, tea, juice',
     polozky: [
-      { name: 'Ice Hibiscus Lemonade', popis: 'apple / grapefruit / orange juice', ice: '7,0' },
-      { name: 'Tea', popis: 'Hibiscus, Home Mint / Salvia, Roibos, Greek, Ginger-Lemon-Mint, Hibiscus-Mint … and more', hot: '5,5', ice: '6,5' },
-      { name: 'Tea', popis: 'Chamomile, Fennel, Green, Earl Grey, English Breakfast, Mint … and more', hot: '5,5', ice: '6,5' },
-      { name: 'Chocolate', popis: 'Dark or White Vanilla', hot: '5,0/6,5', ice: '7,4' },
+      { name: 'Ice Hibiscus Lemonade', ice: '7,0' },
+      { name: 'Tea', hot: '5,5', ice: '6,5' },
+      { name: 'Chocolate', hot: '5,0/6,5', ice: '7,4' },
       { name: 'Juice', popis: 'Orange, Apple, Grapefruit', ice: '5,8' },
       { name: 'Babyccino / Water 0,5 L', plain: '3,8 / 2,5' },
     ],
@@ -62,7 +61,6 @@ const SEKCE: Sekce[] = [
 ]
 
 const BLOKY: Blok[] = [
-  { nadpis: 'Milk', text: 'bio whole · no lactose · oat · almond.' },
   { nadpis: 'Free spices', text: 'Cardamom, Ginger, Cinnamon, Masala Chai, Nutmeg, Chilli, Golden Turmeric Mix, Tonka, Fennel, Pepper, Clove, Star Anise.' },
   { nadpis: 'Extra  1€', text: 'Espresso, Vanilla seeds, (Salty) Caramel, Hazelnut / Pistachio / Almond cream, Choco Dark / White, Carob, Whipped cream.' },
 ]
@@ -85,15 +83,15 @@ function Cena({ p }: { p: Polozka }) {
 
 export default function ListekPage() {
   return (
-    <main style={{ minHeight: '100vh', background: '#f6f1e6', fontFamily: 'Inter,sans-serif', padding: '20px', boxSizing: 'border-box' }}>
+    <main style={{ minHeight: '100vh', background: '#f6f1e6', fontFamily: 'Inter,sans-serif', padding: '8px 20px 24px', boxSizing: 'border-box' }}>
       <div style={{ width: '100%', maxWidth: '640px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
           <ZpetOdkaz />
           <BravoNapis height={34} />
         </div>
 
-        <h1 style={{ fontSize: '26px', fontWeight: 300, letterSpacing: '0.06em', color: '#1a1208', textAlign: 'center', margin: '0 0 8px' }}>Drinks</h1>
-        <p style={{ textAlign: 'center', fontSize: '12px', margin: '0 0 28px' }}>
+        <h1 style={{ fontSize: '26px', fontWeight: 300, letterSpacing: '0.06em', color: '#1a1208', textAlign: 'center', margin: '0 0 6px' }}>Drinks</h1>
+        <p style={{ textAlign: 'center', fontSize: '12px', margin: '0 0 20px' }}>
           <span style={{ color: HOT }}>● HOT</span>&nbsp;&nbsp;<span style={{ color: ICE }}>● ICE</span>
         </p>
 
@@ -105,7 +103,6 @@ export default function ListekPage() {
               <div key={i} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '12px', margin: '0 0 5px' }}>
                 <span style={{ flex: '1 1 auto', minWidth: 0, fontSize: '14px', color: '#1a1208' }}>
                   {p.name}
-                  {p.popis && <span style={{ fontSize: '12px', color: '#9b8d76', fontStyle: 'italic' }}>{'  '}… {p.popis}</span>}
                 </span>
                 <span style={{ flex: '0 0 auto', whiteSpace: 'nowrap', fontSize: '13px' }}><Cena p={p} /></span>
               </div>
