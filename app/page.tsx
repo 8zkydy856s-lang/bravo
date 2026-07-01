@@ -19,7 +19,7 @@ const EMAIL = "hello@bra-vo.com";
 const odkazStyle: React.CSSProperties = {
   flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
   padding: "12px 6px", borderRadius: "12px", border: "none", background: "#4d4030",
-  fontSize: "12px", color: "#f6f1e6", textDecoration: "none"
+  fontSize: "12px", color: "#f6f1e6", textDecoration: "none", whiteSpace: "nowrap"
 };
 
 export default function Home() {
