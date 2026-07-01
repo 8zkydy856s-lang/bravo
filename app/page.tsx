@@ -6,8 +6,9 @@ import Pocasi from "./Pocasi";
 import { LangProvider, T } from "./LangContext";
 import JazykPrepinac from "./JazykPrepinac";
 import { InstagramIkona, GoogleIkona } from "./Ikony";
-import { WebObsahProvider, Sdeleni, ZitraVyhled, ProvozText, PopisText, NavigujOdkaz } from "./WebObsah";
+import { WebObsahProvider, Sdeleni, ZitraVyhled, PopisText, NavigujOdkaz } from "./WebObsah";
 import VozikZivot from "./VozikZivot";
+import ProvozZivot from "./ProvozZivot";
 import LayoutEditor from "./LayoutEditor";
 // Fáze 1: AuthBar a TrustCard zůstávají v projektu, na veřejné úvodní stránce se zatím nevykreslují.
 // import AuthBar from "./AuthBar";
@@ -49,8 +50,8 @@ export default function Home() {
 
       {/* 4+5) Vlídný text o provozu + karta stavu */}
       <div className="landing-band" style={{marginTop:"-14px"}}>
-        {/* 4) Text o provozu - přeložený ze slovníku */}
-        <ProvozText />
+        {/* 4) Text o provozu - ŽIVÝ: záměrné řádkování + morf věty 2 (ze simulátoru) */}
+        <ProvozZivot />
 
         {/* pravý sloupec: sdělení 1 + karta stavu */}
         <div className="landing-band-status">
