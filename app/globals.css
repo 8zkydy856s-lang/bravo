@@ -52,7 +52,7 @@ body {
   .landing-band-status { flex: 1; margin: 16px 0 0; }
   .landing-desc { max-width: 620px; margin: 18px auto 0; }
   .landing-cta { width: 100%; max-width: 340px; margin: 16px auto 0; }
-  .landing-links { max-width: 744px; margin: 16px auto 0; gap: 8px; }
+  .landing-links { max-width: 860px; margin: 16px auto 0; gap: 8px; }
   .landing-sdeleni { max-width: 620px; margin: 14px auto 0; }
 }
 
@@ -61,7 +61,7 @@ body {
 .fx-vozik {
   width: 100%; height: auto; display: block;
   transform-origin: 50% 90%; will-change: transform, filter;
-  animation: vozik-nadech 30s ease-in-out infinite, vozik-jas 42s ease-in-out infinite;
+  animation: vozik-nadech 40s ease-in-out infinite, vozik-jas 54s ease-in-out infinite;
 }
 @keyframes vozik-nadech {
   0% { transform: scale(1); }
@@ -152,9 +152,9 @@ body {
    note1 (♪) i note2 (♫) vycházejí ze středu vozíku, každá jiný odstín a směr (1 doprava, 2 doleva).
    note3 (♬) je nejsvětlejší, náhodně kdekoli přes obrázek, u toho jemně pulzuje (nádech/výdech). */
 .vz-note { position: absolute; line-height: 1; opacity: 0; will-change: transform, opacity; pointer-events: none; }
-.vz-note1 { left: 52%; top: 40%; font-size: 20px; color: #c19a4a; animation: vznote-1 30s ease-in-out infinite; animation-delay: -9s; }
-.vz-note2 { left: 46%; top: 42%; font-size: 19px; color: #a87a5a; animation: vznote-2 34s ease-in-out infinite; animation-delay: -20s; }
-.vz-note3 { left: 40%; top: 40%; font-size: 18px; color: #b6a878; animation: vznote-3 40s ease-in-out infinite; animation-delay: -6s; }
+.vz-note1 { left: 52%; top: 40%; font-size: 17.6px; color: #c19a4a; animation: vznote-1 30s ease-in-out infinite; animation-delay: -9s; }
+.vz-note2 { left: 46%; top: 42%; font-size: 16.7px; color: #a87a5a; animation: vznote-2 34s ease-in-out infinite; animation-delay: -20s; }
+.vz-note3 { left: 40%; top: 40%; font-size: 15.8px; color: #b6a878; animation: vznote-3 40s ease-in-out infinite; animation-delay: -6s; }
 /* všechny 3 noty NEZÁVISLE pulzují — mění průsvitnost I velikost (imituje hudbu); odstíny jemně různé */
 @keyframes vznote-1 {
   0%   { transform: translate(0,0) scale(0.9) rotate(-6deg); opacity: 0; }
