@@ -9,12 +9,16 @@ import { useEffect } from 'react'
 // Kotvy zatím běží nezávisle (přidají se později); dirigent je postaven fázově, aby šla anchor-fáze zapojit.
 // reduced-motion → nespouští se (klid).
 
-const DISSOLVE_MS = 1000 // než se starý tvar morfu rozplyne (opacity→0), pak teprve přijede světlo
-// JEDNA baterka: chvíle i spočinutí = stejné světlo, stejná rychlost (4 s). Sekvenčně a plynule.
-const SWEEP_MS = 4000    // světlo „chvíle" přejíždí (prosvítí podtitul/popis + napíše morf)
-const FILL_MS = 4000     // „spočinutí": přírůstkové rozsvěcování STEJNOU rychlostí
-const SIGH_MS = 2400     // povzdech: drží → zář se zvedne → pozvolna zhasne (jeden plynulý pohyb)
-const GAP_MS = 2600      // klid mezi pulsy
+// JEDNA baterka, KONSTANTNÍ rychlost (linear) — švy na sebe navazují bez zpomalení = plynulé.
+const DISSOLVE_MS = 900  // starý tvar morfu se rozplyne (opacity→0), pak přijede světlo
+const SWEEP_MS = 3400    // baterka přejede „chvíle" (prosvítí podtitul/popis + napíše morf)
+const FILL_MS = 3400     // „spočinutí" se rozsvítí přírůstkově STEJNOU rychlostí
+const HOLD_MS = 500      // celé rozsvícené chvilku drží (spočine)
+const UNFILL_MS = 3400   // „spočinutí" zhasne SYMETRICKY (zleva doprava, stejně jako se rozsvítilo)
+const ANCHOR_START = 1300 // kdy (do zhasínání) se začnou rozsvěcovat kotvy
+const ANCHOR_STAGGER = 450 // rozestup mezi jednotlivými kotvami
+const GLOW_MS = 2600     // jak dlouho kotva září (nadech → drží → zhasne)
+const GAP_MS = 2200      // klid mezi pulsy
 
 export default function Orchestrace() {
   useEffect(() => {
@@ -37,19 +41,21 @@ export default function Orchestrace() {
         window.dispatchEvent(new CustomEvent('bravo-morf-write')) // nastaví nový tvar (zatím neviditelný pod psacím světlem)
         q('.struna-chvile').forEach((e) => { e.classList.remove('sweep'); void e.offsetWidth; e.classList.add('sweep') })         // podtitul + popis: prosvícení
         q('.morf-slot').forEach((e) => { e.classList.remove('sweep-write'); void e.offsetWidth; e.classList.add('sweep-write') }) // morf: světlo NAPÍŠE nový výraz
-        // Fáze 2 — „spočinutí": postupné rozsvěcování (přírůstek) → drží (spočine) → zář se zvýší → zhasne
+        // Fáze 2 — „spočinutí": přírůstkové ROZSVÍCENÍ zleva doprava (stejná rychlost, zůstane)
         later(() => {
           q('.struna-chvile').forEach((e) => e.classList.remove('sweep'))
           q('.morf-slot').forEach((e) => e.classList.remove('sweep-write'))
-          q('.struna-spocin').forEach((e) => { e.classList.remove('fill', 'sigh'); void e.offsetWidth; e.classList.add('fill') })
+          q('.struna-spocin').forEach((e) => { e.classList.remove('fill', 'unfill'); void e.offsetWidth; e.classList.add('fill') })
           later(() => {
-            // celé rozsvíceno → jeden plynulý povzdech (drží → zvedne se → zhasne)
-            q('.struna-spocin').forEach((e) => { e.classList.remove('fill'); void e.offsetWidth; e.classList.add('sigh') })
-            later(() => {
-              q('.struna-spocin').forEach((e) => e.classList.remove('sigh'))
-              later(cycle, GAP_MS)
-            }, SIGH_MS)
-          }, FILL_MS)
+            // Fáze 3 — chvilku DRŽÍ → symetrické ZHASNUTÍ (zleva doprava, stejně jako se rozsvítilo)
+            q('.struna-spocin').forEach((e) => { e.classList.remove('fill'); void e.offsetWidth; e.classList.add('unfill') })
+            // z pohasínání spočinutí vzejde postupné NADECHNUTÍ kotev (jedna po druhé)
+            q('.anchor').forEach((a, i) => {
+              later(() => { a.classList.remove('glow'); void a.offsetWidth; a.classList.add('glow') }, ANCHOR_START + i * ANCHOR_STAGGER)
+            })
+            // po zhasnutí spočinutí + dozáření kotev → další puls
+            later(cycle, ANCHOR_START + 4 * ANCHOR_STAGGER + GLOW_MS + GAP_MS)
+          }, FILL_MS + HOLD_MS)
         }, SWEEP_MS)
       }, DISSOLVE_MS)
     }
