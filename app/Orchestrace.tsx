@@ -11,17 +11,17 @@ import { useEffect } from 'react'
 
 // JEDNA baterka, KONSTANTNÍ rychlost (linear). Fáze se PŘEKRÝVAJÍ → světlo projede plynule celou
 // stránkou bez kroku/přerušení; morf se rozplyne O CHVÍLI DŘÍV, aby další cyklus naskočil bez čekání.
-const SWEEP_MS = 3400      // baterka přejede „chvíle" (prosvítí podtitul/popis + napíše morf)
-const OVERLAP = 1200       // spočinutí začne DŘÍV (o tolik před koncem sweepu) = plynulý přechod 1.→2. část
-const FILL_MS = 3400       // „spočinutí" se rozsvítí přírůstkově STEJNOU rychlostí
-const HOLD_MS = 300        // celé rozsvícené chvilku drží (spočine)
+const SWEEP_MS = 3800      // baterka přejede „chvíle" (prosvítí podtitul/popis + napíše morf) — o chlup pomaleji
+const OVERLAP = 1500       // spočinutí začne DŘÍV (větší překryv) = plynulejší přechod chvíle→spočinutí bez skoku
+const FILL_MS = 3800       // „spočinutí" se rozsvítí přírůstkově STEJNOU rychlostí — o chlup pomaleji
+const HOLD_MS = 350        // celé rozsvícené chvilku drží (spočine)
 // KOTVY = jeden akt: rozsvítí se v kaskádě (skoro naráz) až po BraVo; jakmile svítí BraVo,
 // od prvních bodů se v téže řadě ZHASÍNÁ (BraVo poslední). Až BraVo úplně zhasne → nový puls.
-const ANCHOR_START = 800   // kdy (do zhasínání spočinutí) se začnou rozsvěcovat kotvy
-const ANCHOR_STAGGER = 320 // těsný rozestup — skoro naráz
-const ANCHOR_FADE = 800    // doba rozsvícení / zhasnutí jedné kotvy (jemné, = CSS transition)
-const MORF_DISSOLVE_AT = 300 // kdy (v anchor fázi) se morf rozplyne, ať je vedle BraVo prázdno, než BraVo zhasne
-const LOOP_GAP = 250       // těsná pauza po ÚPLNÉM zhasnutí BraVo, pak nový puls (jeden akt, bez překrytí)
+const ANCHOR_START = 850   // kdy (do zhasínání spočinutí) se začnou rozsvěcovat kotvy
+const ANCHOR_STAGGER = 360 // těsný rozestup — skoro naráz (o chlup pomaleji)
+const ANCHOR_FADE = 900    // doba rozsvícení / zhasnutí jedné kotvy (jemné, = CSS transition .9s)
+const MORF_DISSOLVE_AT = 350 // kdy (v anchor fázi) se morf rozplyne, ať je vedle BraVo prázdno, než BraVo zhasne
+const LOOP_GAP = 280       // těsná pauza po ÚPLNÉM zhasnutí BraVo, pak nový puls (jeden akt, bez překrytí)
 // Pořadí rozsvěcování dle DOM pořadí kotev [BraVo, ZDE, OBA, TOBĚ, POZVÁNKA]:
 // krok 0 = ZDE + POZVÁNKA (současně) → 1 = TOBĚ → 2 = OBA → 3 = BraVo
 const ANCHOR_STEP = [3, 0, 2, 1, 0]

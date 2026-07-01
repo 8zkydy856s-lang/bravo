@@ -94,7 +94,7 @@ function morphSet(root: HTMLElement, D: MData, vi: number) {
 function morphDissolve(root: HTMLElement) {
   const slot = root.querySelector<HTMLElement>('.morf-slot')
   if (!slot) return
-  slot.style.transition = 'opacity 1.4s ease-in-out'
+  slot.style.transition = 'opacity 1.6s ease-in-out'
   slot.style.opacity = '0'
 }
 // PSANÍ SVĚTLEM: nastaví CELÝ nový výraz (vycentrovaný) a krytí OKAMŽITĚ zpět na 1;
