@@ -9,11 +9,11 @@ export const LANGS: [Lang, string][] = [
 
 export const DICT: Record<string, Record<Lang, string>> = {
   mistoKeSpocinuti: {
-    cz: "místo ke spočinutí",
-    en: "a place to rest",
-    fr: "un lieu pour souffler",
-    de: "ein Moment zum Verweilen",
-    lu: "e Plaz fir ze verweilen",
+    cz: "… chvíle spočinutí",
+    en: "… a moment to rest",
+    fr: "… un instant pour souffler",
+    de: "… eine Weile zum Verweilen",
+    lu: "… eng Weil fir ze verweilen",
   },
   praveTed: {
     cz: "PRÁVĚ TEĎ", en: "RIGHT NOW", fr: "EN CE MOMENT", de: "GERADE JETZT", lu: "ELO GRAD",
