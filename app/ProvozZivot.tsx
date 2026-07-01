@@ -142,11 +142,15 @@ export default function ProvozZivot() {
         window.setTimeout(() => { c.style.whiteSpace = '' }, 800)
       }, 1000 + i * 480)
     })
+    // SYMBOL VDĚČNOSTI: stojí (zmrazený) a rozhýbe se AŽ po dokončení náběhu 3 dechů 2. věty
+    // (poslední dech: 1000 + 2*480 = 1960 ms + přechod .75s ≈ 2710 ms). Nezávislé na struně/kotvě.
+    const goTimer = window.setTimeout(() => { root.querySelector('.fx-symbol')?.classList.add('go') }, 2850)
     const onDissolve = () => { morphDissolve(root) }
     const onWrite = () => { pos = (pos + 1) % order.length; morphWriteNew(root, D, order[pos]) }
     window.addEventListener('bravo-morf-dissolve', onDissolve)
     window.addEventListener('bravo-morf-write', onWrite)
     return () => {
+      window.clearTimeout(goTimer)
       window.removeEventListener('bravo-morf-dissolve', onDissolve)
       window.removeEventListener('bravo-morf-write', onWrite)
     }

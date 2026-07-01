@@ -62,7 +62,7 @@ export default function Home() {
           <Sdeleni pozice={1} style={{margin:"0 0 12px"}} />
 
           {/* 5) Stav kiosku + reálné počasí */}
-          <div style={{background:"#fffdf8",borderRadius:"18px",border:"0.5px solid rgba(120,90,40,0.12)",overflow:"hidden"}}>
+          <div style={{background:"#fffdf8",borderRadius:"18px",border:"0.5px solid rgba(120,90,40,0.12)",overflow:"hidden",boxShadow:"0 1px 4px rgba(58,42,18,0.10), 0 4px 16px rgba(58,42,18,0.11)"}}>
             <div style={{padding:"14px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
               <div>
                 <p style={{fontSize:"10px",letterSpacing:"0.15em",color:"#8b7d66",margin:"0 0 6px"}}><T k="praveTed" /></p>
@@ -114,7 +114,7 @@ export default function Home() {
 
       {/* 11) Nenápadný vstup pro majitele - přeložený, posunutý níž */}
       <div style={{marginTop:"56px",textAlign:"center"}}>
-        <a href="/login" style={{fontSize:"12px",color:"#78705f",textDecoration:"none",letterSpacing:"0.04em"}}><T k="vstupProMajitele" /></a>
+        <a href="/login" style={{fontSize:"12px",color:"#ece6d8",textDecoration:"none",letterSpacing:"0.04em"}}><T k="vstupProMajitele" /></a>
       </div>
 
       {/*

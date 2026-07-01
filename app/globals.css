@@ -62,8 +62,11 @@ body {
 /* SYMBOL VDĚČNOSTI za „pochopení": LAYOUT malý (neroztahuje řádek), vizuální velikost dělá transform scale.
    Pod objektem jemná KONSTANTNÍ zlatá záře (drop-shadow kopíruje tvar, není radiální, nehýbe se).
    Lehce zprůhledněný (opacity 0.82), aby nebyl vůči zbytku stránky příliš výrazný. */
-.veta-blok .fx-symbol { display: inline-block; width: 0.82em; height: 1.12em; margin-left: calc(0.5em + 3px); vertical-align: middle; line-height: 0; position: relative; transform: scale(1.96); transform-origin: center; opacity: 0.82; }
+.veta-blok .fx-symbol { display: inline-block; width: 0.82em; height: 1.12em; margin-left: calc(0.5em + 3px); vertical-align: middle; line-height: 0; position: relative; transform: scale(1.96); transform-origin: center; opacity: 0.78; }
 .veta-blok .fx-symbol svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 2px rgba(226,168,60,0.5)) drop-shadow(0 0 4px rgba(226,168,60,0.32)); }
+/* Animace symbolu STOJÍ (zmrazená na stavu vděčnosti), spustí se AŽ po náběhu 3 řádků 2. věty — ProvozZivot přidá .go.
+   Nezávislé na struně/kotvě. Specificita :not(.go) svg path (0,3,2) přebíjí per-class `animation` shorthand (0,3,0). */
+.veta-blok .fx-symbol:not(.go) svg path { animation-play-state: paused; }
 /* BAREVNÁ SMYČKA + JEMNÝ POHYB (statický tvar, decentní; cyklus 25s, přechody pomalé). Pořadí VDĚČNOST → KVĚTINA → KÁVA.
    VDĚČNOST (kůže + modré rukávy + paže barva dlaní): CELÉ dvě SVISLÉ POLOVINY se vůči sobě jemně posunou svisle jako „prosím".
    KVĚTINA (červená): dvě horní špičky se NAZNAČENĚ pootevřou a vrátí (rotace kolem paty, o 25 % víc). KÁVA (hnědá): klid. */
@@ -92,9 +95,10 @@ body {
 
 /* STAVOVÝ KVĚT (místo puntíku): červený zavřeno / zelený otevřeno; velikost ~ jako slunce naproti.
    Otáčení (pomalé) ODDĚLENÉ; dech + radiální ZÁŘE běží SOUBĚŽNĚ; průhlednost se mění NEZÁVISLE v jiném rytmu. */
-.stav-kvet { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 17px; flex: 0 0 auto; color: var(--kv, #c0392b); line-height: 0; }
+.stav-kvet { position: relative; top: 2px; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 17px; flex: 0 0 auto; color: var(--kv, #c0392b); line-height: 0; }
 .stav-kvet .rot { display: inline-flex; align-items: center; justify-content: center; transform-origin: center; animation: stav-kvet-rot 16s linear infinite, stav-kvet-pruh 8.5s ease-in-out infinite; }
-.stav-kvet .glyf { position: relative; z-index: 1; font-size: 23px; line-height: 1; display: inline-block; transform-origin: center; animation: stav-kvet-dech 5.5s ease-in-out infinite; }
+/* KVĚT o 12 % větší (23→25.8px); ZÁŘE ::before zůstává 38px (zvětšení jen na květ, ne na radiaci) */
+.stav-kvet .glyf { position: relative; z-index: 1; font-size: 25.8px; line-height: 1; display: inline-block; transform-origin: center; animation: stav-kvet-dech 5.5s ease-in-out infinite; }
 .stav-kvet::before { content: ""; position: absolute; left: 50%; top: 50%; width: 38px; height: 38px; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, var(--kvGlow, transparent) 0%, transparent 66%); z-index: 0; pointer-events: none; animation: stav-kvet-zar 5.5s ease-in-out infinite; }
 @keyframes stav-kvet-rot { to { transform: rotate(360deg); } }
 @keyframes stav-kvet-dech { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.22); } }
