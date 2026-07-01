@@ -37,7 +37,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .landing { animation: none; }
   .brzy-emoji { animation: none; }
-  .veta-blok .fx-symbol .sym-bud-l, .veta-blok .fx-symbol .sym-bud-r, .veta-blok .fx-symbol .sym-neck, .veta-blok .fx-symbol .sym-foL, .veta-blok .fx-symbol .sym-foR, .veta-blok .fx-symbol .sym-leafL, .veta-blok .fx-symbol .sym-leafR, .veta-blok .fx-symbol .sym-veinL, .veta-blok .fx-symbol .sym-veinR { animation: none; }
+  .veta-blok .fx-symbol .sym-bud-l, .veta-blok .fx-symbol .sym-bud-r, .veta-blok .fx-symbol .sym-foL, .veta-blok .fx-symbol .sym-foR, .veta-blok .fx-symbol .sym-leafL, .veta-blok .fx-symbol .sym-leafR, .veta-blok .fx-symbol .sym-veinL, .veta-blok .fx-symbol .sym-veinR { animation: none; }
   .stav-kvet .rot, .stav-kvet .glyf, .stav-kvet::before { animation: none; }
 }
 .landing-title { font-size: 32px; }
@@ -68,7 +68,6 @@ body {
    VDĚČNOST (kůže + modré rukávy): CELÉ dvě SVISLÉ POLOVINY se vůči sobě jemně posunou nahoru/dolů jako „prosím". */
 .veta-blok .fx-symbol .sym-bud-l { transform-box: fill-box; transform-origin: 50% 100%; animation: sym-cyk-top 25s ease-in-out infinite, sym-mot-lbud 25s ease-in-out infinite; }
 .veta-blok .fx-symbol .sym-bud-r { transform-box: fill-box; transform-origin: 50% 100%; animation: sym-cyk-top 25s ease-in-out infinite, sym-mot-rbud 25s ease-in-out infinite; }
-.veta-blok .fx-symbol .sym-neck { animation: sym-cyk-foliage 25s ease-in-out infinite; }
 .veta-blok .fx-symbol .sym-foL { animation: sym-cyk-foliage 25s ease-in-out infinite, sym-mot-lhalf 25s ease-in-out infinite; }
 .veta-blok .fx-symbol .sym-foR { animation: sym-cyk-foliage 25s ease-in-out infinite, sym-mot-rhalf 25s ease-in-out infinite; }
 .veta-blok .fx-symbol .sym-leafL { animation: sym-cyk-leaf 25s ease-in-out infinite, sym-mot-lhalf 25s ease-in-out infinite; }
