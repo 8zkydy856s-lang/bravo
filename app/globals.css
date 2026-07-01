@@ -92,3 +92,9 @@ body {
   .fx-vozik { animation: none; }
   .vozik-zivot .vz-platek { animation: none; opacity: 0; }
 }
+
+/* Nápojový lístek — na TELEFONU (≤600px) čistší: bez popisků položek, bez sekce MILK, jen jeden čaj.
+   Tablet + desktop: plná verze. (Horní mezera je zmenšená pro všechna zařízení, řeší page.tsx.) */
+@media (max-width: 600px) {
+  .lp-popis, .lp-milk, .lp-wide { display: none !important; }
+}

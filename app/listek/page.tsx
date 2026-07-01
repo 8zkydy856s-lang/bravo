@@ -1,18 +1,20 @@
 import BravoNapis from "../BravoNapis";
 import ZpetOdkaz from "../ZpetOdkaz";
-// Nápojový lístek BRAVO (/listek) - statická stránka, anglicky.
-// Ceny HOT (červená) / ICE (modrá) přeneseny ze simulátoru (aktuálnější verze).
+// Nápojový lístek BRAVO (/listek). Ceny HOT (červená) / ICE (modrá) ze simulátoru.
+// TELEFON (≤600px, viz globals.css): čistší — bez popisků položek, bez sekce MILK, sloučené Tea, těsnější horní část.
+// Tablet + desktop: plná verze (s popisky, MILK, dvěma čaji).
+// Nadpisy sekcí „… bio · fair trade" / „… only real, good ingredients" jsou odstraněny VŠUDE.
 
-type Polozka = { name: string; popis?: string; hot?: string; ice?: string; plain?: string }
-type Sekce = { nadpis: string; podnadpis?: string; polozky: Polozka[] }
-type Blok = { nadpis: string; text: string }
+type Polozka = { name: string; popis?: string; hot?: string; ice?: string; plain?: string; wide?: boolean }
+type Sekce = { nadpis: string; polozky: Polozka[] }
+type Blok = { nadpis: string; text: string; phoneHide?: boolean }
 
 const HOT = '#bd7962'
 const ICE = '#6f9eac'
 
 const SEKCE: Sekce[] = [
   {
-    nadpis: 'Black coffee', podnadpis: '… bio · fair trade',
+    nadpis: 'Black coffee',
     polozky: [
       { name: 'Espresso (Ristretto) / Double Espresso', hot: '3,5/5,0', ice: '3,8/5,3' },
       { name: 'Espresso Romano', popis: 'slice of lemon / orange / grapefruit', hot: '3,8/5,3', ice: '4,0/5,5' },
@@ -34,7 +36,7 @@ const SEKCE: Sekce[] = [
     ],
   },
   {
-    nadpis: 'Extravagant', podnadpis: '… only real, good ingredients',
+    nadpis: 'Extravagant',
     polozky: [
       { name: 'Orange Espresso / Apple Espresso', hot: '7,0', ice: '7,9' },
       { name: 'Apple / Orange “Cider”', popis: 'spiced honey juice', hot: '6,6', ice: '7,6' },
@@ -51,9 +53,10 @@ const SEKCE: Sekce[] = [
   {
     nadpis: 'Chocolate, tea, juice',
     polozky: [
-      { name: 'Ice Hibiscus Lemonade', ice: '7,0' },
-      { name: 'Tea', hot: '5,5', ice: '6,5' },
-      { name: 'Chocolate', hot: '5,0/6,5', ice: '7,4' },
+      { name: 'Ice Hibiscus Lemonade', popis: 'apple / grapefruit / orange juice', ice: '7,0' },
+      { name: 'Tea', popis: 'Hibiscus, Home Mint / Salvia, Roibos, Greek, Ginger-Lemon-Mint, Hibiscus-Mint … and more', hot: '5,5', ice: '6,5' },
+      { name: 'Tea', popis: 'Chamomile, Fennel, Green, Earl Grey, English Breakfast, Mint … and more', hot: '5,5', ice: '6,5', wide: true },
+      { name: 'Chocolate', popis: 'Dark or White Vanilla', hot: '5,0/6,5', ice: '7,4' },
       { name: 'Juice', popis: 'Orange, Apple, Grapefruit', ice: '5,8' },
       { name: 'Babyccino / Water 0,5 L', plain: '3,8 / 2,5' },
     ],
@@ -61,6 +64,7 @@ const SEKCE: Sekce[] = [
 ]
 
 const BLOKY: Blok[] = [
+  { nadpis: 'Milk', text: 'bio whole · no lactose · oat · almond.', phoneHide: true },
   { nadpis: 'Free spices', text: 'Cardamom, Ginger, Cinnamon, Masala Chai, Nutmeg, Chilli, Golden Turmeric Mix, Tonka, Fennel, Pepper, Clove, Star Anise.' },
   { nadpis: 'Extra  1€', text: 'Espresso, Vanilla seeds, (Salty) Caramel, Hazelnut / Pistachio / Almond cream, Choco Dark / White, Carob, Whipped cream.' },
 ]
@@ -83,26 +87,26 @@ function Cena({ p }: { p: Polozka }) {
 
 export default function ListekPage() {
   return (
-    <main style={{ minHeight: '100vh', background: '#f6f1e6', fontFamily: 'Inter,sans-serif', padding: '8px 20px 24px', boxSizing: 'border-box' }}>
+    <main className="listek-main" style={{ minHeight: '100vh', background: '#f6f1e6', fontFamily: 'Inter,sans-serif', padding: '8px 20px 24px', boxSizing: 'border-box' }}>
       <div style={{ width: '100%', maxWidth: '640px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+        <div className="listek-top" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
           <ZpetOdkaz />
           <BravoNapis height={34} />
         </div>
 
-        <h1 style={{ fontSize: '26px', fontWeight: 300, letterSpacing: '0.06em', color: '#1a1208', textAlign: 'center', margin: '0 0 6px' }}>Drinks</h1>
-        <p style={{ textAlign: 'center', fontSize: '12px', margin: '0 0 20px' }}>
+        <h1 className="listek-h1" style={{ fontSize: '26px', fontWeight: 300, letterSpacing: '0.06em', color: '#1a1208', textAlign: 'center', margin: '0 0 6px' }}>Drinks</h1>
+        <p className="listek-legenda" style={{ textAlign: 'center', fontSize: '12px', margin: '0 0 20px' }}>
           <span style={{ color: HOT }}>● HOT</span>&nbsp;&nbsp;<span style={{ color: ICE }}>● ICE</span>
         </p>
 
         {SEKCE.map(s => (
           <section key={s.nadpis} style={{ marginBottom: '22px' }}>
             <Nadpis>{s.nadpis}</Nadpis>
-            {s.podnadpis && <p style={{ fontSize: '12px', color: '#9b8d76', fontStyle: 'italic', margin: '-6px 0 12px' }}>{s.podnadpis}</p>}
             {s.polozky.map((p, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '12px', margin: '0 0 5px' }}>
+              <div key={i} className={p.wide ? 'lp-wide' : undefined} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '12px', margin: '0 0 5px' }}>
                 <span style={{ flex: '1 1 auto', minWidth: 0, fontSize: '14px', color: '#1a1208' }}>
                   {p.name}
+                  {p.popis && <span className="lp-popis" style={{ fontSize: '12px', color: '#9b8d76', fontStyle: 'italic' }}>{'  '}… {p.popis}</span>}
                 </span>
                 <span style={{ flex: '0 0 auto', whiteSpace: 'nowrap', fontSize: '13px' }}><Cena p={p} /></span>
               </div>
@@ -111,7 +115,7 @@ export default function ListekPage() {
         ))}
 
         {BLOKY.map(b => (
-          <section key={b.nadpis} style={{ marginBottom: '22px' }}>
+          <section key={b.nadpis} className={b.phoneHide ? 'lp-milk' : undefined} style={{ marginBottom: '22px' }}>
             <Nadpis>{b.nadpis}</Nadpis>
             <p style={{ fontSize: '13px', color: '#6f6253', lineHeight: 1.7, margin: 0 }}>{b.text}</p>
           </section>
