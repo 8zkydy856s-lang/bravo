@@ -117,12 +117,11 @@ export default function ProvozZivot() {
     if (!D) return
     const order = D.order || D.vars.map((_, i) => i)
     const starts = D.startPositions || [0]
-    // PRVNÍ pořádný tvar (co světlo napíše jako první) = jeden ze 2 NEJDELŠÍCH (střídavě) → celistvý první zážitek.
+    // Věty PŘILETÍ rovnou s NEJDELŠÍM tvarem (zaplní pevnou mezeru → ŽÁDNÁ díra na začátku).
+    // Střídá se návštěvu od návštěvy jeden ze 2 nejdelších; pak se od něj normálně cyklí.
     const chosenLong = starts[Math.random() < 0.5 ? 0 : 1] ?? starts[0]
-    let pos = (chosenLong - 1 + order.length) % order.length // aby první proměna dopadla na nejdelší
-    // Výchozí (krátký) tvar, který se hned prví proměnou přepíše na nejdelší (ne naopak).
-    const initialShort = order.length > 1 ? order[1] : order[0]
-    morphSet(root, D, initialShort)
+    let pos = chosenLong
+    morphSet(root, D, order[pos])
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) { morphSet(root, D, order[chosenLong]); return } // bez pohybu rovnou nejdelší
     // NASKAKOVÁNÍ při načtení: 1. a 3. věta jsou hned; PROSTŘEDNÍ (2.) věta má 3 dechy, které PŘILETÍ po sobě
