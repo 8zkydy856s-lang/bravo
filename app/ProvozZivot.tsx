@@ -153,7 +153,7 @@ export default function ProvozZivot() {
   }, [lang])
 
   return (
-    <p ref={ref} className="landing-band-text veta-blok" style={{ fontSize: '14px', lineHeight: 1.7, color: '#574b3a' }}
+    <p ref={ref} className="landing-band-text veta-blok" style={{ fontSize: '14px', lineHeight: 1.7, color: '#504535' }}
        dangerouslySetInnerHTML={{ __html: PROVOZ[lang] || PROVOZ.cz }} />
   )
 }

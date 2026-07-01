@@ -24,7 +24,9 @@ const EMAIL = "hello@bra-vo.com";
 const odkazStyle: React.CSSProperties = {
   flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
   padding: "12px 6px", borderRadius: "12px", border: "none", background: "#4d4030",
-  fontSize: "13px", color: "#f6f1e6", textDecoration: "none", whiteSpace: "nowrap"
+  fontSize: "13px", color: "#f6f1e6", textDecoration: "none", whiteSpace: "nowrap",
+  // velmi decentní stín dole (světlo šikmo shora) → sotva znatelná iluze prostorového tlačítka
+  boxShadow: "0 1.5px 2.5px rgba(30,20,8,0.22)"
 };
 
 export default function Home() {
@@ -63,7 +65,7 @@ export default function Home() {
           <div style={{background:"#fffdf8",borderRadius:"18px",border:"0.5px solid rgba(120,90,40,0.12)",overflow:"hidden"}}>
             <div style={{padding:"14px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
               <div>
-                <p style={{fontSize:"10px",letterSpacing:"0.15em",color:"#9b8d76",margin:"0 0 6px"}}><T k="praveTed" /></p>
+                <p style={{fontSize:"10px",letterSpacing:"0.15em",color:"#8b7d66",margin:"0 0 6px"}}><T k="praveTed" /></p>
                 <KioskStatus />
                 <ZitraVyhled />
               </div>
@@ -86,7 +88,7 @@ export default function Home() {
 
       {/* 7) Nápojový lístek -> /listek, užší a vycentrovaný */}
       <div className="landing-cta">
-        <Link href="/listek" style={{display:"inline-block",boxSizing:"border-box",textAlign:"center",background:"none",color:"#1a1208",border:"1px solid #d8c8ad",borderRadius:"14px",padding:"12px 56px",fontSize:"14px",fontWeight:500,textDecoration:"none",fontFamily:"Inter,sans-serif"}}>
+        <Link href="/listek" style={{display:"inline-block",boxSizing:"border-box",textAlign:"center",background:"none",color:"#1a1208",border:"1px solid #d8c8ad",borderRadius:"14px",padding:"12px 56px",fontSize:"14px",fontWeight:500,textDecoration:"none",fontFamily:"Inter,sans-serif",boxShadow:"0 0 6px rgba(216,165,82,0.30), 0 1.5px 2.5px rgba(30,20,8,0.12)"}}>
           <T k="napojovyListek" />
         </Link>
       </div>
@@ -101,18 +103,18 @@ export default function Home() {
       {/* 9) E-mail - odkrytý */}
       {ZOBRAZIT_EMAIL && (
         <p style={{margin:"16px 16px 0",textAlign:"center",fontSize:"16px"}}>
-          <a href={`mailto:${EMAIL}`} style={{color:"#8a6c2b",textDecoration:"none"}}>{EMAIL}</a>
+          <a href={`mailto:${EMAIL}`} style={{color:"#7d6126",textDecoration:"none"}}>{EMAIL}</a>
         </p>
       )}
 
       {/* 10) Jemné "... a brzy přijde víc" - přeložené, s větším zářícím smajlíkem */}
-      <p style={{margin:"16px 16px 0",textAlign:"center",fontSize:"14.5px",color:"#45392a",letterSpacing:"0.02em"}}>
+      <p style={{margin:"16px 16px 0",textAlign:"center",fontSize:"14.5px",color:"#3d3123",letterSpacing:"0.02em"}}>
         <T k="aBrzyPrijdeVic" /> <span className="brzy-emoji" aria-hidden="true">😌</span>
       </p>
 
       {/* 11) Nenápadný vstup pro majitele - přeložený, posunutý níž */}
       <div style={{marginTop:"56px",textAlign:"center"}}>
-        <a href="/login" style={{fontSize:"12px",color:"#857a67",textDecoration:"none",letterSpacing:"0.04em"}}><T k="vstupProMajitele" /></a>
+        <a href="/login" style={{fontSize:"12px",color:"#78705f",textDecoration:"none",letterSpacing:"0.04em"}}><T k="vstupProMajitele" /></a>
       </div>
 
       {/*

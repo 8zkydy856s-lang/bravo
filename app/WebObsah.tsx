@@ -74,7 +74,7 @@ export function ProvozText() {
   const data = useContext(Ctx)
   const text = DICT.provozText[lang] || data?.provoz_text?.trim() || DEFAULT_PROVOZ
   return (
-    <p className="landing-band-text" style={{ fontSize: '13px', lineHeight: 1.7, color: '#6f6253', whiteSpace: 'pre-wrap' }}>{sKurzivou(text)}</p>
+    <p className="landing-band-text" style={{ fontSize: '13px', lineHeight: 1.7, color: '#655a4b', whiteSpace: 'pre-wrap' }}>{sKurzivou(text)}</p>
   )
 }
 
@@ -100,7 +100,7 @@ export function PopisText() {
   const l3 = obal(obal(DICT.popisRadek3[lang], s.kotva, 'anchor'), s.spocin, 'struna-spocin')
   const html = [l1, l2, l3].join('<br/>')
   return (
-    <p className="popis-struna" style={{ fontSize: '14px', lineHeight: 1.8, color: '#45392a', fontStyle: 'italic', margin: 0 }}
+    <p className="popis-struna" style={{ fontSize: '14px', lineHeight: 1.8, color: '#3d3123', fontStyle: 'italic', margin: 0 }}
        dangerouslySetInnerHTML={{ __html: html }} />
   )
 }
