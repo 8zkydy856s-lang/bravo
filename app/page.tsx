@@ -9,6 +9,8 @@ import { InstagramIkona, GoogleIkona } from "./Ikony";
 import { WebObsahProvider, Sdeleni, ZitraVyhled, PopisText, NavigujOdkaz } from "./WebObsah";
 import VozikZivot from "./VozikZivot";
 import ProvozZivot from "./ProvozZivot";
+import PodtitulStruna from "./PodtitulStruna";
+import Orchestrace from "./Orchestrace";
 import LayoutEditor from "./LayoutEditor";
 // Fáze 1: AuthBar a TrustCard zůstávají v projektu, na veřejné úvodní stránce se zatím nevykreslují.
 // import AuthBar from "./AuthBar";
@@ -39,7 +41,7 @@ export default function Home() {
       {/* 2) Hlavička - nápis BraVo + podtitul, vycentrované na 50% osy, výš a těsně */}
       <header style={{padding:"0 20px 4px",display:"flex",flexDirection:"column",alignItems:"center",marginTop:"-6px",transform:"translate(-19px,-7px)"}}>
         <BravoNapis className="bravo-napis" priority />
-        <p style={{fontSize:"12px",color:"#6f6253",letterSpacing:"0.14em",paddingLeft:"0.14em",marginTop:"-2px"}}><T k="mistoKeSpocinuti" /></p>
+        <PodtitulStruna />
       </header>
 
       {/* 3) Vozík BRAVO - průhledné PNG, jemně oživené (dýchání + padající plátky) */}
@@ -136,6 +138,7 @@ export default function Home() {
         </nav>
       */}
 
+      <Orchestrace />
       <LayoutEditor />
 
       </WebObsahProvider>

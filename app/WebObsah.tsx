@@ -78,14 +78,30 @@ export function ProvozText() {
   )
 }
 
-// Třířádkový popis kurzívou - ze slovníku dle jazyka.
+// Slova struny + kotva v popisu (dle jazyka) — pro orchestraci obalíme do značek.
+// ř.2 nese „chvíle"-slovo (.struna-chvile), ř.3 nese kotvu POZVÁNKA (.anchor) + „spočin-" (.struna-spocin).
+const POPIS_STRUNA: Record<string, { chvile: string; spocin: string; kotva: string }> = {
+  cz: { chvile: 'chvíle', spocin: 'spočine', kotva: 'POZVÁNKA' },
+  en: { chvile: 'moment', spocin: 'rests', kotva: 'INVITATION' },
+  fr: { chvile: 'instant', spocin: 'souffle', kotva: 'INVITATION' },
+  de: { chvile: 'Weile', spocin: 'verweilt', kotva: 'EINLADUNG' },
+  lu: { chvile: 'Weil', spocin: 'verweilt', kotva: 'ANVITATIOUN' },
+}
+function obal(text: string, slovo: string, cls: string) {
+  return text.replace(slovo, `<span class="${cls}">${slovo}</span>`)
+}
+
+// Třířádkový popis kurzívou - ze slovníku dle jazyka, se značkami struny/kotvy.
 export function PopisText() {
   const { lang } = useLang()
-  const lines = [DICT.popisRadek1[lang], DICT.popisRadek2[lang], DICT.popisRadek3[lang]]
+  const s = POPIS_STRUNA[lang] || POPIS_STRUNA.cz
+  const l1 = DICT.popisRadek1[lang]
+  const l2 = obal(DICT.popisRadek2[lang], s.chvile, 'struna-chvile')
+  const l3 = obal(obal(DICT.popisRadek3[lang], s.kotva, 'anchor'), s.spocin, 'struna-spocin')
+  const html = [l1, l2, l3].join('<br/>')
   return (
-    <p style={{ fontSize: '13px', lineHeight: 1.8, color: '#6f6253', fontStyle: 'italic', margin: 0 }}>
-      {lines.map((ln, i) => <span key={i}>{ln}{i < lines.length - 1 ? <br /> : null}</span>)}
-    </p>
+    <p className="popis-struna" style={{ fontSize: '13px', lineHeight: 1.8, color: '#6f6253', fontStyle: 'italic', margin: 0 }}
+       dangerouslySetInnerHTML={{ __html: html }} />
   )
 }
 

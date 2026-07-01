@@ -29,7 +29,7 @@ export const DICT: Record<string, Record<Lang, string>> = {
   // Hvězdičky *…* označují slova kurzívou (renderuje ProvozText, uživateli se nezobrazí).
   provozText: {
     cz: "Otevírací doba je *přibližná* a závisí na *počasí*. Než se vydám za chvílí k BraVo, vždy nejdřív spočinu ZDE a naladím se, abychom se skutečně sešli OBA připraveni. Těším se, děkuji TOBĚ za pochopení ❀",
-    en: "Hours are *approximate* and depend on the *weather*. Before I set out for a while to BraVo, I always rest HERE first and tune in, so we truly meet BOTH of us ready. Looking forward, thank YOU for understanding ❀",
+    en: "Hours are *approximate* and depend on the *weather*. Before I set out for a moment to BraVo, I always rest HERE first and tune in, so we truly meet BOTH of us ready. Looking forward, thank YOU for understanding ❀",
     fr: "Les horaires sont *approximatifs*, selon la *météo*. Avant de partir un instant vers BraVo, je souffle d'abord ICI et je me mets au diapason, pour qu'on se retrouve vraiment prêts TOUS LES DEUX. Au plaisir, merci à TOI pour la compréhension ❀",
     de: "Die Öffnungszeiten sind *ungefähr*, je nach *Wetter*. Bevor ich für eine Weile zu BraVo aufbreche, verweile ich zuerst HIER und stimme mich ein, damit wir uns wirklich BEIDE bereit begegnen. Ich freue mich, danke DIR fürs Verständnis ❀",
     lu: "D'Öffnungszäiten si *ongeféier*, je no *Wieder*. Ier ech fir eng Weil op BraVo lassginn, verweilen ech als éischt HEI a stëmme mech an, fir datt mir eis wierklech BEIDS prett begéinen. Ech freeë mech, merci DIR fir d'Verständnis ❀",
@@ -42,11 +42,11 @@ export const DICT: Record<string, Record<Lang, string>> = {
     lu: "Spezialitéitekaffi, Téi, Blummen a klassesch Musek,",
   },
   popisRadek2: {
-    cz: "laděné dle Tvé chuti i chvíle,",
+    cz: "laděné dle Tvé chuti a chvíle,",
     en: "tuned to Your taste and moment,",
     fr: "accordés à Votre goût et à Votre instant,",
-    de: "nach Deinem Geschmack und Augenblick,",
-    lu: "no Dengem Goût an Ament,",
+    de: "nach Deinem Geschmack und Weile,",
+    lu: "no Dengem Goût an Weil,",
   },
   popisRadek3: {
     cz: "POZVÁNKA do místa, kde všední den spočine.",
