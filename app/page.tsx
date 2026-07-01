@@ -101,18 +101,18 @@ export default function Home() {
       {/* 9) E-mail - odkrytý */}
       {ZOBRAZIT_EMAIL && (
         <p style={{margin:"16px 16px 0",textAlign:"center",fontSize:"16px"}}>
-          <a href={`mailto:${EMAIL}`} style={{color:"#b8954a",textDecoration:"none"}}>{EMAIL}</a>
+          <a href={`mailto:${EMAIL}`} style={{color:"#9c7c33",textDecoration:"none"}}>{EMAIL}</a>
         </p>
       )}
 
       {/* 10) Jemné "... a brzy přijde víc" - přeložené, s větším zářícím smajlíkem */}
-      <p style={{margin:"16px 16px 0",textAlign:"center",fontSize:"14.5px",color:"#6f6253",letterSpacing:"0.02em"}}>
+      <p style={{margin:"16px 16px 0",textAlign:"center",fontSize:"14.5px",color:"#574b3a",letterSpacing:"0.02em"}}>
         <T k="aBrzyPrijdeVic" /> <span className="brzy-emoji" aria-hidden="true">😌</span>
       </p>
 
       {/* 11) Nenápadný vstup pro majitele - přeložený, posunutý níž */}
       <div style={{marginTop:"56px",textAlign:"center"}}>
-        <a href="/login" style={{fontSize:"12px",color:"#b6ab9b",textDecoration:"none",letterSpacing:"0.04em"}}><T k="vstupProMajitele" /></a>
+        <a href="/login" style={{fontSize:"12px",color:"#9a8e7c",textDecoration:"none",letterSpacing:"0.04em"}}><T k="vstupProMajitele" /></a>
       </div>
 
       {/*

@@ -128,11 +128,12 @@ export default function ProvozZivot() {
     // NASKAKOVÁNÍ při načtení: 1. a 3. věta jsou hned; PROSTŘEDNÍ (2.) věta má 3 dechy, které PŘILETÍ po sobě
     // (odliší tu důležitou prostřední větu). Běží i při přepnutí jazyka.
     const casts = Array.from(root.querySelectorAll<HTMLElement>('.veta2 .cast'))
-    casts.forEach((c) => { c.style.transition = 'none'; c.style.opacity = '0'; c.style.transform = 'translateY(7px)' })
+    // každá část = DECH: jemně se nadechne (lehké zvětšení + prolnutí), ne posun řádku zdola
+    casts.forEach((c) => { c.style.transition = 'none'; c.style.opacity = '0'; c.style.transformOrigin = 'center'; c.style.transform = 'scale(0.955)' })
     casts.forEach((c, i) => {
       window.setTimeout(() => {
-        c.style.transition = 'opacity .6s ease, transform .6s ease'
-        c.style.opacity = '1'; c.style.transform = 'translateY(0)'
+        c.style.transition = 'opacity .7s ease-out, transform .7s ease-out'
+        c.style.opacity = '1'; c.style.transform = 'scale(1)'
       }, 1000 + i * 480)
     })
     const onDissolve = () => { morphDissolve(root) }
