@@ -18,7 +18,7 @@ export default function PodtitulStruna() {
   const { lang } = useLang()
   return (
     <p className="podtitul-struna"
-       style={{ fontSize: '13px', color: '#6f6253', letterSpacing: '0.14em', paddingLeft: '0.14em', marginTop: '-2px' }}
+       style={{ fontSize: '13px', color: '#574b3a', letterSpacing: '0.14em', paddingLeft: '0.14em', marginTop: '-2px' }}
        dangerouslySetInnerHTML={{ __html: PODTITUL[lang] || PODTITUL.cz }} />
   )
 }
