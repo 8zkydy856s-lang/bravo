@@ -30,14 +30,14 @@ export default function Home() {
       <WebObsahProvider>
 
       {/* 1) Přepínač jazyků - funkční */}
-      <div style={{display:"flex",justifyContent:"flex-end",padding:"6px 16px 0"}}>
+      <div style={{display:"flex",justifyContent:"flex-end",padding:"2px 16px 0"}}>
         <JazykPrepinac />
       </div>
 
       {/* 2) Hlavička - nápis BraVo + podtitul, vycentrované na 50% osy, výš a těsně */}
-      <header style={{padding:"2px 20px 8px",display:"flex",flexDirection:"column",alignItems:"center"}}>
+      <header style={{padding:"0 20px 4px",display:"flex",flexDirection:"column",alignItems:"center",marginTop:"-6px"}}>
         <BravoNapis className="bravo-napis" priority />
-        <p style={{fontSize:"12px",color:"#6f6253",letterSpacing:"0.14em",paddingLeft:"0.14em",marginTop:"-2px"}}><T k="mistoKeSpocinuti" /></p>
+        <p style={{fontSize:"12px",color:"#6f6253",letterSpacing:"0.14em",paddingLeft:"0.14em",marginTop:"-2px",transform:"translateX(-40px)"}}><T k="mistoKeSpocinuti" /></p>
       </header>
 
       {/* 3) Vozík BRAVO - průhledné PNG, jemně oživené (dýchání + padající plátky) */}
