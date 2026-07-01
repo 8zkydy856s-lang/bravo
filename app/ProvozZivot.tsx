@@ -10,7 +10,7 @@ import { useLang } from './LangContext'
 // (synchronně s pulsem struny), ne vlastním časovačem.
 
 type Var = { pre: string; jadro: string; prep: string; _tw?: number }
-type MData = { vars: Var[]; maxTotal?: number }
+type MData = { vars: Var[]; maxTotal?: number; order?: number[]; startPositions?: number[] }
 
 const MORPH: Record<string, MData> = {
   cz: { vars: [
@@ -65,6 +65,15 @@ function morphBuild(lang: string, root: HTMLElement): MData | null {
     if (v._tw > maxTotal) maxTotal = v._tw
   })
   D.maxTotal = Math.ceil(maxTotal) + 2
+  // POŘADÍ: prokládat DELŠÍ/KRATŠÍ (žádné dvě kratší za sebou = žádná dvojitá optická díra).
+  // Seřadit dle šířky sestupně a brát střídavě z nejširšího a nejužšího konce.
+  const byW = D.vars.map((v, i) => ({ i, w: v._tw || 0 })).sort((a, b) => b.w - a.w)
+  const order: number[] = []
+  let lo = 0, hi = byW.length - 1, takeWide = true
+  while (lo <= hi) { if (takeWide) order.push(byW[lo++].i); else order.push(byW[hi--].i); takeWide = !takeWide }
+  D.order = order
+  // start z jednoho ze DVOU NEJDELŠÍCH (v order jsou na pozicích 0 a 2) — střídá se návštěvu od návštěvy
+  D.startPositions = [0, Math.min(2, order.length - 1)]
   return D
 }
 
@@ -106,12 +115,14 @@ export default function ProvozZivot() {
     if (!root) return
     const D = morphBuild(lang, root)
     if (!D) return
-    let pos = 0
-    morphSet(root, D, pos) // výchozí tvar
+    const order = D.order || D.vars.map((_, i) => i)
+    const starts = D.startPositions || [0]
+    let pos = starts[Math.random() < 0.5 ? 0 : 1] ?? starts[0] // start z jednoho ze 2 nejdelších, střídavě
+    morphSet(root, D, order[pos]) // výchozí tvar
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) return
     const onDissolve = () => { morphDissolve(root) }
-    const onWrite = () => { pos = (pos + 1) % D.vars.length; morphWriteNew(root, D, pos) }
+    const onWrite = () => { pos = (pos + 1) % order.length; morphWriteNew(root, D, order[pos]) }
     window.addEventListener('bravo-morf-dissolve', onDissolve)
     window.addEventListener('bravo-morf-write', onWrite)
     return () => {

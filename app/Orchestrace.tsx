@@ -16,9 +16,12 @@ const FILL_MS = 3400     // „spočinutí" se rozsvítí přírůstkově STEJNO
 const HOLD_MS = 500      // celé rozsvícené chvilku drží (spočine)
 const UNFILL_MS = 3400   // „spočinutí" zhasne SYMETRICKY (zleva doprava, stejně jako se rozsvítilo)
 const ANCHOR_START = 1300 // kdy (do zhasínání) se začnou rozsvěcovat kotvy
-const ANCHOR_STAGGER = 450 // rozestup mezi jednotlivými kotvami
-const GLOW_MS = 2600     // jak dlouho kotva září (nadech → drží → zhasne)
+const ANCHOR_STAGGER = 550 // rozestup mezi kroky kotev (o chlup pomaleji)
+const GLOW_MS = 3000     // jak dlouho kotva září (nadech → drží → zhasne) — o mikro chlup pomaleji
 const GAP_MS = 2200      // klid mezi pulsy
+// Pořadí rozsvěcování dle DOM pořadí kotev [BraVo, ZDE, OBA, TOBĚ, POZVÁNKA]:
+// krok 0 = ZDE + POZVÁNKA (současně) → 1 = TOBĚ → 2 = OBA → 3 = BraVo
+const ANCHOR_STEP = [3, 0, 2, 1, 0]
 
 export default function Orchestrace() {
   useEffect(() => {
@@ -51,10 +54,11 @@ export default function Orchestrace() {
             q('.struna-spocin').forEach((e) => { e.classList.remove('fill'); void e.offsetWidth; e.classList.add('unfill') })
             // z pohasínání spočinutí vzejde postupné NADECHNUTÍ kotev (jedna po druhé)
             q('.anchor').forEach((a, i) => {
-              later(() => { a.classList.remove('glow'); void a.offsetWidth; a.classList.add('glow') }, ANCHOR_START + i * ANCHOR_STAGGER)
+              const step = ANCHOR_STEP[i] ?? i
+              later(() => { a.classList.remove('glow'); void a.offsetWidth; a.classList.add('glow') }, ANCHOR_START + step * ANCHOR_STAGGER)
             })
-            // po zhasnutí spočinutí + dozáření kotev → další puls
-            later(cycle, ANCHOR_START + 4 * ANCHOR_STAGGER + GLOW_MS + GAP_MS)
+            // po zhasnutí spočinutí + dozáření kotev → další puls (max krok = 3)
+            later(cycle, ANCHOR_START + 3 * ANCHOR_STAGGER + GLOW_MS + GAP_MS)
           }, FILL_MS + HOLD_MS)
         }, SWEEP_MS)
       }, DISSOLVE_MS)
