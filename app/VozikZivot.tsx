@@ -23,12 +23,19 @@ export default function VozikZivot() {
     const rnd = (a: number, b: number) => a + Math.random() * (b - a)
 
     // plátky — pokaždé z trošku jiného místa, jiným tempem
-    scope.querySelectorAll<HTMLElement>('.vz-p').forEach((el) => {
+    const petals = Array.from(scope.querySelectorAll<HTMLElement>('.vz-p'))
+    petals.forEach((el) => {
       const band = el.dataset.band
       el.style.left = (band === 'L' ? rnd(6, 33) : rnd(67, 94)).toFixed(1) + '%'
       el.style.animationDelay = '-' + rnd(0, 42).toFixed(1) + 's'
       el.style.animationDuration = rnd(32, 48).toFixed(1) + 's'
     })
+    // náhodně JEDEN plátek se v půli pádu pozastaví a chvíli vznáší (ne všechny padají stejně)
+    if (petals.length) {
+      const h = petals[Math.floor(rnd(0, petals.length))]
+      h.style.animationName = 'vzp-hover'
+      h.style.animationDuration = rnd(42, 54).toFixed(1) + 's'
+    }
 
     // noty 1 a 2 — vycházejí ze středu vozíku, každá jiný směr; trajektorie se každou návštěvu trochu liší
     const n1 = scope.querySelector<HTMLElement>('.vz-note1')
@@ -44,14 +51,15 @@ export default function VozikZivot() {
       n2.style.animationDelay = '-' + rnd(0, 16).toFixed(1) + 's'
     }
 
-    // nota 3 — nejsvětlejší, náhodně kdekoli přes obrázek, náhodný směr, u toho pulzuje
+    // nota 3 — nejsvětlejší, pluje DÉLE; vždy začne v PRŮHLEDNÉ části (strany), ne přes kresbu vozíku
     const n3 = scope.querySelector<HTMLElement>('.vz-note3')
     if (n3) {
-      n3.style.left = rnd(14, 78).toFixed(1) + '%'
-      n3.style.top = rnd(22, 70).toFixed(1) + '%'
-      n3.style.setProperty('--nx', Math.round(rnd(-30, 30)) + 'px')
-      n3.style.setProperty('--ny', Math.round(rnd(-42, -16)) + 'px')
-      n3.style.animationDelay = '-' + rnd(0, 12).toFixed(1) + 's'
+      const side = Math.random() < 0.5 ? rnd(6, 26) : rnd(74, 92)
+      n3.style.left = side.toFixed(1) + '%'
+      n3.style.top = rnd(12, 58).toFixed(1) + '%'
+      n3.style.setProperty('--nx', Math.round(rnd(-26, 26)) + 'px')
+      n3.style.setProperty('--ny', Math.round(rnd(-40, -14)) + 'px')
+      n3.style.animationDelay = '-' + rnd(0, 20).toFixed(1) + 's'
     }
   }, [])
 
