@@ -73,18 +73,6 @@ function Nadpis({ children }: { children: React.ReactNode }) {
   return <p style={{ fontSize: '11px', letterSpacing: '0.18em', color: '#b8954a', textTransform: 'uppercase', margin: '0 0 12px', fontWeight: 600 }}>{children}</p>
 }
 
-function Cena({ p }: { p: Polozka }) {
-  if (p.plain) return <span style={{ color: '#6f6253' }}>{p.plain}</span>
-  if (!p.hot && !p.ice) return <span style={{ color: '#6f6253' }}>—</span>
-  return (
-    <>
-      {p.hot && <span style={{ color: HOT }}>{p.hot}</span>}
-      {p.hot && p.ice && <span style={{ color: '#cabfa8' }}> · </span>}
-      {p.ice && <span style={{ color: ICE }}>{p.ice}</span>}
-    </>
-  )
-}
-
 export default function ListekPage() {
   return (
     <main className="listek-main" style={{ minHeight: '100vh', background: '#f6f1e6', fontFamily: 'Inter,sans-serif', padding: '8px 20px 24px', boxSizing: 'border-box' }}>
@@ -103,12 +91,21 @@ export default function ListekPage() {
           <section key={s.nadpis} style={{ marginBottom: '22px' }}>
             <Nadpis>{s.nadpis}</Nadpis>
             {s.polozky.map((p, i) => (
-              <div key={i} className={p.wide ? 'lp-wide' : undefined} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '12px', margin: '0 0 5px' }}>
+              <div key={i} className={p.wide ? 'lp-wide' : undefined} style={{ display: 'flex', alignItems: 'baseline', margin: '0 0 5px' }}>
                 <span style={{ flex: '1 1 auto', minWidth: 0, fontSize: '14px', color: '#1a1208' }}>
                   {p.name}
                   {p.popis && <span className="lp-popis" style={{ fontSize: '12px', color: '#9b8d76', fontStyle: 'italic' }}>{'  '}… {p.popis}</span>}
                 </span>
-                <span style={{ flex: '0 0 auto', whiteSpace: 'nowrap', fontSize: '13px' }}><Cena p={p} /></span>
+                {p.plain ? (
+                  <span style={{ flex: '0 0 auto', marginLeft: '10px', textAlign: 'right', whiteSpace: 'nowrap', fontSize: '13px', color: '#6f6253' }}>{p.plain}</span>
+                ) : (
+                  <>
+                    {/* HOT sloupec — pevná šířka, zarovnaný na střed sám v sobě */}
+                    <span style={{ flex: '0 0 56px', textAlign: 'center', whiteSpace: 'nowrap', fontSize: '13px', color: HOT }}>{p.hot ?? ''}</span>
+                    {/* ICE sloupec — pevná šířka, zarovnaný doprava k okraji */}
+                    <span style={{ flex: '0 0 52px', textAlign: 'right', whiteSpace: 'nowrap', fontSize: '13px', color: ICE }}>{p.ice ?? ''}</span>
+                  </>
+                )}
               </div>
             ))}
           </section>
