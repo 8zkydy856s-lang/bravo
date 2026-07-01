@@ -81,12 +81,18 @@ function morphSet(root: HTMLElement, D: MData, vi: number) {
   if (fxk) fxk.textContent = NBSP + v.prep
 }
 
-// odhalení nové varianty POD světlem: jemný pokles krytí → výměna → zpět
+// ZNOVUZROZENÍ: celý tvar se POZVOLNA rozplyne úplně do ztracena (opacity → 0, ne blik),
+// teprve když je pryč, se vymění za CELÝ nový výraz a ten se vycentrovaný objeví (opacity → 1).
+// Pokaždé celý znovu — i kdyby další varianta sdílela písmena. Jasný systém v pevné mezeře.
 function morphReveal(root: HTMLElement, D: MData, vi: number) {
   const slot = root.querySelector<HTMLElement>('.morf-slot')
   if (!slot) { morphSet(root, D, vi); return }
-  slot.style.opacity = '0.3'
-  window.setTimeout(() => { morphSet(root, D, vi); slot.style.opacity = '1' }, 300)
+  slot.style.transition = 'opacity .8s ease'
+  slot.style.opacity = '0'
+  window.setTimeout(() => {
+    morphSet(root, D, vi)          // celý nový výraz, vycentrovaný
+    slot.style.opacity = '1'        // znovuzrození
+  }, 850)
 }
 
 export default function ProvozZivot() {

@@ -9,9 +9,10 @@ import { useEffect } from 'react'
 // Kotvy zatím běží nezávisle (přidají se později); dirigent je postaven fázově, aby šla anchor-fáze zapojit.
 // reduced-motion → nespouští se (klid).
 
-const SWEEP_MS = 1800   // jak dlouho světlo „chvíle" projíždí
-const SETTLE_MS = 1500  // jak dlouho „spočinutí" drží zář
-const GAP_MS = 2200     // klid mezi pulsy
+const SWEEP_MS = 3400   // jak dlouho světlo „chvíle" nasvěcuje (pomalé přejetí baterkou)
+const MORF_AT = 250     // kdy se spustí rozplynutí+znovuzrození morfu (brzy, pak ho světlo nasvítí)
+const SETTLE_MS = 1800  // jak dlouho „spočinutí" drží zář
+const GAP_MS = 2600     // klid mezi pulsy
 
 export default function Orchestrace() {
   useEffect(() => {
@@ -29,8 +30,8 @@ export default function Orchestrace() {
     const cycle = () => {
       // Fáze 1 — „chvíle" projede zleva doprava (restart animace přes reflow)
       q('.struna-chvile').forEach((e) => { e.classList.remove('sweep'); void e.offsetWidth; e.classList.add('sweep') })
-      // uprostřed průjezdu odhalit nový tvar morfu POD světlem
-      later(() => { window.dispatchEvent(new CustomEvent('bravo-morf-next')) }, SWEEP_MS / 2)
+      // brzy po startu: morf se rozplyne a znovuzrodí (celý, vycentrovaný); pak ho světlo nasvítí
+      later(() => { window.dispatchEvent(new CustomEvent('bravo-morf-next')) }, MORF_AT)
       // Fáze 2 — „spočinutí" se usadí, chvíli drží, pak vše zhasne a po pauze další puls
       later(() => {
         q('.struna-chvile').forEach((e) => e.classList.remove('sweep'))

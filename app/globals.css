@@ -50,14 +50,17 @@ body {
 /* ===== ORCHESTRACE STRUNY — světlo (barva zlatá, laditelné) ===== */
 /* Morf-slot: pevná mezera, nový tvar se objeví VYCENTROVANÝ (šířku nastaví engine). */
 .morf-slot { display: inline-block; white-space: nowrap; text-align: center; vertical-align: baseline; transition: opacity .3s ease; }
-/* Fáze 1 — „chvíle" projede: pomalá zlatá zář zleva doprava skrz text (švih hůlky). */
+/* Fáze 1 — „chvíle" se NASVÍTÍ zleva doprava (jako baterka). Text NIKDY nezmizí:
+   základ = vlastní barva textu (currentColor), přes něj přejede jen teplé přisvětlení.
+   Obraz je širší než text (220 %) a poloha jde 100%→0%, takže box je VŽDY plně pokrytý
+   (žádná průhledná místa = žádné mizení písmen); putuje pouze světlý pruh. */
 .struna-chvile.sweep {
-  background-image: linear-gradient(100deg, currentColor 0%, currentColor 38%, #e8c97a 50%, currentColor 62%, currentColor 100%);
-  background-size: 260% 100%; background-repeat: no-repeat;
+  background-image: linear-gradient(90deg, currentColor 0%, currentColor 40%, #d6a552 50%, currentColor 60%, currentColor 100%);
+  background-size: 220% 100%; background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: struna-sweep 1.8s ease-in-out;
+  animation: struna-sweep 3.4s ease-in-out;
 }
-@keyframes struna-sweep { from { background-position: 200% 0; } to { background-position: -60% 0; } }
+@keyframes struna-sweep { from { background-position: 100% 0; } to { background-position: 0% 0; } }
 /* Fáze 2 — „spočinutí" se usadí: klidná zlatá zář, chvíli drží. */
 .struna-spocin { transition: color .6s ease, text-shadow .6s ease; }
 .struna-spocin.settle { color: #a9763a; text-shadow: 0 0 10px rgba(201,138,58,0.4); }
