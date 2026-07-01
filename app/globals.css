@@ -37,7 +37,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .landing { animation: none; }
   .brzy-emoji { animation: none; }
-  .veta-blok .fx-symbol, .veta-blok .fx-symbol .sym-top, .veta-blok .fx-symbol .sym-leaf, .veta-blok .fx-symbol .sym-foliage, .veta-blok .fx-symbol .sym-vein { animation: none; }
+  .veta-blok .fx-symbol, .veta-blok .fx-symbol .sym-top-l, .veta-blok .fx-symbol .sym-top-r, .veta-blok .fx-symbol .sym-leaf, .veta-blok .fx-symbol .sym-foliage, .veta-blok .fx-symbol .sym-vein { animation: none; }
   .stav-kvet .rot, .stav-kvet .glyf, .stav-kvet::before { animation: none; }
 }
 .landing-title { font-size: 32px; }
@@ -65,15 +65,21 @@ body {
 .veta-blok .fx-symbol svg { display: block; width: 100%; height: 100%; overflow: visible; }
 /* velmi jemné prolínání průhlednosti celého symbolu */
 @keyframes fx-symbol-pruh { 0%, 100% { opacity: 1; } 50% { opacity: 0.86; } }
-/* BAREVNÁ SMYČKA (statická, jen prolínání): KÁVA (hnědá) → KVĚTINA (červená) → VDĚČNOST (kůže + modré rukávy). */
-.veta-blok .fx-symbol .sym-top { animation: sym-cyk-top 16s ease-in-out infinite; }
-.veta-blok .fx-symbol .sym-leaf { animation: sym-cyk-leaf 16s ease-in-out infinite; }
-.veta-blok .fx-symbol .sym-foliage { animation: sym-cyk-foliage 16s ease-in-out infinite; }
-.veta-blok .fx-symbol .sym-vein { animation: sym-cyk-vein 16s ease-in-out infinite; }
-@keyframes sym-cyk-top { 0%,7% { fill:#6a4a2e; stroke:#4e3420; } 30%,40% { fill:#cf3b2c; stroke:#a52a1e; } 60%,73% { fill:#f2ad4e; stroke:#d98b34; } 93%,100% { fill:#6a4a2e; stroke:#4e3420; } }
-@keyframes sym-cyk-leaf { 0%,7% { fill:#6faa4a; stroke:#4a7c30; } 30%,40% { fill:#6faa4a; stroke:#4a7c30; } 60%,73% { fill:#5b8fd6; stroke:#3f6aa8; } 93%,100% { fill:#6faa4a; stroke:#4a7c30; } }
-@keyframes sym-cyk-foliage { 0%,7% { stroke:#4a7c30; } 30%,40% { stroke:#4a7c30; } 60%,73% { stroke:#3f6aa8; } 93%,100% { stroke:#4a7c30; } }
-@keyframes sym-cyk-vein { 0%,7% { stroke:#3f6d29; } 30%,40% { stroke:#3f6d29; } 60%,73% { stroke:#2f5789; } 93%,100% { stroke:#3f6d29; } }
+/* BAREVNÁ SMYČKA + JEMNÝ POHYB (statický tvar, jen barvy a nepatrné pohyby):
+   KVĚTINA (červená, špičky se rozevřou a vrátí) → KÁVA (hnědá, klid) → VDĚČNOST (kůže + modré rukávy,
+   dlaně se vůči sobě jemně posunou svisle jako „prosím"). Levé a pravé poupě mají zrcadlový pohyb. */
+.veta-blok .fx-symbol .sym-top-l { transform-box: fill-box; transform-origin: 50% 100%; animation: sym-cyk-top 18s ease-in-out infinite, sym-mot-l 18s ease-in-out infinite; }
+.veta-blok .fx-symbol .sym-top-r { transform-box: fill-box; transform-origin: 50% 100%; animation: sym-cyk-top 18s ease-in-out infinite, sym-mot-r 18s ease-in-out infinite; }
+.veta-blok .fx-symbol .sym-leaf { animation: sym-cyk-leaf 18s ease-in-out infinite; }
+.veta-blok .fx-symbol .sym-foliage { animation: sym-cyk-foliage 18s ease-in-out infinite; }
+.veta-blok .fx-symbol .sym-vein { animation: sym-cyk-vein 18s ease-in-out infinite; }
+@keyframes sym-cyk-top { 0%,22% { fill:#cf3b2c; stroke:#a52a1e; } 34%,46% { fill:#6a4a2e; stroke:#4e3420; } 58%,80% { fill:#f2ad4e; stroke:#d98b34; } 92%,100% { fill:#cf3b2c; stroke:#a52a1e; } }
+@keyframes sym-cyk-leaf { 0%,46% { fill:#6faa4a; stroke:#4a7c30; } 58%,80% { fill:#5b8fd6; stroke:#3f6aa8; } 92%,100% { fill:#6faa4a; stroke:#4a7c30; } }
+@keyframes sym-cyk-foliage { 0%,46% { stroke:#4a7c30; } 58%,80% { stroke:#3f6aa8; } 92%,100% { stroke:#4a7c30; } }
+@keyframes sym-cyk-vein { 0%,46% { stroke:#3f6d29; } 58%,80% { stroke:#2f5789; } 92%,100% { stroke:#3f6d29; } }
+/* KVĚTINA: špičky se rozevřou (rotace kolem paty poupěte) — VDĚČNOST: dlaně se jemně posunou svisle proti sobě */
+@keyframes sym-mot-l { 0%,6% { transform: translateY(0) rotate(0deg); } 13% { transform: translateY(0) rotate(-7deg); } 22%,60% { transform: translateY(0) rotate(0deg); } 66% { transform: translateY(-12px) rotate(0deg); } 72% { transform: translateY(10px) rotate(0deg); } 80%,100% { transform: translateY(0) rotate(0deg); } }
+@keyframes sym-mot-r { 0%,6% { transform: translateY(0) rotate(0deg); } 13% { transform: translateY(0) rotate(7deg); } 22%,60% { transform: translateY(0) rotate(0deg); } 66% { transform: translateY(12px) rotate(0deg); } 72% { transform: translateY(-10px) rotate(0deg); } 80%,100% { transform: translateY(0) rotate(0deg); } }
 
 /* STAVOVÝ KVĚT (místo puntíku): červený zavřeno / zelený otevřeno; velikost ~ jako slunce naproti.
    Otáčení (pomalé) ODDĚLENÉ; dech + radiální ZÁŘE běží SOUBĚŽNĚ; průhlednost se mění NEZÁVISLE v jiném rytmu. */
