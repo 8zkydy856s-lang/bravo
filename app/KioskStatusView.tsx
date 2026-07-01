@@ -38,9 +38,9 @@ export default function KioskStatusView({ je_otevreno, oteviraci_cas, zaviraci_c
   const note = poznamka?.trim() || ''
 
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', transform: 'translate(3px, 3px)' }}>
       <span className="stav-kvet" aria-hidden="true" style={{ ['--kv']: kvetColor, ['--kvGlow']: kvetGlow } as CSSProperties}>
-        <span className="glyf">❀</span>
+        <span className="rot"><span className="glyf">❀</span></span>
       </span>
       <div>
         <p style={{ fontSize: '14px', fontWeight: 500, color: '#1a1208', margin: 0 }}>{title}</p>
