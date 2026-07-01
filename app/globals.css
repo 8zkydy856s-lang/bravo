@@ -62,8 +62,8 @@ body {
 /* SYMBOL VDĚČNOSTI za „pochopení": LAYOUT malý (neroztahuje řádek), vizuální velikost dělá transform scale.
    Pod objektem jemná KONSTANTNÍ zlatá záře (drop-shadow kopíruje tvar, není radiální, nehýbe se).
    Lehce zprůhledněný (opacity 0.82), aby nebyl vůči zbytku stránky příliš výrazný. */
-.veta-blok .fx-symbol { display: inline-block; width: 0.82em; height: 1.12em; margin-left: calc(0.5em + 3px); vertical-align: middle; line-height: 0; position: relative; transform: scale(1.96); transform-origin: center; opacity: 0.78; }
-.veta-blok .fx-symbol svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 2px rgba(226,168,60,0.5)) drop-shadow(0 0 4px rgba(226,168,60,0.32)); }
+.veta-blok .fx-symbol { display: inline-block; width: 0.82em; height: 1.12em; margin-left: calc(0.5em + 3px); vertical-align: middle; line-height: 0; position: relative; transform: scale(1.96) translateZ(0); transform-origin: center; opacity: 0.78; will-change: transform; backface-visibility: hidden; }
+.veta-blok .fx-symbol svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 2px rgba(226,168,60,0.62)) drop-shadow(0 0 5px rgba(226,168,60,0.42)); }
 /* Animace symbolu STOJÍ (zmrazená na stavu vděčnosti), spustí se AŽ po náběhu 3 řádků 2. věty — ProvozZivot přidá .go.
    Nezávislé na struně/kotvě. Specificita :not(.go) svg path (0,3,2) přebíjí per-class `animation` shorthand (0,3,0). */
 .veta-blok .fx-symbol:not(.go) svg path { animation-play-state: paused; }
