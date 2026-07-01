@@ -5,12 +5,13 @@ import { useLang } from './LangContext'
 // Obě slova jsou STABILNÍ text (nemizí) — jen jimi projede světlo orchestrace.
 // Značky: .struna-chvile (projede zář zleva doprava) · .struna-spocin (usadí se zář).
 // „…" počítáme ke struně (necháváme před chvíle).
+// Rozšíření: baterka (chvíle) projede i „… + náběhové slovo"; rozsvícení (spočinout) i spojku před slovem.
 const PODTITUL: Record<string, string> = {
-  cz: `… <span class="struna-chvile">chvíle</span> <span class="struna-spocin">spočinutí</span>`,
-  en: `… a <span class="struna-chvile">moment</span> to <span class="struna-spocin">rest</span>`,
-  fr: `… un <span class="struna-chvile">instant</span> pour <span class="struna-spocin">souffler</span>`,
-  de: `… eine <span class="struna-chvile">Weile</span> zum <span class="struna-spocin">Verweilen</span>`,
-  lu: `… eng <span class="struna-chvile">Weil</span> fir ze <span class="struna-spocin">verweilen</span>`,
+  cz: `<span class="struna-chvile">… chvíle</span> <span class="struna-spocin">spočinutí</span>`,
+  en: `<span class="struna-chvile">… a moment</span> <span class="struna-spocin">to rest</span>`,
+  fr: `<span class="struna-chvile">… un instant</span> <span class="struna-spocin">pour souffler</span>`,
+  de: `<span class="struna-chvile">… eine Weile</span> <span class="struna-spocin">zum Verweilen</span>`,
+  lu: `<span class="struna-chvile">… eng Weil</span> <span class="struna-spocin">fir ze verweilen</span>`,
 }
 
 export default function PodtitulStruna() {
