@@ -10,11 +10,11 @@ import { useEffect } from 'react'
 // reduced-motion → nespouští se (klid).
 
 const DISSOLVE_MS = 1000 // než se starý tvar morfu rozplyne (opacity→0), pak teprve přijede světlo
-const SWEEP_MS = 4400    // jak dlouho světlo „chvíle" přejíždí (prosvítí podtitul/popis + napíše morf) — pomalejší
-const FILL_MS = 2000     // „spočinutí": postupné rozsvěcování zleva doprava
-const LIT_HOLD = 1000    // celé rozsvíceno drží (spočine)
-const SWELL_MS = 450     // zář se spojí a lehce zvýší
-const GAP_MS = 2800      // klid mezi pulsy
+// JEDNA baterka: chvíle i spočinutí = stejné světlo, stejná rychlost (4 s). Sekvenčně a plynule.
+const SWEEP_MS = 4000    // světlo „chvíle" přejíždí (prosvítí podtitul/popis + napíše morf)
+const FILL_MS = 4000     // „spočinutí": přírůstkové rozsvěcování STEJNOU rychlostí
+const SIGH_MS = 2400     // povzdech: drží → zář se zvedne → pozvolna zhasne (jeden plynulý pohyb)
+const GAP_MS = 2600      // klid mezi pulsy
 
 export default function Orchestrace() {
   useEffect(() => {
@@ -41,19 +41,14 @@ export default function Orchestrace() {
         later(() => {
           q('.struna-chvile').forEach((e) => e.classList.remove('sweep'))
           q('.morf-slot').forEach((e) => e.classList.remove('sweep-write'))
-          q('.struna-spocin').forEach((e) => { e.classList.remove('fill', 'lit', 'swell'); void e.offsetWidth; e.classList.add('fill') })
+          q('.struna-spocin').forEach((e) => { e.classList.remove('fill', 'sigh'); void e.offsetWidth; e.classList.add('fill') })
           later(() => {
-            // celé rozsvíceno → drží (spočine)
-            q('.struna-spocin').forEach((e) => { e.classList.remove('fill'); e.classList.add('lit') })
+            // celé rozsvíceno → jeden plynulý povzdech (drží → zvedne se → zhasne)
+            q('.struna-spocin').forEach((e) => { e.classList.remove('fill'); void e.offsetWidth; e.classList.add('sigh') })
             later(() => {
-              // zář se spojí a lehce zvýší
-              q('.struna-spocin').forEach((e) => e.classList.add('swell'))
-              later(() => {
-                // pozvolna zhasne (fade přes base transition)
-                q('.struna-spocin').forEach((e) => e.classList.remove('swell', 'lit'))
-                later(cycle, GAP_MS)
-              }, SWELL_MS)
-            }, LIT_HOLD)
+              q('.struna-spocin').forEach((e) => e.classList.remove('sigh'))
+              later(cycle, GAP_MS)
+            }, SIGH_MS)
           }, FILL_MS)
         }, SWEEP_MS)
       }, DISSOLVE_MS)

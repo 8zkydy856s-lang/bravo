@@ -58,7 +58,7 @@ body {
   background-image: linear-gradient(90deg, currentColor 0%, currentColor 28%, #e8b34e 50%, currentColor 72%, currentColor 100%);
   background-size: 250% 100%; background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: struna-sweep 4.4s ease-in-out;
+  animation: struna-sweep 4s ease-in-out;
 }
 @keyframes struna-sweep { from { background-position: 100% 0; } to { background-position: 0% 0; } }
 /* MORF — světlo NAPÍŠE nový tvar: za světlem text JE (currentColor), před světlem ještě NENÍ (transparent).
@@ -67,24 +67,29 @@ body {
   background-image: linear-gradient(90deg, currentColor 0%, currentColor 40%, #e8b34e 50%, transparent 62%, transparent 100%);
   background-size: 250% 100%; background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: struna-write 4.4s ease-in-out;
+  animation: struna-write 4s ease-in-out;
 }
 @keyframes struna-write { from { background-position: 100% 0; } to { background-position: 0% 0; } }
 /* Fáze 2 — „spočinutí": světlo se v slově POSTUPNĚ rozsvěcuje zleva doprava a ZŮSTÁVÁ (přírůstek),
    pak je celé rozsvícené a chvíli DRŽÍ (spočine), zář se spojí a lehce zvýší, a pozvolna zhasne. */
 .struna-spocin { transition: color .7s ease, text-shadow .7s ease; }
-/* přírůstek: zleva gold (rozsvíceno, zůstává), zprava currentColor (ještě ne); fill forwards = zůstane celé rozsvícené */
+/* přírůstek: STEJNÉ světlo jako baterka (stejný pruh 28–72 %, size 250 %, tempo 4 s) — jen ZA ním zůstává gold.
+   Zleva gold (rozsvíceno, zůstává), zprava currentColor (ještě ne); fill forwards = zůstane celé rozsvícené. */
 .struna-spocin.fill {
-  background-image: linear-gradient(90deg, #e8b34e 0%, #e8b34e 44%, #f2c866 50%, currentColor 56%, currentColor 100%);
-  background-size: 220% 100%; background-repeat: no-repeat;
+  background-image: linear-gradient(90deg, #e8b34e 0%, #e8b34e 30%, #f4cd74 50%, currentColor 72%, currentColor 100%);
+  background-size: 250% 100%; background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: struna-fill 2s ease-in-out forwards;
+  animation: struna-fill 4s ease-in-out forwards;
 }
 @keyframes struna-fill { from { background-position: 100% 0; } to { background-position: 0% 0; } }
-/* celé rozsvíceno, drží (spočine) — plná zlatá + jemná zář */
-.struna-spocin.lit { color: #e8b34e; text-shadow: 0 0 7px rgba(232,179,78,0.45); }
-/* zář se spojí a lehce zvýší */
-.struna-spocin.lit.swell { text-shadow: 0 0 13px rgba(242,200,102,0.75); transition: text-shadow .45s ease; }
+/* POVZDECH: jeden plynulý pohyb — chvíli drží (spočine) → zář se zvedne (nadechne) → pozvolna zhasne (vydechne). */
+.struna-spocin.sigh { -webkit-text-fill-color: currentColor; animation: struna-sigh 2.4s ease-in-out forwards; }
+@keyframes struna-sigh {
+  0%   { color: #e8b34e; text-shadow: 0 0 7px rgba(232,179,78,0.45); }
+  32%  { color: #e8b34e; text-shadow: 0 0 7px rgba(232,179,78,0.45); }
+  60%  { color: #f4cd74; text-shadow: 0 0 14px rgba(244,205,116,0.78); }
+  100% { color: #6f6253; text-shadow: 0 0 0 rgba(232,179,78,0); }
+}
 .landing-desc { margin: 10px 20px 0; text-align: center; }
 .landing-cta { margin: 12px 16px 0; text-align: center; }
 .landing-links { margin: 10px 16px 0; display: flex; gap: 8px; }
