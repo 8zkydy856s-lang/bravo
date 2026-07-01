@@ -67,8 +67,9 @@ export default function VozikZivot() {
     const srdce = scope.querySelector<HTMLElement>('.vz-srdce')
     if (srdce) {
       const umisti = () => {
-        srdce.style.left = rnd(24, 66).toFixed(1) + '%'
-        srdce.style.top = rnd(34, 72).toFixed(1) + '%'
+        // druhá strana postavičky, NAD květinami (pravá horní část obrázku nad květinovým boxem)
+        srdce.style.left = rnd(62, 84).toFixed(1) + '%'
+        srdce.style.top = rnd(20, 44).toFixed(1) + '%'
         srdce.style.setProperty('--sx', Math.round(rnd(-10, 10)) + 'px')
         srdce.style.fontSize = rnd(7, 9).toFixed(1) + 'px' // menší než zelený plátek (~12px)
       }

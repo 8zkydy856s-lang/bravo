@@ -125,6 +125,16 @@ export default function ProvozZivot() {
     morphSet(root, D, initialShort)
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) { morphSet(root, D, order[chosenLong]); return } // bez pohybu rovnou nejdelší
+    // NASKAKOVÁNÍ při načtení: 1. a 3. věta jsou hned; PROSTŘEDNÍ (2.) věta má 3 dechy, které PŘILETÍ po sobě
+    // (odliší tu důležitou prostřední větu). Běží i při přepnutí jazyka.
+    const casts = Array.from(root.querySelectorAll<HTMLElement>('.veta2 .cast'))
+    casts.forEach((c) => { c.style.transition = 'none'; c.style.opacity = '0'; c.style.transform = 'translateY(7px)' })
+    casts.forEach((c, i) => {
+      window.setTimeout(() => {
+        c.style.transition = 'opacity .6s ease, transform .6s ease'
+        c.style.opacity = '1'; c.style.transform = 'translateY(0)'
+      }, 1000 + i * 480)
+    })
     const onDissolve = () => { morphDissolve(root) }
     const onWrite = () => { pos = (pos + 1) % order.length; morphWriteNew(root, D, order[pos]) }
     window.addEventListener('bravo-morf-dissolve', onDissolve)

@@ -70,7 +70,7 @@ export default function Orchestrace() {
       }, fillAt)
     }
 
-    later(cycle, 1050) // start orchestrace až PO vstupním zaostření (~0,9 s blur→sharp), pak teprve puls
+    later(cycle, 2600) // start orchestrace až PO vstupním zaostření + naskákání 2. věty (dechy přiletí), pak teprve puls
     return () => { pending.forEach((id) => window.clearTimeout(id)); pending.clear() }
   }, [])
 
