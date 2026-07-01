@@ -94,7 +94,7 @@ function morphSet(root: HTMLElement, D: MData, vi: number) {
 function morphDissolve(root: HTMLElement) {
   const slot = root.querySelector<HTMLElement>('.morf-slot')
   if (!slot) return
-  slot.style.transition = 'opacity .8s ease'
+  slot.style.transition = 'opacity 1.4s ease-in-out'
   slot.style.opacity = '0'
 }
 // PSANÍ SVĚTLEM: nastaví CELÝ nový výraz (vycentrovaný) a krytí OKAMŽITĚ zpět na 1;
@@ -117,10 +117,14 @@ export default function ProvozZivot() {
     if (!D) return
     const order = D.order || D.vars.map((_, i) => i)
     const starts = D.startPositions || [0]
-    let pos = starts[Math.random() < 0.5 ? 0 : 1] ?? starts[0] // start z jednoho ze 2 nejdelších, střídavě
-    morphSet(root, D, order[pos]) // výchozí tvar
+    // PRVNÍ pořádný tvar (co světlo napíše jako první) = jeden ze 2 NEJDELŠÍCH (střídavě) → celistvý první zážitek.
+    const chosenLong = starts[Math.random() < 0.5 ? 0 : 1] ?? starts[0]
+    let pos = (chosenLong - 1 + order.length) % order.length // aby první proměna dopadla na nejdelší
+    // Výchozí (krátký) tvar, který se hned prví proměnou přepíše na nejdelší (ne naopak).
+    const initialShort = order.length > 1 ? order[1] : order[0]
+    morphSet(root, D, initialShort)
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduce) return
+    if (reduce) { morphSet(root, D, order[chosenLong]); return } // bez pohybu rovnou nejdelší
     const onDissolve = () => { morphDissolve(root) }
     const onWrite = () => { pos = (pos + 1) % order.length; morphWriteNew(root, D, order[pos]) }
     window.addEventListener('bravo-morf-dissolve', onDissolve)

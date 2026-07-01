@@ -19,7 +19,7 @@ const ANCHOR_START = 1300  // kdy (do zhasínání) se začnou rozsvěcovat kotv
 const ANCHOR_STAGGER = 700 // rozestup mezi kroky kotev (pomaleji)
 const GLOW_MS = 3800       // jak dlouho kotva září (nadech → drží → zhasne) — pomaleji
 const LOOP_GAP = 700       // malý přesah — další puls naskočí, než kotvy dozní = plynulá smyčka
-const DISSOLVE_LEAD = 1100 // o kolik dřív (před dalším cyklem) se morf rozplyne
+const DISSOLVE_LEAD = 1700 // o kolik dřív se morf začne rozplývat (pozvolně 1,4 s, ať dokončí před dalším pulsem)
 // Pořadí rozsvěcování dle DOM pořadí kotev [BraVo, ZDE, OBA, TOBĚ, POZVÁNKA]:
 // krok 0 = ZDE + POZVÁNKA (současně) → 1 = TOBĚ → 2 = OBA → 3 = BraVo
 const ANCHOR_STEP = [3, 0, 2, 1, 0]
