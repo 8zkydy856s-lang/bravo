@@ -55,24 +55,36 @@ body {
    Obraz je širší než text (220 %) a poloha jde 100%→0%, takže box je VŽDY plně pokrytý
    (žádná průhledná místa = žádné mizení písmen); putuje pouze světlý pruh. */
 .struna-chvile.sweep {
-  background-image: linear-gradient(90deg, currentColor 0%, currentColor 40%, #d6a552 50%, currentColor 60%, currentColor 100%);
-  background-size: 220% 100%; background-repeat: no-repeat;
+  background-image: linear-gradient(90deg, currentColor 0%, currentColor 28%, #e8b34e 50%, currentColor 72%, currentColor 100%);
+  background-size: 250% 100%; background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: struna-sweep 3.4s ease-in-out;
+  animation: struna-sweep 4.4s ease-in-out;
 }
 @keyframes struna-sweep { from { background-position: 100% 0; } to { background-position: 0% 0; } }
 /* MORF — světlo NAPÍŠE nový tvar: za světlem text JE (currentColor), před světlem ještě NENÍ (transparent).
    Celý výraz „za chvíli k" jako jeden kus. Stejné tempo i směr jako prosvícení → sladěné s přejezdem stránky. */
 .morf-slot.sweep-write {
-  background-image: linear-gradient(90deg, currentColor 0%, currentColor 44%, #d6a552 50%, transparent 58%, transparent 100%);
-  background-size: 220% 100%; background-repeat: no-repeat;
+  background-image: linear-gradient(90deg, currentColor 0%, currentColor 40%, #e8b34e 50%, transparent 62%, transparent 100%);
+  background-size: 250% 100%; background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: struna-write 3.4s ease-in-out;
+  animation: struna-write 4.4s ease-in-out;
 }
 @keyframes struna-write { from { background-position: 100% 0; } to { background-position: 0% 0; } }
-/* Fáze 2 — „spočinutí" se usadí: klidná zlatá zář, chvíli drží. */
-.struna-spocin { transition: color .6s ease, text-shadow .6s ease; }
-.struna-spocin.settle { color: #a9763a; text-shadow: 0 0 10px rgba(201,138,58,0.4); }
+/* Fáze 2 — „spočinutí": světlo se v slově POSTUPNĚ rozsvěcuje zleva doprava a ZŮSTÁVÁ (přírůstek),
+   pak je celé rozsvícené a chvíli DRŽÍ (spočine), zář se spojí a lehce zvýší, a pozvolna zhasne. */
+.struna-spocin { transition: color .7s ease, text-shadow .7s ease; }
+/* přírůstek: zleva gold (rozsvíceno, zůstává), zprava currentColor (ještě ne); fill forwards = zůstane celé rozsvícené */
+.struna-spocin.fill {
+  background-image: linear-gradient(90deg, #e8b34e 0%, #e8b34e 44%, #f2c866 50%, currentColor 56%, currentColor 100%);
+  background-size: 220% 100%; background-repeat: no-repeat;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  animation: struna-fill 2s ease-in-out forwards;
+}
+@keyframes struna-fill { from { background-position: 100% 0; } to { background-position: 0% 0; } }
+/* celé rozsvíceno, drží (spočine) — plná zlatá + jemná zář */
+.struna-spocin.lit { color: #e8b34e; text-shadow: 0 0 7px rgba(232,179,78,0.45); }
+/* zář se spojí a lehce zvýší */
+.struna-spocin.lit.swell { text-shadow: 0 0 13px rgba(242,200,102,0.75); transition: text-shadow .45s ease; }
 .landing-desc { margin: 10px 20px 0; text-align: center; }
 .landing-cta { margin: 12px 16px 0; text-align: center; }
 .landing-links { margin: 10px 16px 0; display: flex; gap: 8px; }

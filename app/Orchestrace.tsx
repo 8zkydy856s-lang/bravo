@@ -9,10 +9,12 @@ import { useEffect } from 'react'
 // Kotvy zatím běží nezávisle (přidají se později); dirigent je postaven fázově, aby šla anchor-fáze zapojit.
 // reduced-motion → nespouští se (klid).
 
-const DISSOLVE_MS = 900 // než se starý tvar morfu rozplyne (opacity→0), pak teprve přijede světlo
-const SWEEP_MS = 3400   // jak dlouho světlo „chvíle" přejíždí (prosvítí podtitul/popis + napíše morf)
-const SETTLE_MS = 1800  // jak dlouho „spočinutí" drží zář
-const GAP_MS = 2600     // klid mezi pulsy
+const DISSOLVE_MS = 1000 // než se starý tvar morfu rozplyne (opacity→0), pak teprve přijede světlo
+const SWEEP_MS = 4400    // jak dlouho světlo „chvíle" přejíždí (prosvítí podtitul/popis + napíše morf) — pomalejší
+const FILL_MS = 2000     // „spočinutí": postupné rozsvěcování zleva doprava
+const LIT_HOLD = 1000    // celé rozsvíceno drží (spočine)
+const SWELL_MS = 450     // zář se spojí a lehce zvýší
+const GAP_MS = 2800      // klid mezi pulsy
 
 export default function Orchestrace() {
   useEffect(() => {
@@ -35,15 +37,24 @@ export default function Orchestrace() {
         window.dispatchEvent(new CustomEvent('bravo-morf-write')) // nastaví nový tvar (zatím neviditelný pod psacím světlem)
         q('.struna-chvile').forEach((e) => { e.classList.remove('sweep'); void e.offsetWidth; e.classList.add('sweep') })         // podtitul + popis: prosvícení
         q('.morf-slot').forEach((e) => { e.classList.remove('sweep-write'); void e.offsetWidth; e.classList.add('sweep-write') }) // morf: světlo NAPÍŠE nový výraz
-        // Fáze 2 — po přejezdu se „spočinutí" usadí, chvíli drží, pak vše zhasne a po pauze další puls
+        // Fáze 2 — „spočinutí": postupné rozsvěcování (přírůstek) → drží (spočine) → zář se zvýší → zhasne
         later(() => {
           q('.struna-chvile').forEach((e) => e.classList.remove('sweep'))
           q('.morf-slot').forEach((e) => e.classList.remove('sweep-write'))
-          q('.struna-spocin').forEach((e) => e.classList.add('settle'))
+          q('.struna-spocin').forEach((e) => { e.classList.remove('fill', 'lit', 'swell'); void e.offsetWidth; e.classList.add('fill') })
           later(() => {
-            q('.struna-spocin').forEach((e) => e.classList.remove('settle'))
-            later(cycle, GAP_MS)
-          }, SETTLE_MS)
+            // celé rozsvíceno → drží (spočine)
+            q('.struna-spocin').forEach((e) => { e.classList.remove('fill'); e.classList.add('lit') })
+            later(() => {
+              // zář se spojí a lehce zvýší
+              q('.struna-spocin').forEach((e) => e.classList.add('swell'))
+              later(() => {
+                // pozvolna zhasne (fade přes base transition)
+                q('.struna-spocin').forEach((e) => e.classList.remove('swell', 'lit'))
+                later(cycle, GAP_MS)
+              }, SWELL_MS)
+            }, LIT_HOLD)
+          }, FILL_MS)
         }, SWEEP_MS)
       }, DISSOLVE_MS)
     }
