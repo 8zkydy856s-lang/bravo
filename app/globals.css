@@ -19,6 +19,8 @@ body {
 /* Fáze 1 - responzivní úvodní vizitka.
    Mobil = úzký sloupec jako dřív; desktop (od 860px) = širší, vzdušnější. */
 .landing {
+  /* VSTUP: první zobrazení = chvilku zamlžená/poloprůhledná stránka → zaostří a oživne (pak teprve orchestrace). */
+  animation: bravo-prichod .85s ease-out backwards;
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
@@ -26,6 +28,13 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+}
+@keyframes bravo-prichod {
+  from { filter: blur(7px); opacity: 0.35; }
+  to   { filter: blur(0); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing { animation: none; }
 }
 .landing-title { font-size: 32px; }
 .bravo-napis { height: 54px; width: auto; }
@@ -58,7 +67,7 @@ body {
   background-image: linear-gradient(90deg, currentColor 0%, currentColor 28%, #e8b34e 50%, currentColor 72%, currentColor 100%);
   background-size: 250% 100%; background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: struna-sweep 3.8s linear;
+  animation: struna-sweep 4s linear;
 }
 @keyframes struna-sweep { from { background-position: 100% 0; } to { background-position: 0% 0; } }
 /* MORF — světlo NAPÍŠE nový tvar: za světlem text JE (currentColor), před světlem ještě NENÍ (transparent).
@@ -67,7 +76,7 @@ body {
   background-image: linear-gradient(90deg, currentColor 0%, currentColor 40%, #e8b34e 50%, transparent 62%, transparent 100%);
   background-size: 250% 100%; background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: struna-write 3.8s linear;
+  animation: struna-write 4s linear;
 }
 @keyframes struna-write { from { background-position: 100% 0; } to { background-position: 0% 0; } }
 /* Fáze 2 — „spočinutí": světlo se v slově POSTUPNĚ rozsvěcuje zleva doprava a ZŮSTÁVÁ (přírůstek),
@@ -78,7 +87,7 @@ body {
   background-image: linear-gradient(90deg, #e8b34e 0%, #e8b34e 30%, #f4cd74 50%, currentColor 72%, currentColor 100%);
   background-size: 250% 100%; background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: struna-fill 3.8s linear forwards;
+  animation: struna-fill 4s linear forwards;
 }
 @keyframes struna-fill { from { background-position: 100% 0; } to { background-position: 0% 0; } }
 /* ZHASNUTÍ (symetrie): STEJNĚ jako se rozsvítilo — zleva doprava se písmenka postupně zhasínají. */
@@ -86,13 +95,13 @@ body {
   background-image: linear-gradient(90deg, currentColor 0%, currentColor 30%, #f4cd74 50%, #e8b34e 72%, #e8b34e 100%);
   background-size: 250% 100%; background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: struna-unfill 3.8s linear forwards;
+  animation: struna-unfill 4s linear forwards;
 }
 @keyframes struna-unfill { from { background-position: 100% 0; } to { background-position: 0% 0; } }
 /* KOTVY — z pohasínání spočinutí vzejde nadechnutí kotev: rozsvítí se, chvíli drží, zhasnou. */
 /* Kotva: přidání .on = pozvolna se rozsvítí a ZŮSTANE svítit; odebrání .on = pozvolna zhasne.
    Dirigent řídí kaskádu (rozsvícení po řadě → od BraVo se v řadě zhasíná, BraVo poslední). */
-.anchor { transition: color .9s ease, text-shadow .9s ease; }
+.anchor { transition: color .95s ease, text-shadow .95s ease; }
 .anchor.on { color: #c99a3a; text-shadow: 0 0 9px rgba(232,179,78,0.55); }
 .landing-desc { margin: 10px 20px 0; text-align: center; }
 .landing-cta { margin: 12px 16px 0; text-align: center; }
