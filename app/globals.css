@@ -90,14 +90,10 @@ body {
 }
 @keyframes struna-unfill { from { background-position: 100% 0; } to { background-position: 0% 0; } }
 /* KOTVY — z pohasínání spočinutí vzejde nadechnutí kotev: rozsvítí se, chvíli drží, zhasnou. */
-.anchor { transition: color .5s linear, text-shadow .5s linear; }
-.anchor.glow { animation: anchor-glow 2.6s ease-in-out forwards; }
-@keyframes anchor-glow {
-  0%   { color: #6f6253; text-shadow: 0 0 0 rgba(232,179,78,0); }
-  38%  { color: #c99a3a; text-shadow: 0 0 8px rgba(232,179,78,0.5); }
-  66%  { color: #c99a3a; text-shadow: 0 0 8px rgba(232,179,78,0.5); }
-  100% { color: #6f6253; text-shadow: 0 0 0 rgba(232,179,78,0); }
-}
+/* Kotva: přidání .on = pozvolna se rozsvítí a ZŮSTANE svítit; odebrání .on = pozvolna zhasne.
+   Dirigent řídí kaskádu (rozsvícení po řadě → od BraVo se v řadě zhasíná, BraVo poslední). */
+.anchor { transition: color .8s ease, text-shadow .8s ease; }
+.anchor.on { color: #c99a3a; text-shadow: 0 0 9px rgba(232,179,78,0.55); }
 .landing-desc { margin: 10px 20px 0; text-align: center; }
 .landing-cta { margin: 12px 16px 0; text-align: center; }
 .landing-links { margin: 10px 16px 0; display: flex; gap: 8px; }

@@ -15,11 +15,13 @@ const SWEEP_MS = 3400      // baterka přejede „chvíle" (prosvítí podtitul/
 const OVERLAP = 1200       // spočinutí začne DŘÍV (o tolik před koncem sweepu) = plynulý přechod 1.→2. část
 const FILL_MS = 3400       // „spočinutí" se rozsvítí přírůstkově STEJNOU rychlostí
 const HOLD_MS = 300        // celé rozsvícené chvilku drží (spočine)
-const ANCHOR_START = 1300  // kdy (do zhasínání) se začnou rozsvěcovat kotvy
-const ANCHOR_STAGGER = 700 // rozestup mezi kroky kotev (pomaleji)
-const GLOW_MS = 3800       // jak dlouho kotva září (nadech → drží → zhasne) — pomaleji
-const LOOP_GAP = 700       // malý přesah — další puls naskočí, než kotvy dozní = plynulá smyčka
-const DISSOLVE_LEAD = 1700 // o kolik dřív se morf začne rozplývat (pozvolně 1,4 s, ať dokončí před dalším pulsem)
+// KOTVY = jeden akt: rozsvítí se v kaskádě (skoro naráz) až po BraVo; jakmile svítí BraVo,
+// od prvních bodů se v téže řadě ZHASÍNÁ (BraVo poslední). Až BraVo úplně zhasne → nový puls.
+const ANCHOR_START = 800   // kdy (do zhasínání spočinutí) se začnou rozsvěcovat kotvy
+const ANCHOR_STAGGER = 320 // těsný rozestup — skoro naráz
+const ANCHOR_FADE = 800    // doba rozsvícení / zhasnutí jedné kotvy (jemné, = CSS transition)
+const MORF_DISSOLVE_AT = 300 // kdy (v anchor fázi) se morf rozplyne, ať je vedle BraVo prázdno, než BraVo zhasne
+const LOOP_GAP = 250       // těsná pauza po ÚPLNÉM zhasnutí BraVo, pak nový puls (jeden akt, bez překrytí)
 // Pořadí rozsvěcování dle DOM pořadí kotev [BraVo, ZDE, OBA, TOBĚ, POZVÁNKA]:
 // krok 0 = ZDE + POZVÁNKA (současně) → 1 = TOBĚ → 2 = OBA → 3 = BraVo
 const ANCHOR_STEP = [3, 0, 2, 1, 0]
@@ -50,20 +52,21 @@ export default function Orchestrace() {
       later(() => {
         q('.struna-spocin').forEach((e) => { e.classList.remove('fill', 'unfill'); restart(e, 'fill') })
         later(() => {
-          // drží → symetrické ZHASNUTÍ (zleva doprava) + z pohasínání se rozsvěcují KOTVY
+          // drží → symetrické ZHASNUTÍ spočinutí
           q('.struna-spocin').forEach((e) => { e.classList.remove('fill'); restart(e, 'unfill') })
+          // KOTVY jako jeden akt: rozsvítí se v kaskádě (krok 0..3, BraVo poslední) a ZŮSTANOU svítit;
+          // jakmile svítí BraVo (krok 3), od prvních bodů se v téže řadě ZHASÍNÁ (BraVo poslední).
           q('.anchor').forEach((a, i) => {
             const step = ANCHOR_STEP[i] ?? i
-            later(() => restart(a, 'glow'), ANCHOR_START + step * ANCHOR_STAGGER)
+            later(() => a.classList.add('on'), ANCHOR_START + step * ANCHOR_STAGGER)              // rozsvítí, drží
+            later(() => a.classList.remove('on'), ANCHOR_START + (3 + step) * ANCHOR_STAGGER)      // zhasíná (od okamžiku, kdy svítí BraVo)
           })
+          // morf se rozplyne, ať je vedle BraVo PRÁZDNO, než BraVo dozáří/zhasne
+          later(() => window.dispatchEvent(new CustomEvent('bravo-morf-dissolve')), MORF_DISSOLVE_AT)
+          // NOVÝ PULS až po ÚPLNÉM zhasnutí BraVo (žádné překrytí svítící BraVo ↔ nový morf) + těsná pauza
+          later(cycle, ANCHOR_START + 6 * ANCHOR_STAGGER + ANCHOR_FADE + LOOP_GAP)
         }, FILL_MS + HOLD_MS)
       }, fillAt)
-
-      // délka cyklu — další puls naskočí, když kotvy ještě doznívají (plynulá smyčka)
-      const period = fillAt + FILL_MS + HOLD_MS + ANCHOR_START + 3 * ANCHOR_STAGGER + LOOP_GAP
-      // morf se rozplyne O CHVÍLI DŘÍV, ať je při dalším cyklu hned připraven (žádné čekání na švu)
-      later(() => window.dispatchEvent(new CustomEvent('bravo-morf-dissolve')), period - DISSOLVE_LEAD)
-      later(cycle, period)
     }
 
     later(cycle, 900) // krátká prodleva po načtení
