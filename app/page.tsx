@@ -8,6 +8,7 @@ import JazykPrepinac from "./JazykPrepinac";
 import { InstagramIkona, GoogleIkona } from "./Ikony";
 import { WebObsahProvider, Sdeleni, ZitraVyhled, ProvozText, PopisText, NavigujOdkaz } from "./WebObsah";
 import VozikZivot from "./VozikZivot";
+import LayoutEditor from "./LayoutEditor";
 // Fáze 1: AuthBar a TrustCard zůstávají v projektu, na veřejné úvodní stránce se zatím nevykreslují.
 // import AuthBar from "./AuthBar";
 // import TrustCard from "./TrustCard";
@@ -133,6 +134,8 @@ export default function Home() {
           ))}
         </nav>
       */}
+
+      <LayoutEditor />
 
       </WebObsahProvider>
       </LangProvider>
