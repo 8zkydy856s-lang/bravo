@@ -18,10 +18,9 @@ const HOLD_MS = 370        // celé rozsvícené chvilku drží (spočine)
 // KOTVY = jeden akt: rozsvítí se v kaskádě (skoro naráz) až po BraVo; jakmile svítí BraVo,
 // od prvních bodů se v téže řadě ZHASÍNÁ (BraVo poslední). Až BraVo úplně zhasne → nový puls.
 const ANCHOR_START = 900   // kotvy začnou brzy po spočinutí (žádná mrtvá mezera), jen malý průnik
-const ANCHOR_STAGGER = 750 // KLIDNÝ rozestup — body jako oddělené TÓNY, rovnoměrně (ne rychle za sebou)
+const ANCHOR_STAGGER = 850 // KLIDNÝ rozestup — body jako oddělené TÓNY, rovnoměrně (o chlup pomaleji)
 const ANCHOR_FADE = 950    // doba rozsvícení / zhasnutí jedné kotvy (jemné, = CSS transition .95s)
-const MORF_DISSOLVE_AT = 370 // kdy (v anchor fázi) se morf rozplyne, ať je vedle BraVo prázdno, než BraVo zhasne
-const LOOP_GAP = 600       // klidný nádech po zhasnutí BraVo, pak nový puls (pozvolnější sled cyklů)
+const LOOP_GAP = 500       // klidný nádech mezi pulsy (morf ukazuje text, díra jen krátká na konci)
 // Pořadí rozsvěcování dle DOM pořadí kotev [BraVo, ZDE, OBA, TOBĚ, POZVÁNKA]:
 // krok 0 = ZDE + POZVÁNKA (současně) → 1 = TOBĚ → 2 = OBA → 3 = BraVo
 const ANCHOR_STEP = [3, 0, 2, 1, 0]
@@ -61,10 +60,12 @@ export default function Orchestrace() {
             later(() => a.classList.add('on'), ANCHOR_START + step * ANCHOR_STAGGER)              // rozsvítí, drží
             later(() => a.classList.remove('on'), ANCHOR_START + (3 + step) * ANCHOR_STAGGER)      // zhasíná (od okamžiku, kdy svítí BraVo)
           })
-          // morf se rozplyne, ať je vedle BraVo PRÁZDNO, než BraVo dozáří/zhasne
-          later(() => window.dispatchEvent(new CustomEvent('bravo-morf-dissolve')), MORF_DISSOLVE_AT)
-          // NOVÝ PULS až po ÚPLNÉM zhasnutí BraVo (žádné překrytí svítící BraVo ↔ nový morf) + těsná pauza
-          later(cycle, ANCHOR_START + 6 * ANCHOR_STAGGER + ANCHOR_FADE + LOOP_GAP)
+          // MORF ukazuje text skoro celou dobu (i vedle svítící BraVo — klidný text, nesvítí, nekonkuruje).
+          // Rozplyne se AŽ PO úplném zhasnutí BraVo → žádná dlouhá díra, jen krátký přechod na konci.
+          const bravoZhaslo = ANCHOR_START + 6 * ANCHOR_STAGGER + ANCHOR_FADE
+          later(() => window.dispatchEvent(new CustomEvent('bravo-morf-dissolve')), bravoZhaslo + 100)
+          // NOVÝ PULS až rozplynutí (1,6 s) doběhne — pak světlo napíše nový morf (BraVo už dávno zhaslé)
+          later(cycle, bravoZhaslo + 100 + 1600 + LOOP_GAP)
         }, FILL_MS + HOLD_MS)
       }, fillAt)
     }

@@ -61,6 +61,22 @@ export default function VozikZivot() {
       n3.style.setProperty('--ny', Math.round(rnd(-40, -14)) + 'px')
       n3.style.animationDelay = '-' + rnd(0, 20).toFixed(1) + 's'
     }
+
+    // SRDCE — malé, červené ale průhledné; vznáší se, zjeví se, roste a rozplyne;
+    // POKAŽDÉ se objeví na jiném NÁHODNÉM místě v oblasti obrázku (přemístí se při každém cyklu).
+    const srdce = scope.querySelector<HTMLElement>('.vz-srdce')
+    if (srdce) {
+      const umisti = () => {
+        srdce.style.left = rnd(24, 66).toFixed(1) + '%'
+        srdce.style.top = rnd(34, 72).toFixed(1) + '%'
+        srdce.style.setProperty('--sx', Math.round(rnd(-10, 10)) + 'px')
+        srdce.style.fontSize = rnd(7, 9).toFixed(1) + 'px' // menší než zelený plátek (~12px)
+      }
+      umisti()
+      srdce.style.animationDuration = rnd(11, 16).toFixed(1) + 's'
+      srdce.style.animationDelay = '-' + rnd(0, 8).toFixed(1) + 's'
+      srdce.addEventListener('animationiteration', umisti) // nové místo při každém objevení
+    }
   }, [])
 
   return (
@@ -76,6 +92,7 @@ export default function VozikZivot() {
         <span className="vz-note vz-note1">♪</span>
         <span className="vz-note vz-note2">♫</span>
         <span className="vz-note vz-note3">♬</span>
+        <span className="vz-srdce">♥</span>
       </div>
     </>
   )
