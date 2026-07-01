@@ -36,11 +36,11 @@ const MORPH: Record<string, MData> = {
 
 // Strukturovaný text provozu (5 jazyků). Morf v .morf-slot (centrovaný). „spočinu"=.struna-spocin, jádro=.struna-chvile.
 const PROVOZ: Record<string, string> = {
-  cz: `<span class="veta veta1">Otevírací doba je <em>přibližná</em> a&nbsp;závisí na&nbsp;<em>počasí</em>.</span><span class="veta veta2"><span class="cast">Než se vydám <span class="morf-slot"><span class="chv-za">za&nbsp;</span><span class="struna-chvile chv-jadro">chvíli</span><span class="fx-k">&nbsp;k</span></span> <span class="anchor">BraVo</span>,</span><span class="cast">vždy nejdřív <span class="struna-spocin">spočinu</span> <span class="anchor">ZDE</span> a&nbsp;naladím se,</span><span class="cast">abychom se skutečně sešli <span class="anchor">OBA</span>&nbsp;připraveni.</span></span><span class="veta veta3">Těším se, děkuji <span class="anchor">TOBĚ</span> za&nbsp;pochopení<span class="fx-kvetina" aria-hidden="true"> ❀</span></span>`,
-  en: `<span class="veta veta1">Hours are <em>approximate</em> and depend on the <em>weather</em>.</span><span class="veta veta2"><span class="cast">Before I set out <span class="morf-slot"><span class="chv-za">for&nbsp;</span><span class="struna-chvile chv-jadro">a&nbsp;moment</span><span class="fx-k">&nbsp;to</span></span> <span class="anchor">BraVo</span>,</span><span class="cast">I always <span class="struna-spocin">rest</span> <span class="anchor">HERE</span> first and tune in,</span><span class="cast">so we truly meet <span class="anchor">BOTH</span> of us ready.</span></span><span class="veta veta3">Looking forward, thank <span class="anchor">YOU</span> for understanding<span class="fx-kvetina" aria-hidden="true"> ❀</span></span>`,
-  fr: `<span class="veta veta1">Les horaires sont <em>approximatifs</em>, selon la <em>météo</em>.</span><span class="veta veta2"><span class="cast">Avant de partir <span class="morf-slot"><span class="chv-za">dans&nbsp;</span><span class="struna-chvile chv-jadro">un&nbsp;instant</span><span class="fx-k">&nbsp;vers</span></span> <span class="anchor">BraVo</span>,</span><span class="cast">je <span class="struna-spocin">souffle</span> d'abord <span class="anchor">ICI</span> et je me mets au diapason,</span><span class="cast">pour qu'on se retrouve vraiment prêts <span class="anchor">TOUS LES DEUX</span>.</span></span><span class="veta veta3">Au plaisir, merci <span class="anchor">à&nbsp;TOI</span> pour la compréhension<span class="fx-kvetina" aria-hidden="true"> ❀</span></span>`,
-  de: `<span class="veta veta1">Die Öffnungszeiten sind <em>ungefähr</em>, je nach <em>Wetter</em>.</span><span class="veta veta2"><span class="cast">Bevor ich <span class="morf-slot"><span class="chv-za">für&nbsp;</span><span class="struna-chvile chv-jadro">eine&nbsp;Weile</span><span class="fx-k">&nbsp;zu</span></span> <span class="anchor">BraVo</span> aufbreche,</span><span class="cast"><span class="struna-spocin">verweile</span> ich zuerst <span class="anchor">HIER</span> und stimme mich ein,</span><span class="cast">damit wir uns wirklich <span class="anchor">BEIDE</span> bereit begegnen.</span></span><span class="veta veta3">Ich freue mich, danke <span class="anchor">DIR</span> fürs Verständnis<span class="fx-kvetina" aria-hidden="true"> ❀</span></span>`,
-  lu: `<span class="veta veta1">D'Öffnungszäiten si <em>ongeféier</em>, je no <em>Wieder</em>.</span><span class="veta veta2"><span class="cast">Ier ech <span class="morf-slot"><span class="chv-za">fir&nbsp;</span><span class="struna-chvile chv-jadro">eng&nbsp;Weil</span><span class="fx-k">&nbsp;op</span></span> <span class="anchor">BraVo</span> lassginn,</span><span class="cast"><span class="struna-spocin">verweilen</span> ech als éischt <span class="anchor">HEI</span> a stëmme mech an,</span><span class="cast">fir datt mir eis wierklech <span class="anchor">BEIDS</span> prett begéinen.</span></span><span class="veta veta3">Ech freeë mech, merci <span class="anchor">DIR</span> fir d'Verständnis<span class="fx-kvetina" aria-hidden="true"> ❀</span></span>`,
+  cz: `<span class="veta veta1">Otevírací doba je <em>přibližná</em> a&nbsp;závisí na&nbsp;<em>počasí</em>.</span><span class="veta veta2"><span class="cast">Než se vydám <span class="morf-slot"><span class="chv-za">za&nbsp;</span><span class="chv-jadro">chvíli</span><span class="fx-k">&nbsp;k</span></span> <span class="anchor">BraVo</span>,</span><span class="cast">vždy nejdřív <span class="struna-spocin">spočinu</span> <span class="anchor">ZDE</span> a&nbsp;naladím se,</span><span class="cast">abychom se skutečně sešli <span class="anchor">OBA</span>&nbsp;připraveni.</span></span><span class="veta veta3">Těším se, děkuji <span class="anchor">TOBĚ</span> za&nbsp;pochopení<span class="fx-kvetina" aria-hidden="true"> ❀</span></span>`,
+  en: `<span class="veta veta1">Hours are <em>approximate</em> and depend on the <em>weather</em>.</span><span class="veta veta2"><span class="cast">Before I set out <span class="morf-slot"><span class="chv-za">for&nbsp;</span><span class="chv-jadro">a&nbsp;moment</span><span class="fx-k">&nbsp;to</span></span> <span class="anchor">BraVo</span>,</span><span class="cast">I always <span class="struna-spocin">rest</span> <span class="anchor">HERE</span> first and tune in,</span><span class="cast">so we truly meet <span class="anchor">BOTH</span> of us ready.</span></span><span class="veta veta3">Looking forward, thank <span class="anchor">YOU</span> for understanding<span class="fx-kvetina" aria-hidden="true"> ❀</span></span>`,
+  fr: `<span class="veta veta1">Les horaires sont <em>approximatifs</em>, selon la <em>météo</em>.</span><span class="veta veta2"><span class="cast">Avant de partir <span class="morf-slot"><span class="chv-za">dans&nbsp;</span><span class="chv-jadro">un&nbsp;instant</span><span class="fx-k">&nbsp;vers</span></span> <span class="anchor">BraVo</span>,</span><span class="cast">je <span class="struna-spocin">souffle</span> d'abord <span class="anchor">ICI</span> et je me mets au diapason,</span><span class="cast">pour qu'on se retrouve vraiment prêts <span class="anchor">TOUS LES DEUX</span>.</span></span><span class="veta veta3">Au plaisir, merci <span class="anchor">à&nbsp;TOI</span> pour la compréhension<span class="fx-kvetina" aria-hidden="true"> ❀</span></span>`,
+  de: `<span class="veta veta1">Die Öffnungszeiten sind <em>ungefähr</em>, je nach <em>Wetter</em>.</span><span class="veta veta2"><span class="cast">Bevor ich <span class="morf-slot"><span class="chv-za">für&nbsp;</span><span class="chv-jadro">eine&nbsp;Weile</span><span class="fx-k">&nbsp;zu</span></span> <span class="anchor">BraVo</span> aufbreche,</span><span class="cast"><span class="struna-spocin">verweile</span> ich zuerst <span class="anchor">HIER</span> und stimme mich ein,</span><span class="cast">damit wir uns wirklich <span class="anchor">BEIDE</span> bereit begegnen.</span></span><span class="veta veta3">Ich freue mich, danke <span class="anchor">DIR</span> fürs Verständnis<span class="fx-kvetina" aria-hidden="true"> ❀</span></span>`,
+  lu: `<span class="veta veta1">D'Öffnungszäiten si <em>ongeféier</em>, je no <em>Wieder</em>.</span><span class="veta veta2"><span class="cast">Ier ech <span class="morf-slot"><span class="chv-za">fir&nbsp;</span><span class="chv-jadro">eng&nbsp;Weil</span><span class="fx-k">&nbsp;op</span></span> <span class="anchor">BraVo</span> lassginn,</span><span class="cast"><span class="struna-spocin">verweilen</span> ech als éischt <span class="anchor">HEI</span> a stëmme mech an,</span><span class="cast">fir datt mir eis wierklech <span class="anchor">BEIDS</span> prett begéinen.</span></span><span class="veta veta3">Ech freeë mech, merci <span class="anchor">DIR</span> fir d'Verständnis<span class="fx-kvetina" aria-hidden="true"> ❀</span></span>`,
 }
 
 const NBSP = ' '
@@ -81,18 +81,20 @@ function morphSet(root: HTMLElement, D: MData, vi: number) {
   if (fxk) fxk.textContent = NBSP + v.prep
 }
 
-// ZNOVUZROZENÍ: celý tvar se POZVOLNA rozplyne úplně do ztracena (opacity → 0, ne blik),
-// teprve když je pryč, se vymění za CELÝ nový výraz a ten se vycentrovaný objeví (opacity → 1).
-// Pokaždé celý znovu — i kdyby další varianta sdílela písmena. Jasný systém v pevné mezeře.
-function morphReveal(root: HTMLElement, D: MData, vi: number) {
+// MIZENÍ: celý tvar se POZVOLNA rozplyne úplně do ztracena (opacity → 0). Ne světlem, prostě zmizí.
+function morphDissolve(root: HTMLElement) {
   const slot = root.querySelector<HTMLElement>('.morf-slot')
-  if (!slot) { morphSet(root, D, vi); return }
+  if (!slot) return
   slot.style.transition = 'opacity .8s ease'
   slot.style.opacity = '0'
-  window.setTimeout(() => {
-    morphSet(root, D, vi)          // celý nový výraz, vycentrovaný
-    slot.style.opacity = '1'        // znovuzrození
-  }, 850)
+}
+// PSANÍ SVĚTLEM: nastaví CELÝ nový výraz (vycentrovaný) a krytí OKAMŽITĚ zpět na 1;
+// viditelnost pak řídí .sweep-write — světlo text napíše zleva doprava (za světlem JE, před ním NENÍ).
+// Volá dirigent těsně před přejezdem světla, aby objevení bylo sjednocené s baterkou.
+function morphWriteNew(root: HTMLElement, D: MData, vi: number) {
+  const slot = root.querySelector<HTMLElement>('.morf-slot')
+  morphSet(root, D, vi)
+  if (slot) { slot.style.transition = 'none'; slot.style.opacity = '1' }
 }
 
 export default function ProvozZivot() {
@@ -108,9 +110,14 @@ export default function ProvozZivot() {
     morphSet(root, D, pos) // výchozí tvar
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) return
-    const onNext = () => { pos = (pos + 1) % D.vars.length; morphReveal(root, D, pos) }
-    window.addEventListener('bravo-morf-next', onNext)
-    return () => window.removeEventListener('bravo-morf-next', onNext)
+    const onDissolve = () => { morphDissolve(root) }
+    const onWrite = () => { pos = (pos + 1) % D.vars.length; morphWriteNew(root, D, pos) }
+    window.addEventListener('bravo-morf-dissolve', onDissolve)
+    window.addEventListener('bravo-morf-write', onWrite)
+    return () => {
+      window.removeEventListener('bravo-morf-dissolve', onDissolve)
+      window.removeEventListener('bravo-morf-write', onWrite)
+    }
   }, [lang])
 
   return (

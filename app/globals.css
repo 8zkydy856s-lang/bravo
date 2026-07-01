@@ -61,6 +61,15 @@ body {
   animation: struna-sweep 3.4s ease-in-out;
 }
 @keyframes struna-sweep { from { background-position: 100% 0; } to { background-position: 0% 0; } }
+/* MORF — světlo NAPÍŠE nový tvar: za světlem text JE (currentColor), před světlem ještě NENÍ (transparent).
+   Celý výraz „za chvíli k" jako jeden kus. Stejné tempo i směr jako prosvícení → sladěné s přejezdem stránky. */
+.morf-slot.sweep-write {
+  background-image: linear-gradient(90deg, currentColor 0%, currentColor 44%, #d6a552 50%, transparent 58%, transparent 100%);
+  background-size: 220% 100%; background-repeat: no-repeat;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  animation: struna-write 3.4s ease-in-out;
+}
+@keyframes struna-write { from { background-position: 100% 0; } to { background-position: 0% 0; } }
 /* Fáze 2 — „spočinutí" se usadí: klidná zlatá zář, chvíli drží. */
 .struna-spocin { transition: color .6s ease, text-shadow .6s ease; }
 .struna-spocin.settle { color: #a9763a; text-shadow: 0 0 10px rgba(201,138,58,0.4); }
