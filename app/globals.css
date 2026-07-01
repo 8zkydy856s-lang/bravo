@@ -37,7 +37,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .landing { animation: none; }
   .brzy-emoji { animation: none; }
-  .veta-blok .fx-symbol .sym-bud-l, .veta-blok .fx-symbol .sym-bud-r, .veta-blok .fx-symbol .sym-foL, .veta-blok .fx-symbol .sym-foR, .veta-blok .fx-symbol .sym-leafL, .veta-blok .fx-symbol .sym-leafR, .veta-blok .fx-symbol .sym-veinL, .veta-blok .fx-symbol .sym-veinR { animation: none; }
+  .veta-blok .fx-symbol .sym-bud-l, .veta-blok .fx-symbol .sym-bud-r, .veta-blok .fx-symbol .sym-stemL, .veta-blok .fx-symbol .sym-stemR, .veta-blok .fx-symbol .sym-foL, .veta-blok .fx-symbol .sym-foR, .veta-blok .fx-symbol .sym-leafL, .veta-blok .fx-symbol .sym-leafR, .veta-blok .fx-symbol .sym-veinL, .veta-blok .fx-symbol .sym-veinR { animation: none; }
   .stav-kvet .rot, .stav-kvet .glyf, .stav-kvet::before { animation: none; }
 }
 .landing-title { font-size: 32px; }
@@ -70,6 +70,9 @@ body {
 .veta-blok .fx-symbol .sym-bud-r { transform-box: fill-box; transform-origin: 50% 100%; animation: sym-cyk-top 25s ease-in-out infinite, sym-mot-rbud 25s ease-in-out infinite; }
 .veta-blok .fx-symbol .sym-foL { animation: sym-cyk-foliage 25s ease-in-out infinite, sym-mot-lhalf 25s ease-in-out infinite; }
 .veta-blok .fx-symbol .sym-foR { animation: sym-cyk-foliage 25s ease-in-out infinite, sym-mot-rhalf 25s ease-in-out infinite; }
+/* STONKY = paže rukou: v KVĚTINĚ/KÁVĚ zelené, ve VDĚČNOSTI barva DLANÍ (tmavší žluto-oranžová) → dvě prosící ruce */
+.veta-blok .fx-symbol .sym-stemL { animation: sym-cyk-stem 25s ease-in-out infinite, sym-mot-lhalf 25s ease-in-out infinite; }
+.veta-blok .fx-symbol .sym-stemR { animation: sym-cyk-stem 25s ease-in-out infinite, sym-mot-rhalf 25s ease-in-out infinite; }
 .veta-blok .fx-symbol .sym-leafL { animation: sym-cyk-leaf 25s ease-in-out infinite, sym-mot-lhalf 25s ease-in-out infinite; }
 .veta-blok .fx-symbol .sym-leafR { animation: sym-cyk-leaf 25s ease-in-out infinite, sym-mot-rhalf 25s ease-in-out infinite; }
 .veta-blok .fx-symbol .sym-veinL { animation: sym-cyk-vein 25s ease-in-out infinite, sym-mot-lhalf 25s ease-in-out infinite; }
@@ -78,6 +81,7 @@ body {
 @keyframes sym-cyk-leaf { 0%,48% { fill:#6faa4a; stroke:#4a7c30; } 60%,88% { fill:#5b8fd6; stroke:#3f6aa8; } 100% { fill:#6faa4a; stroke:#4a7c30; } }
 @keyframes sym-cyk-foliage { 0%,48% { stroke:#4a7c30; } 60%,88% { stroke:#3f6aa8; } 100% { stroke:#4a7c30; } }
 @keyframes sym-cyk-vein { 0%,48% { stroke:#3f6d29; } 60%,88% { stroke:#2f5789; } 100% { stroke:#3f6d29; } }
+@keyframes sym-cyk-stem { 0%,48% { stroke:#4a7c30; } 60%,88% { stroke:#d98b34; } 100% { stroke:#4a7c30; } }
 /* poupata: náznak pootevření (rotace) v KVĚTINĚ + svislý posun (kompenzace měřítka 0.795) ve VDĚČNOSTI */
 @keyframes sym-mot-lbud { 0%,3% { transform: translateY(0) rotate(0deg); } 13% { transform: translateY(0) rotate(-2.5deg); } 23%,60% { transform: translateY(0) rotate(0deg); } 68% { transform: translateY(-9.2px) rotate(0deg); } 78% { transform: translateY(6.6px) rotate(0deg); } 84%,100% { transform: translateY(0) rotate(0deg); } }
 @keyframes sym-mot-rbud { 0%,3% { transform: translateY(0) rotate(0deg); } 13% { transform: translateY(0) rotate(2.5deg); } 23%,60% { transform: translateY(0) rotate(0deg); } 68% { transform: translateY(9.2px) rotate(0deg); } 78% { transform: translateY(-6.6px) rotate(0deg); } 84%,100% { transform: translateY(0) rotate(0deg); } }
@@ -104,7 +108,7 @@ body {
    Obraz je širší než text (220 %) a poloha jde 100%→0%, takže box je VŽDY plně pokrytý
    (žádná průhledná místa = žádné mizení písmen); putuje pouze světlý pruh. */
 .struna-chvile.sweep {
-  background-image: linear-gradient(90deg, currentColor 0%, currentColor 28%, #e8b34e 50%, currentColor 72%, currentColor 100%);
+  background-image: linear-gradient(90deg, currentColor 0%, currentColor 42%, #e8b34e 50%, currentColor 58%, currentColor 100%);
   background-size: 250% 100%; background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
   animation: struna-sweep 4s linear;
