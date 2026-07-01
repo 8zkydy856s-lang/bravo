@@ -37,7 +37,7 @@ export default function Home() {
       {/* 2) Hlavička - nápis BraVo + podtitul, vycentrované na 50% osy, výš a těsně */}
       <header style={{padding:"0 20px 4px",display:"flex",flexDirection:"column",alignItems:"center",marginTop:"-6px"}}>
         <BravoNapis className="bravo-napis" priority />
-        <p style={{fontSize:"12px",color:"#6f6253",letterSpacing:"0.14em",paddingLeft:"0.14em",marginTop:"-2px",transform:"translateX(-40px)"}}><T k="mistoKeSpocinuti" /></p>
+        <p style={{fontSize:"12px",color:"#6f6253",letterSpacing:"0.14em",paddingLeft:"0.14em",marginTop:"-2px"}}><T k="mistoKeSpocinuti" /></p>
       </header>
 
       {/* 3) Vozík BRAVO - průhledné PNG, jemně oživené (dýchání + padající plátky) */}
@@ -47,7 +47,7 @@ export default function Home() {
       </div>
 
       {/* 4+5) Vlídný text o provozu + karta stavu */}
-      <div className="landing-band">
+      <div className="landing-band" style={{marginTop:"-24px"}}>
         {/* 4) Text o provozu - přeložený ze slovníku */}
         <ProvozText />
 
