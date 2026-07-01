@@ -37,7 +37,7 @@ export default function Home() {
       {/* 2) Hlavička - nápis BraVo + podtitul, vycentrované na 50% osy, výš a těsně */}
       <header style={{padding:"2px 20px 8px",display:"flex",flexDirection:"column",alignItems:"center"}}>
         <BravoNapis className="bravo-napis" priority />
-        <p style={{fontSize:"12px",color:"#6f6253",letterSpacing:"0.14em",paddingLeft:"0.14em",marginTop:"1px"}}><T k="mistoKeSpocinuti" /></p>
+        <p style={{fontSize:"12px",color:"#6f6253",letterSpacing:"0.14em",paddingLeft:"0.14em",marginTop:"-2px"}}><T k="mistoKeSpocinuti" /></p>
       </header>
 
       {/* 3) Vozík BRAVO - průhledné PNG, jemně oživené (dýchání + padající plátky) */}
@@ -53,7 +53,7 @@ export default function Home() {
 
         {/* pravý sloupec: sdělení 1 + karta stavu */}
         <div className="landing-band-status">
-          <Sdeleni pozice={1} style={{margin:"0 0 8px"}} />
+          <Sdeleni pozice={1} style={{margin:"14px 0 2px"}} />
 
           {/* 5) Stav kiosku + reálné počasí */}
           <div style={{background:"#fffdf8",borderRadius:"18px",border:"0.5px solid rgba(120,90,40,0.12)",overflow:"hidden"}}>
