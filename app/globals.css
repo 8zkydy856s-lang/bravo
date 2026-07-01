@@ -56,7 +56,7 @@ body {
   .landing-sdeleni { max-width: 620px; margin: 14px auto 0; }
 }
 
-/* === Oživení vozíku — jemné dýchání + padající plátky (přeneseno ze simulátoru) === */
+/* === Oživení vozíku — dýchání + organické poletující plátky + poletující lístek + tichá nota === */
 .landing-photo { position: relative; }
 .fx-vozik {
   width: 100%; height: auto; display: block;
@@ -73,24 +73,80 @@ body {
   50% { filter: brightness(1.07); }
   100% { filter: brightness(1); }
 }
-.vozik-zivot { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
-.vozik-zivot .vz-platek {
-  position: absolute; width: 12px; height: 12px;
-  border-radius: 0 80% 0 80%; background: #dc96aa; opacity: 0;
-  animation: vz-platek 32s linear infinite;
+.vozik-zivot { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+
+/* PLÁTKY — poletují křížem krážem, každý jiným tempem, směrem a rotací; pomalu se překlápějí */
+.vz-p { position: absolute; top: -6%; width: 12px; height: 12px; border-radius: 0 80% 0 80%; opacity: 0; will-change: transform, opacity; }
+.vz-p1 { left: 12%; width: 11px; background: #dca6b0; animation: vzp-a 30s ease-in-out infinite; animation-delay: -2s; }
+.vz-p2 { left: 30%; width: 13px; background: #d7aec2; animation: vzp-b 38s ease-in-out infinite; animation-delay: -13s; }
+.vz-p3 { left: 46%; width: 10px; background: #e0b19c; animation: vzp-c 26s ease-in-out infinite; animation-delay: -21s; }
+.vz-p4 { left: 62%; width: 12px; background: #dca6b0; animation: vzp-d 44s ease-in-out infinite; animation-delay: -6s; }
+.vz-p5 { left: 78%; width: 11px; background: #d7aec2; animation: vzp-a 34s ease-in-out infinite; animation-delay: -27s; }
+.vz-p6 { left: 88%; width: 13px; background: #e0b19c; animation: vzp-b 41s ease-in-out infinite; animation-delay: -34s; }
+@keyframes vzp-a {
+  0%   { transform: translate(0,0) rotate(0); opacity: 0; }
+  8%   { opacity: .55; }
+  30%  { transform: translate(22px,60px) rotate(90deg); }
+  55%  { transform: translate(-10px,120px) rotate(180deg); opacity: .5; }
+  80%  { transform: translate(26px,190px) rotate(280deg); opacity: .4; }
+  100% { transform: translate(4px,250px) rotate(360deg); opacity: 0; }
 }
-.vz-platek-1 { left: 26%; top: -4%; animation-delay: 0s; }
-.vz-platek-2 { left: 50%; top: -4%; animation-delay: 10.6s; }
-.vz-platek-3 { left: 70%; top: -4%; animation-delay: 21.3s; }
-@keyframes vz-platek {
-  0% { transform: translate(0, 0) rotate(0); opacity: 0; }
-  12% { opacity: 0.5; }
-  88% { opacity: 0.45; }
-  100% { transform: translate(30px, 170px) rotate(240deg); opacity: 0; }
+@keyframes vzp-b {
+  0%   { transform: translate(0,0) rotate(0); opacity: 0; }
+  10%  { opacity: .5; }
+  35%  { transform: translate(-26px,70px) rotate(-110deg); }
+  60%  { transform: translate(12px,140px) rotate(-210deg); opacity: .45; }
+  100% { transform: translate(-18px,240px) rotate(-360deg); opacity: 0; }
 }
+@keyframes vzp-c {
+  0%   { transform: translate(0,0) rotate(0); opacity: 0; }
+  12%  { opacity: .55; }
+  50%  { transform: translate(8px,110px) rotate(150deg); opacity: .5; }
+  100% { transform: translate(-6px,220px) rotate(300deg); opacity: 0; }
+}
+@keyframes vzp-d {
+  0%   { transform: translate(0,0) rotate(0); opacity: 0; }
+  9%   { opacity: .5; }
+  40%  { transform: translate(30px,90px) rotate(130deg); }
+  70%  { transform: translate(-14px,160px) rotate(250deg); opacity: .4; }
+  100% { transform: translate(20px,250px) rotate(400deg); opacity: 0; }
+}
+
+/* POLETUJÍCÍ LÍSTEK — třetí efekt: pomalu krouží po obrázku a vrací se */
+.vz-leaf { position: absolute; width: 15px; height: 10px; border-radius: 0 80% 0 80%; background: #c99a5e; opacity: 0; will-change: transform, opacity; }
+.vz-leaf1 { left: 18%; top: 34%; animation: vzl-1 48s ease-in-out infinite; animation-delay: -5s; }
+.vz-leaf2 { left: 66%; top: 56%; animation: vzl-2 56s ease-in-out infinite; animation-delay: -26s; }
+@keyframes vzl-1 {
+  0%   { transform: translate(0,0) rotate(0); opacity: 0; }
+  10%  { opacity: .4; }
+  25%  { transform: translate(90px,34px) rotate(120deg); }
+  50%  { transform: translate(150px,-18px) rotate(220deg); opacity: .35; }
+  75%  { transform: translate(64px,44px) rotate(320deg); }
+  90%  { opacity: .35; }
+  100% { transform: translate(0,0) rotate(360deg); opacity: 0; }
+}
+@keyframes vzl-2 {
+  0%   { transform: translate(0,0) rotate(0); opacity: 0; }
+  12%  { opacity: .35; }
+  30%  { transform: translate(-80px,-26px) rotate(-100deg); }
+  55%  { transform: translate(-140px,26px) rotate(-200deg); opacity: .3; }
+  80%  { transform: translate(-52px,-18px) rotate(-300deg); }
+  100% { transform: translate(0,0) rotate(-360deg); opacity: 0; }
+}
+
+/* NOTA — poloprůhledný symbol hudby, jemně pluje */
+.vz-note { position: absolute; left: 42%; top: 26%; font-size: 20px; line-height: 1; color: #b8954a; opacity: 0; will-change: transform, opacity; animation: vz-note 27s ease-in-out infinite; animation-delay: -9s; }
+@keyframes vz-note {
+  0%   { transform: translate(0,0) rotate(-8deg); opacity: 0; }
+  15%  { opacity: .18; }
+  50%  { transform: translate(28px,-42px) rotate(6deg); opacity: .22; }
+  85%  { opacity: .1; }
+  100% { transform: translate(58px,-92px) rotate(-4deg); opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .fx-vozik { animation: none; }
-  .vozik-zivot .vz-platek { animation: none; opacity: 0; }
+  .vz-p, .vz-leaf, .vz-note { animation: none; opacity: 0; }
 }
 
 /* Nápojový lístek — na TELEFONU (≤600px) čistší: bez popisků položek, bez sekce MILK, jen jeden čaj.
