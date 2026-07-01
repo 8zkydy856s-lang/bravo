@@ -53,7 +53,7 @@ export default function Home() {
 
         {/* pravý sloupec: sdělení 1 + karta stavu */}
         <div className="landing-band-status">
-          <Sdeleni pozice={1} style={{margin:"14px 0 2px"}} />
+          <Sdeleni pozice={1} style={{margin:"0 0 12px"}} />
 
           {/* 5) Stav kiosku + reálné počasí */}
           <div style={{background:"#fffdf8",borderRadius:"18px",border:"0.5px solid rgba(120,90,40,0.12)",overflow:"hidden"}}>
