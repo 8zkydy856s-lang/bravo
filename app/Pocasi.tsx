@@ -40,8 +40,8 @@ export default function Pocasi() {
   if (!w) return null
   return (
     <div style={{ textAlign: 'right' }}>
-      <p style={{ fontSize: '22px', margin: 0, lineHeight: 1 }}>{ikona(w.code)}</p>
-      <p style={{ fontSize: '11px', color: '#8a7f70', margin: '2px 0 0' }}>{w.temp} °C</p>
+      <p style={{ fontSize: '23px', margin: 0, lineHeight: 1 }}>{ikona(w.code)}</p>
+      <p style={{ fontSize: '12px', color: '#8a7f70', margin: '2px 0 0' }}>{w.temp} °C</p>
     </div>
   )
 }

@@ -38,9 +38,9 @@ export default function KioskStatusView({ je_otevreno, oteviraci_cas, zaviraci_c
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
       <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: dotColor }} />
       <div>
-        <p style={{ fontSize: '13px', fontWeight: 500, color: '#1a1208', margin: 0 }}>{title}</p>
-        {casy && <p style={{ fontSize: '11px', color: '#8a7f70', margin: '2px 0 0' }}>{casy}</p>}
-        {note && <p style={{ fontSize: '11px', color: '#8a7f70', margin: '5px 0 0', overflowWrap: 'anywhere' }}>{note}</p>}
+        <p style={{ fontSize: '14px', fontWeight: 500, color: '#1a1208', margin: 0 }}>{title}</p>
+        {casy && <p style={{ fontSize: '12px', color: '#8a7f70', margin: '2px 0 0' }}>{casy}</p>}
+        {note && <p style={{ fontSize: '12px', color: '#8a7f70', margin: '5px 0 0', overflowWrap: 'anywhere' }}>{note}</p>}
       </div>
     </div>
   )

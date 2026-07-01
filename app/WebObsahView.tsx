@@ -19,7 +19,7 @@ export function SdeleniRadek({ text, vzhled = 'splynout' }: { text: string; vzhl
         padding: zvyraznit ? '11px 18px' : '4px 8px',
       }}>
         <p style={{
-          fontSize: '13px', lineHeight: 1.6, color: '#6f6253', margin: 0, textAlign: 'center',
+          fontSize: '14px', lineHeight: 1.6, color: '#6f6253', margin: 0, textAlign: 'center',
           overflowWrap: 'anywhere', whiteSpace: 'pre-wrap',
         }}>{text}</p>
       </div>
@@ -30,5 +30,5 @@ export function SdeleniRadek({ text, vzhled = 'splynout' }: { text: string; vzhl
 // Řádek "výhled na zítřek" - malý text jako uvnitř karty stavu.
 export function ZitraRadek({ text }: { text: string }) {
   // Velkými písmeny přes CSS - nezávislé na tom, jak je text uložený v DB.
-  return <p style={{ fontSize: '11px', color: '#8a7f70', margin: '8px 0 0', overflowWrap: 'anywhere', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{text}</p>
+  return <p style={{ fontSize: '12px', color: '#8a7f70', margin: '8px 0 0', overflowWrap: 'anywhere', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{text}</p>
 }

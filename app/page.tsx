@@ -24,7 +24,7 @@ const EMAIL = "hello@bra-vo.com";
 const odkazStyle: React.CSSProperties = {
   flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
   padding: "12px 6px", borderRadius: "12px", border: "none", background: "#4d4030",
-  fontSize: "12px", color: "#f6f1e6", textDecoration: "none", whiteSpace: "nowrap"
+  fontSize: "13px", color: "#f6f1e6", textDecoration: "none", whiteSpace: "nowrap"
 };
 
 export default function Home() {
@@ -39,7 +39,7 @@ export default function Home() {
       </div>
 
       {/* 2) Hlavička - nápis BraVo + podtitul, vycentrované na 50% osy, výš a těsně */}
-      <header style={{padding:"0 20px 4px",display:"flex",flexDirection:"column",alignItems:"center",marginTop:"-6px",transform:"translate(-19px,-10px)"}}>
+      <header style={{padding:"0 16px 4px",display:"flex",flexDirection:"column",alignItems:"center",marginTop:"-6px",transform:"translate(-19px,-10px)"}}>
         <BravoNapis className="bravo-napis" priority />
         <PodtitulStruna />
       </header>
@@ -63,7 +63,7 @@ export default function Home() {
           <div style={{background:"#fffdf8",borderRadius:"18px",border:"0.5px solid rgba(120,90,40,0.12)",overflow:"hidden"}}>
             <div style={{padding:"14px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
               <div>
-                <p style={{fontSize:"9px",letterSpacing:"0.15em",color:"#9b8d76",margin:"0 0 6px"}}><T k="praveTed" /></p>
+                <p style={{fontSize:"10px",letterSpacing:"0.15em",color:"#9b8d76",margin:"0 0 6px"}}><T k="praveTed" /></p>
                 <KioskStatus />
                 <ZitraVyhled />
               </div>
@@ -86,7 +86,7 @@ export default function Home() {
 
       {/* 7) Nápojový lístek -> /listek, užší a vycentrovaný */}
       <div className="landing-cta">
-        <Link href="/listek" style={{display:"inline-block",boxSizing:"border-box",textAlign:"center",background:"none",color:"#1a1208",border:"1px solid #d8c8ad",borderRadius:"14px",padding:"12px 56px",fontSize:"13px",fontWeight:500,textDecoration:"none",fontFamily:"Inter,sans-serif"}}>
+        <Link href="/listek" style={{display:"inline-block",boxSizing:"border-box",textAlign:"center",background:"none",color:"#1a1208",border:"1px solid #d8c8ad",borderRadius:"14px",padding:"12px 56px",fontSize:"14px",fontWeight:500,textDecoration:"none",fontFamily:"Inter,sans-serif"}}>
           <T k="napojovyListek" />
         </Link>
       </div>
@@ -100,19 +100,19 @@ export default function Home() {
 
       {/* 9) E-mail - odkrytý */}
       {ZOBRAZIT_EMAIL && (
-        <p style={{margin:"16px 20px 0",textAlign:"center",fontSize:"13px"}}>
+        <p style={{margin:"16px 16px 0",textAlign:"center",fontSize:"16px"}}>
           <a href={`mailto:${EMAIL}`} style={{color:"#b8954a",textDecoration:"none"}}>{EMAIL}</a>
         </p>
       )}
 
       {/* 10) Jemné "... a brzy přijde víc" - přeložené, s větším zářícím smajlíkem */}
-      <p style={{margin:"16px 20px 0",textAlign:"center",fontSize:"13.5px",color:"#6f6253",letterSpacing:"0.02em"}}>
+      <p style={{margin:"16px 16px 0",textAlign:"center",fontSize:"14.5px",color:"#6f6253",letterSpacing:"0.02em"}}>
         <T k="aBrzyPrijdeVic" /> <span className="brzy-emoji" aria-hidden="true">😌</span>
       </p>
 
       {/* 11) Nenápadný vstup pro majitele - přeložený, posunutý níž */}
       <div style={{marginTop:"56px",textAlign:"center"}}>
-        <a href="/login" style={{fontSize:"11px",color:"#b6ab9b",textDecoration:"none",letterSpacing:"0.04em"}}><T k="vstupProMajitele" /></a>
+        <a href="/login" style={{fontSize:"12px",color:"#b6ab9b",textDecoration:"none",letterSpacing:"0.04em"}}><T k="vstupProMajitele" /></a>
       </div>
 
       {/*

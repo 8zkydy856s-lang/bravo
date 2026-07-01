@@ -100,7 +100,7 @@ export function PopisText() {
   const l3 = obal(obal(DICT.popisRadek3[lang], s.kotva, 'anchor'), s.spocin, 'struna-spocin')
   const html = [l1, l2, l3].join('<br/>')
   return (
-    <p className="popis-struna" style={{ fontSize: '13px', lineHeight: 1.8, color: '#6f6253', fontStyle: 'italic', margin: 0 }}
+    <p className="popis-struna" style={{ fontSize: '14px', lineHeight: 1.8, color: '#6f6253', fontStyle: 'italic', margin: 0 }}
        dangerouslySetInnerHTML={{ __html: html }} />
   )
 }
