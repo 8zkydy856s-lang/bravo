@@ -40,14 +40,14 @@ export default function VozikZivot() {
     // noty 1 a 2 — vycházejí ze středu vozíku, každá jiný směr; trajektorie se každou návštěvu trochu liší
     const n1 = scope.querySelector<HTMLElement>('.vz-note1')
     if (n1) {
-      n1.style.left = rnd(48, 56).toFixed(1) + '%'
-      n1.style.setProperty('--nx', Math.round(rnd(-8, 20)) + 'px')
+      n1.style.left = rnd(60, 70).toFixed(1) + '%'   // VEDLE hlavy baristy (vpravo), ne v ní
+      n1.style.setProperty('--nx', Math.round(rnd(-4, 22)) + 'px')
       n1.style.animationDelay = '-' + rnd(0, 14).toFixed(1) + 's'
     }
     const n2 = scope.querySelector<HTMLElement>('.vz-note2')
     if (n2) {
-      n2.style.left = rnd(42, 50).toFixed(1) + '%'
-      n2.style.setProperty('--nx', Math.round(rnd(-20, 8)) + 'px')
+      n2.style.left = rnd(58, 68).toFixed(1) + '%'   // taky vedle hlavy (vpravo)
+      n2.style.setProperty('--nx', Math.round(rnd(-14, 8)) + 'px')
       n2.style.animationDelay = '-' + rnd(0, 16).toFixed(1) + 's'
     }
 

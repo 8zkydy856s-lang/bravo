@@ -152,8 +152,8 @@ body {
    note1 (♪) i note2 (♫) vycházejí ze středu vozíku, každá jiný odstín a směr (1 doprava, 2 doleva).
    note3 (♬) je nejsvětlejší, náhodně kdekoli přes obrázek, u toho jemně pulzuje (nádech/výdech). */
 .vz-note { position: absolute; line-height: 1; opacity: 0; will-change: transform, opacity; pointer-events: none; }
-.vz-note1 { left: 52%; top: 40%; font-size: 17.6px; color: #c19a4a; animation: vznote-1 30s ease-in-out infinite; animation-delay: -9s; }
-.vz-note2 { left: 46%; top: 42%; font-size: 16.7px; color: #a87a5a; animation: vznote-2 34s ease-in-out infinite; animation-delay: -20s; }
+.vz-note1 { left: 64%; top: 40%; font-size: 17.6px; color: #c19a4a; animation: vznote-1 30s ease-in-out infinite; animation-delay: -9s; }
+.vz-note2 { left: 62%; top: 42%; font-size: 16.7px; color: #a87a5a; animation: vznote-2 34s ease-in-out infinite; animation-delay: -20s; }
 .vz-note3 { left: 40%; top: 40%; font-size: 15.8px; color: #b6a878; animation: vznote-3 40s ease-in-out infinite; animation-delay: -6s; }
 /* všechny 3 noty NEZÁVISLE pulzují — mění průsvitnost I velikost (imituje hudbu); odstíny jemně různé */
 @keyframes vznote-1 {
