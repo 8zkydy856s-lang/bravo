@@ -52,7 +52,7 @@ body {
   .landing-band-status { flex: 1; margin: 16px 0 0; }
   .landing-desc { max-width: 620px; margin: 18px auto 0; }
   .landing-cta { width: 100%; max-width: 340px; margin: 16px auto 0; }
-  .landing-links { max-width: 640px; margin: 16px auto 0; gap: 16px; }
+  .landing-links { max-width: 720px; margin: 16px auto 0; gap: 16px; }
   .landing-sdeleni { max-width: 620px; margin: 14px auto 0; }
 }
 
@@ -80,6 +80,7 @@ body {
    Pozice po STRANÁCH (mimo střed = mimo nápis BraVo). top se animuje v %, takže dopadají ke spodní hraně obrázku na každém zařízení. */
 .vozik-fall { position: absolute; top: -170px; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; }
 .vz-p { position: absolute; width: 12px; height: 12px; border-radius: 0 80% 0 80%; opacity: 0; will-change: top, transform, opacity; }
+.vz-p-green { background: #a9c19a !important; }  /* jeden plátek jako list — jemná zelená, ne křiklavá */
 .vz-p1 { left: 8%;  width: 11px; background: #dca6b0; animation: vzp-a 34s ease-in-out infinite; animation-delay: -3s; }
 .vz-p2 { left: 20%; width: 13px; background: #d7aec2; animation: vzp-b 42s ease-in-out infinite; animation-delay: -15s; }
 .vz-p3 { left: 30%; width: 10px; background: #e0b19c; animation: vzp-c 30s ease-in-out infinite; animation-delay: -24s; }
@@ -137,14 +138,33 @@ body {
   100% { transform: translate(0,0) rotate(-360deg); opacity: 0; }
 }
 
-/* NOTA — poloprůhledný symbol hudby (jako plátky), NE velká; jemně pluje nad vozíkem, viditelná */
-.vz-note { position: absolute; left: 52%; top: 40%; font-size: 20px; line-height: 1; color: #b8954a; opacity: 0; will-change: transform, opacity; animation: vz-note 30s ease-in-out infinite; animation-delay: -9s; }
-@keyframes vz-note {
+/* NOTY — poloprůhledné symboly hudby (NE velké). Náhodu (pozice/směr) dodává VozikZivot.tsx.
+   note1 (♪) i note2 (♫) vycházejí ze středu vozíku, každá jiný odstín a směr (1 doprava, 2 doleva).
+   note3 (♬) je nejsvětlejší, náhodně kdekoli přes obrázek, u toho jemně pulzuje (nádech/výdech). */
+.vz-note { position: absolute; line-height: 1; opacity: 0; will-change: transform, opacity; pointer-events: none; }
+.vz-note1 { left: 52%; top: 40%; font-size: 20px; color: #b8954a; animation: vznote-1 30s ease-in-out infinite; animation-delay: -9s; }
+.vz-note2 { left: 46%; top: 42%; font-size: 19px; color: #a98a5c; animation: vznote-2 34s ease-in-out infinite; animation-delay: -20s; }
+.vz-note3 { left: 40%; top: 40%; font-size: 18px; color: #c9ac72; animation: vznote-3 27s ease-in-out infinite; animation-delay: -6s; }
+@keyframes vznote-1 {
   0%   { transform: translate(0,0) rotate(-8deg); opacity: 0; }
   22%  { opacity: .34; }
-  55%  { transform: translate(24px,-46px) rotate(6deg); opacity: .36; }
+  55%  { transform: translate(calc(22px + var(--nx,0px)), -46px) rotate(6deg); opacity: .36; }
   85%  { opacity: .22; }
-  100% { transform: translate(46px,-92px) rotate(-4deg); opacity: 0; }
+  100% { transform: translate(calc(46px + var(--nx,0px)), -92px) rotate(-4deg); opacity: 0; }
+}
+@keyframes vznote-2 {
+  0%   { transform: translate(0,0) rotate(8deg); opacity: 0; }
+  22%  { opacity: .3; }
+  55%  { transform: translate(calc(-24px + var(--nx,0px)), -44px) rotate(-6deg); opacity: .32; }
+  85%  { opacity: .2; }
+  100% { transform: translate(calc(-48px + var(--nx,0px)), -90px) rotate(4deg); opacity: 0; }
+}
+@keyframes vznote-3 {
+  0%   { transform: translate(0,0) scale(0.9); opacity: 0; }
+  20%  { opacity: .2; }
+  50%  { transform: translate(var(--nx,20px), var(--ny,-30px)) scale(1.14); opacity: .24; }
+  80%  { transform: translate(calc(var(--nx,20px) * 1.6), calc(var(--ny,-30px) * 1.6)) scale(0.94); opacity: .15; }
+  100% { transform: translate(calc(var(--nx,20px) * 2.1), calc(var(--ny,-30px) * 2.1)) scale(1.06); opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
