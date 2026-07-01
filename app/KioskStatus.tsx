@@ -39,6 +39,17 @@ export default function KioskStatus() {
     return () => { active = false }
   }, [])
 
+  // Sdílí barvu stavu (otevřeno/zavřeno) do celé stránky přes CSS proměnné —
+  // symbol vděčnosti za „pochopení" (.fx-symbol) pak svítí STEJNOU barvou jako stavový květ.
+  useEffect(() => {
+    if (!status || status.viditelnost !== 'viditelne') return
+    const open = status.je_otevreno
+    const el = document.documentElement
+    el.style.setProperty('--bravo-stav-barva', open ? '#4caf50' : '#c0392b')
+    el.style.setProperty('--bravo-stav-glow', open ? 'rgba(76,175,80,.5)' : 'rgba(192,57,43,.5)')
+    el.dataset.bravoStav = open ? 'open' : 'closed'
+  }, [status])
+
   // dokud nemáme data, nebo řádek chybí -> nic nezobrazujeme
   if (!loaded || !status) return null
   // viditelnost: zatím reálně počítáme s "viditelne", ale pole čteme a respektujeme

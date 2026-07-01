@@ -37,7 +37,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .landing { animation: none; }
   .brzy-emoji { animation: none; }
-  .veta-blok .fx-kvetina { animation: none; opacity: 0.45; }
+  .veta-blok .fx-symbol::before { animation: none; }
+  .stav-kvet .glyf, .stav-kvet::before { animation: none; }
 }
 .landing-title { font-size: 32px; }
 .bravo-napis { height: 54px; width: auto; }
@@ -58,16 +59,19 @@ body {
 .veta-blok .chv-jadro { display: inline-block; transition: opacity 1s ease; }
 .veta-blok .anchor { display: inline-block; transition: color 1.1s ease, text-shadow 1.1s ease; }
 .veta-blok .mark { background: none; box-shadow: none; padding: 0; margin: 0; border: 0; }
-/* Květina: LAYOUT jako text (font-size 1em, line-height 0) → neroztahuje řádek; vizuální velikost dělá transform scale. */
-.veta-blok .fx-kvetina { color: #c98a3a; font-style: normal; display: inline-block; margin-left: 0.85em; font-size: 1em; line-height: 0; vertical-align: middle; opacity: 0.45; transform-origin: center; transform: scale(1.6); animation: kvet-mandala 46s linear infinite; }
-/* Květina jako pomalá MANDALA: velmi pomalu se otáčí kolem středu, VÝRAZNĚJI mění velikost i jemně průhlednost — harmonicky, nerušivě. */
-@keyframes kvet-mandala {
-  0%   { transform: rotate(0deg)   scale(1.3); opacity: 0.34; }
-  25%  { transform: rotate(90deg)  scale(1.95); opacity: 0.52; }
-  50%  { transform: rotate(180deg) scale(1.3); opacity: 0.34; }
-  75%  { transform: rotate(270deg) scale(1.95); opacity: 0.52; }
-  100% { transform: rotate(360deg) scale(1.3); opacity: 0.34; }
-}
+/* SYMBOL VDĚČNOSTI za „pochopení": LAYOUT malý (neroztahuje řádek), vizuální velikost dělá transform scale.
+   Barva = --bravo-stav-barva (stav otevřeno/zavřeno), fallback teplá hnědá; kolem jemná záře stejné barvy. */
+.veta-blok .fx-symbol { display: inline-block; width: 0.82em; height: 1.12em; margin-left: 0.5em; vertical-align: middle; line-height: 0; position: relative; color: var(--bravo-stav-barva, #574b3a); transform: scale(1.75); transform-origin: center; transition: color 1.1s ease; }
+.veta-blok .fx-symbol svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 2px var(--bravo-stav-glow, transparent)); }
+.veta-blok .fx-symbol::before { content: ""; position: absolute; left: 50%; top: 50%; width: 2.3em; height: 2.3em; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, var(--bravo-stav-glow, transparent) 0%, transparent 66%); z-index: -1; pointer-events: none; animation: fx-symbol-zar 6.5s ease-in-out infinite; }
+@keyframes fx-symbol-zar { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+/* STAVOVÝ KVĚT (místo puntíku): červený zavřeno / zelený otevřeno; pomalu se točí + zvětšuje, ze středu radiálně září. */
+.stav-kvet { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; flex: 0 0 auto; color: var(--kv, #c0392b); line-height: 0; }
+.stav-kvet .glyf { position: relative; z-index: 1; font-size: 15px; line-height: 1; display: inline-block; transform-origin: center; animation: stav-kvet-ziv 15s linear infinite; }
+.stav-kvet::before { content: ""; position: absolute; left: 50%; top: 50%; width: 27px; height: 27px; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, var(--kvGlow, transparent) 0%, transparent 66%); z-index: 0; pointer-events: none; animation: stav-kvet-zar 6s ease-in-out infinite; }
+@keyframes stav-kvet-ziv { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.2); } 100% { transform: rotate(360deg) scale(1); } }
+@keyframes stav-kvet-zar { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
 /* ===== ORCHESTRACE STRUNY — světlo (barva zlatá, laditelné) ===== */
 /* Morf-slot: pevná mezera, nový tvar se objeví VYCENTROVANÝ (šířku nastaví engine). */

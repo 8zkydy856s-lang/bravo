@@ -7,6 +7,8 @@
 //  - časy: jen když je otevřeno A NENÍ dnešní výjimka
 //  - poznámka: ukazuje se v obou stavech (je-li vyplněná)
 
+import type { CSSProperties } from 'react'
+
 export type StatusLabels = { otevreno: string; dnesZavreno: string; od: string; do: string }
 const DEFAULT_LABELS: StatusLabels = { otevreno: 'Otevřeno', dnesZavreno: 'Dnes zavřeno', od: 'od', do: 'do' }
 
@@ -20,7 +22,8 @@ type Props = {
 }
 
 export default function KioskStatusView({ je_otevreno, oteviraci_cas, zaviraci_cas, poznamka, dnesni_vyjimka, labels = DEFAULT_LABELS }: Props) {
-  const dotColor = je_otevreno ? '#4caf50' : '#c0392b'
+  const kvetColor = je_otevreno ? '#4caf50' : '#c0392b'
+  const kvetGlow = je_otevreno ? 'rgba(76,175,80,.5)' : 'rgba(192,57,43,.5)'
   const title = je_otevreno ? labels.otevreno : labels.dnesZavreno
 
   let casy = ''
@@ -35,8 +38,10 @@ export default function KioskStatusView({ je_otevreno, oteviraci_cas, zaviraci_c
   const note = poznamka?.trim() || ''
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: dotColor }} />
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+      <span className="stav-kvet" aria-hidden="true" style={{ ['--kv']: kvetColor, ['--kvGlow']: kvetGlow } as CSSProperties}>
+        <span className="glyf">❀</span>
+      </span>
       <div>
         <p style={{ fontSize: '14px', fontWeight: 500, color: '#1a1208', margin: 0 }}>{title}</p>
         {casy && <p style={{ fontSize: '12px', color: '#8a7f70', margin: '2px 0 0' }}>{casy}</p>}
