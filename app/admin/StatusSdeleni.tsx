@@ -20,8 +20,17 @@ const CZ = {
 }
 const inp: React.CSSProperties = { border: '0.5px solid #e0d9d0', borderRadius: 8, padding: '7px 10px', fontSize: 13, fontFamily: 'Inter,sans-serif', outline: 'none', color: '#1a1208' }
 
-type Kiosk = KioskRow & { viditelnost?: string }
+type Kiosk = KioskRow & { viditelnost?: string; poznamka_preklady?: Record<string, string> | null }
 type Sdel = { zap: boolean; text: string; styl: StylSdeleni }
+type Hlaska = { id: number; kategorie: string; text: string; preklady: Record<string, string> }
+
+// Přeloží anglický text do 5 jazyků přes /api/preklad (fallback = angličtina).
+async function prelozit(text: string): Promise<Record<string, string>> {
+  try {
+    const r = await fetch('/api/preklad', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) })
+    return await r.json()
+  } catch { return { en: text, cz: text, fr: text, de: text, lu: text } }
+}
 
 export default function StatusSdeleni() {
   const [k, setK] = useState<Kiosk | null>(null)
@@ -31,13 +40,18 @@ export default function StatusSdeleni() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
+  const [hlasky, setHlasky] = useState<Hlaska[]>([])
+  const [novaHlaska, setNovaHlaska] = useState({ text: '', kategorie: 'sdeleni' })
+  const [hlaskaBusy, setHlaskaBusy] = useState(false)
 
   useEffect(() => {
     Promise.all([
-      supabase.from('kiosk_status').select('je_otevreno, oteviraci_cas, zaviraci_cas, poznamka, duvod, dnesni_vyjimka, rezim, brzy_otevre_min, brzy_zavre_min, vyhled_text, vyhled_rezim').eq('pobocka_id', 'hlavni').maybeSingle(),
+      supabase.from('kiosk_status').select('je_otevreno, oteviraci_cas, zaviraci_cas, poznamka, poznamka_preklady, duvod, dnesni_vyjimka, rezim, brzy_otevre_min, brzy_zavre_min, vyhled_text, vyhled_rezim').eq('pobocka_id', 'hlavni').maybeSingle(),
       supabase.from('rozvrh').select('den, zavreno, otevira, zavira').eq('pobocka_id', 'hlavni').order('den'),
       supabase.from('web_obsah').select('sdeleni1_zap, sdeleni1_text, sdeleni1_styl, sdeleni2_zap, sdeleni2_text, sdeleni2_styl, sdeleni3_zap, sdeleni3_text, sdeleni3_styl').eq('klic', 'hlavni').maybeSingle(),
-    ]).then(([ks, rz, wo]) => {
+      supabase.from('hlasky').select('id, kategorie, text, preklady').order('created_at', { ascending: false }),
+    ]).then(([ks, rz, wo, hl]) => {
+      setHlasky((hl.data as Hlaska[]) || [])
       const d = (ks.data as Kiosk) || null
       if (d) setK({ ...d, rezim: d.rezim || 'auto', brzy_otevre_min: d.brzy_otevre_min ?? 25, brzy_zavre_min: d.brzy_zavre_min ?? 30 })
       const rows = (rz.data as RozvrhDen[]) || []
@@ -81,13 +95,32 @@ export default function StatusSdeleni() {
   }
   const setSdF = (i: number, f: keyof Sdel, v: any) => setSd(sd.map((s, j) => j === i ? { ...s, [f]: v } : s))
 
+  // Knihovna hlášek: přidat (přeloží se), smazat, vložit do řádku / výjimky.
+  async function pridatHlasku() {
+    if (!novaHlaska.text.trim()) return
+    setHlaskaBusy(true)
+    const prek = await prelozit(novaHlaska.text.trim())
+    const { data, error } = await supabase.from('hlasky').insert({ kategorie: novaHlaska.kategorie, text: novaHlaska.text.trim(), preklady: prek }).select('id, kategorie, text, preklady').maybeSingle()
+    if (!error && data) { setHlasky([data as Hlaska, ...hlasky]); setNovaHlaska({ ...novaHlaska, text: '' }) }
+    else setMsg('Chyba hlášky: ' + (error?.message || ''))
+    setHlaskaBusy(false)
+  }
+  async function smazatHlasku(id: number) {
+    await supabase.from('hlasky').delete().eq('id', id)
+    setHlasky(hlasky.filter(h => h.id !== id))
+  }
+
   async function ulozit() {
     if (!k) return
-    setSaving(true); setMsg('')
+    setSaving(true); setMsg('Ukládám a překládám…')
     try {
+      // překlady (angličtina → 5 jazyků) pro sdělení + výjimku; volá se jen tady, uloží se do DB
+      const [p0, p1, p2] = await Promise.all(sd.map(s => s.text.trim() ? prelozit(s.text.trim()) : Promise.resolve({})))
+      const poznPrek = k.poznamka?.trim() ? await prelozit(k.poznamka.trim()) : {}
       const e1 = (await supabase.from('kiosk_status').update({
         rezim: k.rezim, je_otevreno: k.je_otevreno, dnesni_vyjimka: k.dnesni_vyjimka,
         oteviraci_cas: k.oteviraci_cas || null, zaviraci_cas: k.zaviraci_cas || null, poznamka: k.poznamka || null,
+        poznamka_preklady: poznPrek,
         brzy_otevre_min: k.brzy_otevre_min, brzy_zavre_min: k.brzy_zavre_min, vyhled_text: k.vyhled_text || null,
         vyhled_rezim: k.vyhled_rezim || 'plan',
       }).eq('pobocka_id', 'hlavni')).error
@@ -95,11 +128,11 @@ export default function StatusSdeleni() {
         await supabase.from('rozvrh').update({ zavreno: r.zavreno, otevira: r.otevira || null, zavira: r.zavira || null }).eq('pobocka_id', 'hlavni').eq('den', r.den)
       }
       const e3 = (await supabase.from('web_obsah').update({
-        sdeleni1_zap: sd[0].zap, sdeleni1_text: sd[0].text || null, sdeleni1_styl: sd[0].styl,
-        sdeleni2_zap: sd[1].zap, sdeleni2_text: sd[1].text || null, sdeleni2_styl: sd[1].styl,
-        sdeleni3_zap: sd[2].zap, sdeleni3_text: sd[2].text || null, sdeleni3_styl: sd[2].styl,
+        sdeleni1_zap: sd[0].zap, sdeleni1_text: sd[0].text || null, sdeleni1_styl: sd[0].styl, sdeleni1_preklady: p0,
+        sdeleni2_zap: sd[1].zap, sdeleni2_text: sd[1].text || null, sdeleni2_styl: sd[1].styl, sdeleni2_preklady: p1,
+        sdeleni3_zap: sd[2].zap, sdeleni3_text: sd[2].text || null, sdeleni3_styl: sd[2].styl, sdeleni3_preklady: p2,
       }).eq('klic', 'hlavni')).error
-      setMsg(e1 || e3 ? 'Chyba: ' + ((e1 || e3)?.message) : 'Uloženo ✓')
+      setMsg(e1 || e3 ? 'Chyba: ' + ((e1 || e3)?.message) : 'Uloženo ✓ (přeloženo do 5 jazyků)')
     } catch (e: any) { setMsg('Chyba: ' + e.message) }
     finally { setSaving(false) }
   }
@@ -107,6 +140,17 @@ export default function StatusSdeleni() {
   const seg = (label: string, on: boolean, onClick: () => void, flex = true) => (
     <button className={'adm-seg' + (on ? ' on' : '')} onClick={onClick} style={flex ? { flex: 1 } : undefined}>{label}</button>
   )
+  // Výběr hlášky z knihovny → vloží její (anglický) text do pole
+  const VyberHlasky = ({ kat, onPick }: { kat: string; onPick: (t: string) => void }) => {
+    const list = hlasky.filter(h => h.kategorie === kat)
+    if (!list.length) return null
+    return (
+      <select style={{ ...inp, maxWidth: 220 }} value="" onChange={e => { const h = list.find(x => x.id === +e.target.value); if (h) onPick(h.text) }}>
+        <option value="">Vložit hlášku…</option>
+        {list.map(h => <option key={h.id} value={h.id}>{h.text}</option>)}
+      </select>
+    )
+  }
   const UlozitBtn = (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
       <button className="adm-btn" onClick={ulozit} disabled={saving} style={{ background: '#1a1208', color: '#d4a96a', border: 'none', whiteSpace: 'nowrap' }}>{saving ? 'Ukládám…' : 'Uložit'}</button>
@@ -180,8 +224,7 @@ export default function StatusSdeleni() {
             <input style={{ ...inp, flex: 1 }} value={k.oteviraci_cas || ''} onChange={e => setKf('oteviraci_cas', e.target.value)} placeholder="Otevírá 08:00" />
             <input style={{ ...inp, flex: 1 }} value={k.zaviraci_cas || ''} onChange={e => setKf('zaviraci_cas', e.target.value)} placeholder="Zavírá 16:00" />
           </div>}
-          <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.poznamka || ''} onChange={e => setKf('poznamka', e.target.value)} placeholder="Výjimka / poznámka (např. Zavřeno kvůli počasí)" />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10, fontSize: 13 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 2, fontSize: 13 }}>
             <span style={{ flex: 1 }}>Mezifáze „brzy otevře / zavře" — minut předem</span>
             <input style={{ ...inp, width: 56 }} type="number" value={k.brzy_otevre_min ?? 25} onChange={e => setKf('brzy_otevre_min', +e.target.value)} />
             <input style={{ ...inp, width: 56 }} type="number" value={k.brzy_zavre_min ?? 30} onChange={e => setKf('brzy_zavre_min', +e.target.value)} />
@@ -200,14 +243,24 @@ export default function StatusSdeleni() {
         <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.vyhled_text || ''} onChange={e => setKf('vyhled_text', e.target.value)} placeholder="Vlastní text (nepovinné) — např. Zítra svátek" />
       </div>
 
+      <div className="adm-card">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+          <p className="adm-card-h" style={{ margin: 0, flex: 1 }}>Výjimka u statusu <span className="adm-badge" style={{ color: '#8a7f70' }}>EN · přeloží se</span></p>
+          <VyberHlasky kat="vyjimka" onPick={t => setKf('poznamka', t)} />
+        </div>
+        <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.poznamka || ''} onChange={e => setKf('poznamka', e.target.value)} placeholder="Text in English (e.g. Closed due to weather)" />
+      </div>
+
       {/* SDĚLENÍ — 3 řádky (anglicky) + vzhled písma na 1/2/3 řádky současně */}
       <div className="adm-card">
-        <p className="adm-card-h">Sdělení na web <span className="adm-badge" style={{ color: '#8a7f70' }}>EN · nepřekládá se</span></p>
+        <p className="adm-card-h">Sdělení na web <span className="adm-badge" style={{ color: '#8a7f70' }}>EN · přeloží se</span></p>
         {sd.map((s, i) => (
           <div key={i} style={{ marginBottom: 12, paddingBottom: 12, borderBottom: i < 2 ? '0.5px solid #eee5d8' : 'none' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
               <button className={'adm-seg' + (s.zap ? ' on' : '')} style={{ padding: '4px 10px', fontSize: 12 }} onClick={() => setSdF(i, 'zap', !s.zap)}>{s.zap ? 'Zap' : 'Vyp'}</button>
-              <span className="adm-muted" style={{ flex: 1 }}>Sdělení {i + 1} · {POZICE[i]}</span>
+              <span className="adm-muted">Sdělení {i + 1} · {POZICE[i]}</span>
+              <span style={{ flex: 1 }} />
+              <VyberHlasky kat="sdeleni" onPick={t => setSdF(i, 'text', t)} />
               <label style={{ fontSize: 12, color: '#8a7f70', display: 'flex', alignItems: 'center', gap: 5, cursor: 'pointer' }}>
                 <input type="checkbox" checked={!!cil[i]} onChange={e => setCil({ ...cil, [i]: e.target.checked })} /> upravovat vzhled
               </label>
@@ -245,6 +298,36 @@ export default function StatusSdeleni() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* KNIHOVNA HLÁŠEK — přednastavené vzkazy (přeloží se jednou), vybíráš je výše z „Vložit hlášku…" */}
+      <div className="adm-card">
+        <p className="adm-card-h">Knihovna hlášek <span className="adm-badge" style={{ color: '#8a7f70' }}>napiš anglicky, přeloží se</span></p>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+          <select style={{ ...inp, width: 130 }} value={novaHlaska.kategorie} onChange={e => setNovaHlaska({ ...novaHlaska, kategorie: e.target.value })}>
+            <option value="sdeleni">pro sdělení</option>
+            <option value="vyjimka">pro výjimku</option>
+          </select>
+          <input style={{ ...inp, flex: '1 1 200px' }} value={novaHlaska.text} onChange={e => setNovaHlaska({ ...novaHlaska, text: e.target.value })} placeholder="Nová hláška v angličtině…" />
+          <button className="adm-btn" onClick={pridatHlasku} disabled={hlaskaBusy || !novaHlaska.text.trim()} style={{ background: '#d4a96a', color: '#1a1208', border: 'none', fontWeight: 600 }}>{hlaskaBusy ? 'Překládám…' : '+ Přidat'}</button>
+        </div>
+        {(['sdeleni', 'vyjimka'] as const).map(kat => {
+          const list = hlasky.filter(h => h.kategorie === kat)
+          if (!list.length) return null
+          return (
+            <div key={kat} style={{ marginBottom: 8 }}>
+              <p className="adm-muted" style={{ marginBottom: 4 }}>{kat === 'sdeleni' ? 'Sdělení' : 'Výjimky'}:</p>
+              {list.map(h => (
+                <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0' }}>
+                  <span style={{ flex: 1, fontSize: 13, color: '#1a1208' }}>{h.text}</span>
+                  <span className="adm-muted" title={`cz: ${h.preklady?.cz || ''}\nfr: ${h.preklady?.fr || ''}\nde: ${h.preklady?.de || ''}\nlu: ${h.preklady?.lu || ''}`} style={{ cursor: 'help' }}>5 jazyků ⓘ</span>
+                  <button className="adm-seg" style={{ padding: '2px 8px', fontSize: 12 }} onClick={() => smazatHlasku(h.id)}>Smazat</button>
+                </div>
+              ))}
+            </div>
+          )
+        })}
+        {!hlasky.length && <p className="adm-muted">Zatím žádné hlášky. Přidej si vzkazy, které používáš často — pak je jen vybíráš nahoře.</p>}
       </div>
 
       <div style={{ marginTop: 4 }}>{UlozitBtn}</div>

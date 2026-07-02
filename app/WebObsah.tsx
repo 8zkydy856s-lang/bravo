@@ -16,10 +16,11 @@ export const DEFAULT_PROVOZ = 'Otevírací doba je přibližná a závisí na po
 export const DEFAULT_POPIS = 'Speciální káva, čaj, květiny a klasická hudba.\nNápoje laděné na míru, podle tvé chuti.\nPozvánka k zastavení v každém všedním dni.'
 export const DEFAULT_MAPS = 'https://maps.app.goo.gl/2gwzhh7xnpfEp7Lt9'
 
+type Prekl = Record<string, string> | null
 type WebObsahData = {
-  sdeleni1_zap: boolean; sdeleni1_text: string | null; sdeleni1_vzhled: SdeleniVzhled; sdeleni1_styl: StylSdeleni | null
-  sdeleni2_zap: boolean; sdeleni2_text: string | null; sdeleni2_vzhled: SdeleniVzhled; sdeleni2_styl: StylSdeleni | null
-  sdeleni3_zap: boolean; sdeleni3_text: string | null; sdeleni3_vzhled: SdeleniVzhled; sdeleni3_styl: StylSdeleni | null
+  sdeleni1_zap: boolean; sdeleni1_text: string | null; sdeleni1_vzhled: SdeleniVzhled; sdeleni1_styl: StylSdeleni | null; sdeleni1_preklady: Prekl
+  sdeleni2_zap: boolean; sdeleni2_text: string | null; sdeleni2_vzhled: SdeleniVzhled; sdeleni2_styl: StylSdeleni | null; sdeleni2_preklady: Prekl
+  sdeleni3_zap: boolean; sdeleni3_text: string | null; sdeleni3_vzhled: SdeleniVzhled; sdeleni3_styl: StylSdeleni | null; sdeleni3_preklady: Prekl
   zitra_zap: boolean; zitra_text: string | null
   maps_odkaz: string | null
   provoz_text: string | null
@@ -40,7 +41,7 @@ export function WebObsahProvider({ children }: { children: React.ReactNode }) {
     let active = true
     supabase
       .from('web_obsah')
-      .select('sdeleni1_zap, sdeleni1_text, sdeleni1_vzhled, sdeleni1_styl, sdeleni2_zap, sdeleni2_text, sdeleni2_vzhled, sdeleni2_styl, sdeleni3_zap, sdeleni3_text, sdeleni3_vzhled, sdeleni3_styl, zitra_zap, zitra_text, maps_odkaz, provoz_text, popis_text')
+      .select('sdeleni1_zap, sdeleni1_text, sdeleni1_vzhled, sdeleni1_styl, sdeleni1_preklady, sdeleni2_zap, sdeleni2_text, sdeleni2_vzhled, sdeleni2_styl, sdeleni2_preklady, sdeleni3_zap, sdeleni3_text, sdeleni3_vzhled, sdeleni3_styl, sdeleni3_preklady, zitra_zap, zitra_text, maps_odkaz, provoz_text, popis_text')
       .eq('klic', 'hlavni')
       .maybeSingle()
       .then(({ data }) => { if (active) setData((data as WebObsahData | null) ?? null) })
@@ -52,12 +53,15 @@ export function WebObsahProvider({ children }: { children: React.ReactNode }) {
 // Jedno sdělení podle pozice. Vykreslí se jen když je zapnuté a má text; vzhled dle DB.
 export function Sdeleni({ pozice, className, style }: { pozice: 1 | 2 | 3; className?: string; style?: React.CSSProperties }) {
   const data = useContext(Ctx)
+  const { lang } = useLang()
   if (!data) return null
   const zap = pozice === 1 ? data.sdeleni1_zap : pozice === 2 ? data.sdeleni2_zap : data.sdeleni3_zap
   const raw = pozice === 1 ? data.sdeleni1_text : pozice === 2 ? data.sdeleni2_text : data.sdeleni3_text
   const vzhled = pozice === 1 ? data.sdeleni1_vzhled : pozice === 2 ? data.sdeleni2_vzhled : data.sdeleni3_vzhled
   const stylRaw = pozice === 1 ? data.sdeleni1_styl : pozice === 2 ? data.sdeleni2_styl : data.sdeleni3_styl
-  const text = raw?.trim() || ''
+  const prekl = pozice === 1 ? data.sdeleni1_preklady : pozice === 2 ? data.sdeleni2_preklady : data.sdeleni3_preklady
+  // překlad pro jazyk návštěvníka; fallback = původní (anglický) text
+  const text = (prekl?.[lang]?.trim()) || raw?.trim() || ''
   if (!zap || !text) return null
   return <div className={className} style={style}><SdeleniRadek text={text} styl={stylZDat(stylRaw, vzhled)} /></div>
 }

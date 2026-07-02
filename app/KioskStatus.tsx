@@ -8,7 +8,7 @@ import { vypocetStav, type RozvrhDen, type KioskRow } from './lib/stav'
 
 // Stav kiosku pro zákazníky (chytrý status): fáze se počítá z rozvrhu + režimu (auto/ruční),
 // v čase Europe/Luxembourg. Mezifáze „brzy otevře/zavře", výhled na zítřek. Přepočítává se každých 30 s.
-type Status = KioskRow & { viditelnost: string }
+type Status = KioskRow & { viditelnost: string; poznamka_preklady?: Record<string, string> | null }
 
 export default function KioskStatus() {
   const { lang } = useLang()
@@ -21,7 +21,7 @@ export default function KioskStatus() {
     let active = true
     Promise.all([
       supabase.from('kiosk_status')
-        .select('je_otevreno, oteviraci_cas, zaviraci_cas, poznamka, duvod, dnesni_vyjimka, viditelnost, rezim, brzy_otevre_min, brzy_zavre_min, vyhled_text')
+        .select('je_otevreno, oteviraci_cas, zaviraci_cas, poznamka, poznamka_preklady, duvod, dnesni_vyjimka, viditelnost, rezim, brzy_otevre_min, brzy_zavre_min, vyhled_text, vyhled_rezim')
         .eq('pobocka_id', 'hlavni').maybeSingle(),
       supabase.from('rozvrh').select('den, zavreno, otevira, zavira').eq('pobocka_id', 'hlavni'),
     ]).then(([s, r]) => {
@@ -37,7 +37,9 @@ export default function KioskStatus() {
   if (!loaded || !status) return null
   if (status.viditelnost !== 'viditelne') return null
 
-  const stav = vypocetStav(rozvrh, status, new Date())
+  // výjimku (poznámku) ukážeme v jazyce návštěvníka (fallback = původní text)
+  const poznLang = status.poznamka_preklady?.[lang]?.trim() || status.poznamka
+  const stav = vypocetStav(rozvrh, { ...status, poznamka: poznLang }, new Date())
   const stavLabels = {
     otevreno: DICT.otevreno[lang], dnesZavreno: DICT.dnesZavreno[lang], od: DICT.od[lang], do: DICT.do[lang],
     brzyOtevreme: DICT.brzyOtevreme[lang], zatimZavreno: DICT.zatimZavreno[lang], brzyZavirame: DICT.brzyZavirame[lang],
