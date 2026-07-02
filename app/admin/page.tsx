@@ -187,7 +187,10 @@ export default function AdminDashboard() {
   return (
     <main className="adm-shell">
       <header className="adm-topbar">
-        <div className="adm-brand"><BravoNapis height={26} /><span className="adm-tag">dashboard</span></div>
+        <div className="adm-brand">
+          <a href="/" title="Zpět na úvodní stránku" style={{ display: 'inline-flex', cursor: 'pointer' }}><BravoNapis height={26} /></a>
+          <span className="adm-tag">dashboard</span>
+        </div>
         <div className="adm-top-right">
           <span className="adm-who">{hatNow}</span>
           <button className="adm-logout" onClick={odhlasit}>Odhlásit</button>
