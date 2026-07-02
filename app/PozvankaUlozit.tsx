@@ -90,7 +90,7 @@ export default function PozvankaUlozit() {
         @keyframes pozv-vyjezd { from { transform: translateY(130%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes pozv-zar { 0%,100% { text-shadow: 0 0 4px rgba(232,201,122,0.5); } 50% { text-shadow: 0 0 14px rgba(232,201,122,0.95), 0 0 26px rgba(232,201,122,0.7); } }
       `}</style>
-      <div style={{ pointerEvents: 'auto', maxWidth: 440, width: '100%', background: '#fffdf8', border: '0.5px solid rgba(120,90,40,0.28)', borderRadius: 20, boxShadow: '0 8px 30px rgba(58,42,18,0.22)', padding: '16px 18px', fontFamily: 'Inter,sans-serif', animation: 'pozv-vyjezd 1.4s cubic-bezier(.16,.84,.3,1) both' }}>
+      <div style={{ pointerEvents: 'auto', maxWidth: 440, width: '100%', background: '#fffdf8', border: '0.5px solid rgba(120,90,40,0.28)', borderRadius: 20, boxShadow: '0 8px 30px rgba(58,42,18,0.22)', padding: '16px 18px', fontFamily: 'Inter,sans-serif', animation: 'pozv-vyjezd 2.1s cubic-bezier(.16,.84,.3,1) both' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
           <img src="/icon-192.png" alt="" width={46} height={46} style={{ borderRadius: 11, flexShrink: 0 }} />
           <div style={{ flex: 1, minWidth: 0 }}>
