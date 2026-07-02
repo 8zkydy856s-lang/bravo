@@ -66,6 +66,9 @@ export default function AdminDashboard() {
   const [hats, setHats] = useState<Record<string, boolean>>({})
   const [kiosk, setKiosk] = useState<KioskRow | null>(null)
   const [rozvrh, setRozvrh] = useState<RozvrhDen[]>([])
+  const [noveHeslo, setNoveHeslo] = useState('')
+  const [hesloMsg, setHesloMsg] = useState('')
+  const [hesloBusy, setHesloBusy] = useState(false)
 
   // auth gate (allowlist e-mailů; dev bypass jen mimo produkci pro náhled)
   useEffect(() => {
@@ -111,6 +114,14 @@ export default function AdminDashboard() {
     })
   }
   async function odhlasit() { await supabase.auth.signOut(); router.replace('/') }
+  async function zmenitHeslo() {
+    if (noveHeslo.length < 8) { setHesloMsg('Heslo musí mít aspoň 8 znaků.'); return }
+    setHesloBusy(true); setHesloMsg('')
+    const { error } = await supabase.auth.updateUser({ password: noveHeslo })
+    setHesloBusy(false)
+    if (error) setHesloMsg('Chyba: ' + error.message)
+    else { setHesloMsg('Heslo změněno ✓'); setNoveHeslo('') }
+  }
 
   if (!ready || !mounted) {
     return <main className="adm-load">Načítám…</main>
@@ -147,7 +158,20 @@ export default function AdminDashboard() {
   function sectionBody(key: string) {
     const s = SECTIONS[key]
     if (key === 'home') {
-      return Preview
+      return (
+        <>
+          {Preview}
+          <div className="adm-card">
+            <p className="adm-card-h">Změnit heslo</p>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+              <input type="password" value={noveHeslo} onChange={e => setNoveHeslo(e.target.value)} placeholder="Nové heslo (min. 8 znaků)"
+                style={{ border: '0.5px solid #e0d9d0', borderRadius: 8, padding: '8px 10px', fontSize: 13, fontFamily: 'Inter,sans-serif', outline: 'none', flex: '1 1 220px', color: '#1a1208' }} />
+              <button className="adm-btn" onClick={zmenitHeslo} disabled={hesloBusy || noveHeslo.length < 8} style={{ background: '#1a1208', color: '#d4a96a', border: 'none', fontWeight: 600 }}>{hesloBusy ? 'Měním…' : 'Uložit heslo'}</button>
+              {hesloMsg && <span style={{ fontSize: 13, color: hesloMsg.startsWith('Chyba') ? '#c0392b' : '#3b7d3b' }}>{hesloMsg}</span>}
+            </div>
+          </div>
+        </>
+      )
     }
     if (key === 'status') {
       return <StatusSdeleni />
