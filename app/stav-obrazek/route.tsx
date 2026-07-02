@@ -2,8 +2,8 @@ import { ImageResponse } from 'next/og'
 import { createClient } from '@supabase/supabase-js'
 import { vypocetStav, type RozvrhDen, type KioskRow } from '../lib/stav'
 
-// Sdílecí obrázek stavu pro Instagram story (9:16, ANGLICKY). Generuje se při každém otevření
-// z živých dat → vždy čerstvý. Bez klíče/placení. Stav se počítá v čase Europe/Luxembourg.
+// Sdílecí STICKER stavu (malé „tlačítko", PRŮHLEDNÉ pozadí) — položíš na fotku do IG story.
+// Generuje se z živých dat při každém otevření → vždy čerstvé. Anglicky. Bez klíče/placení.
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -22,21 +22,24 @@ export async function GET() {
   const title = denOtevreny ? 'Open today' : 'Closed today'
   const hours = denOtevreny ? `${stav.otevira}–${stav.zavira}` : ''
   const tomorrow = `tomorrow: likely ${stav.vyhledOtevreno ? 'open' : 'closed'}`
+  const ink = '#3d3123', muted = '#8a7f70'
 
-  const cream = '#f4efe4', ink = '#3d3123', muted = '#8a7f70'
   return new ImageResponse(
     (
-      <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: cream, padding: 80 }}>
-        <div style={{ display: 'flex', fontSize: 92, color: ink, letterSpacing: 2, marginBottom: 24, fontStyle: 'italic' }}>BraVo</div>
-        <div style={{ display: 'flex', fontSize: 26, color: muted, letterSpacing: 6, marginBottom: 90 }}>… a moment to rest</div>
-        <div style={{ display: 'flex', width: 64, height: 64, borderRadius: 64, background: dot, marginBottom: 40 }} />
-        <div style={{ display: 'flex', fontSize: 76, color: ink, fontWeight: 500, marginBottom: 14 }}>{title}</div>
-        {hours ? <div style={{ display: 'flex', fontSize: 52, color: muted, marginBottom: 40 }}>{hours}</div> : <div style={{ display: 'flex', marginBottom: 40 }} />}
-        <div style={{ display: 'flex', fontSize: 40, color: muted, letterSpacing: 2 }}>{tomorrow}</div>
-        <div style={{ display: 'flex', flex: 1 }} />
-        <div style={{ display: 'flex', fontSize: 34, color: muted, letterSpacing: 4 }}>bra-vo.com</div>
+      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', padding: 24 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', background: '#f4efe4', border: '3px solid #e4d9c2', borderRadius: 54, padding: '40px 56px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
+            <div style={{ display: 'flex', width: 40, height: 40, borderRadius: 40, background: dot }} />
+            <div style={{ display: 'flex', fontSize: 58, color: ink, fontWeight: 500 }}>{title}</div>
+            {hours ? <div style={{ display: 'flex', fontSize: 44, color: muted, marginLeft: 6 }}>{hours}</div> : <div style={{ display: 'flex' }} />}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 18 }}>
+            <div style={{ display: 'flex', fontSize: 30, color: muted, letterSpacing: 1 }}>{tomorrow}</div>
+            <div style={{ display: 'flex', fontSize: 26, color: muted, letterSpacing: 3, marginLeft: 40 }}>bra-vo.com</div>
+          </div>
+        </div>
       </div>
     ),
-    { width: 1080, height: 1920 }
+    { width: 900, height: 340 }
   )
 }
