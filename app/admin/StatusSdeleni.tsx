@@ -16,6 +16,7 @@ const CZ = {
   otevreno: 'Otevřeno', dnesZavreno: 'Dnes zavřeno', od: 'od', do: 'do',
   brzyOtevreme: 'Brzy otevřeme', zatimZavreno: 'Zatím zavřeno', brzyZavirame: 'Brzy zavíráme',
   otevira: 'otevírá', vyuzijChvili: 'využij chvíli', zitra: 'Zítra', zitraZavreno: 'zavřeno', dnes: 'dnes',
+  praveTed: 'Právě teď', dnesUzZavreno: 'Dnes už zavřeno', pravdepodobne: 'pravděpodobně', otevrenoMale: 'otevřeno',
 }
 const inp: React.CSSProperties = { border: '0.5px solid #e0d9d0', borderRadius: 8, padding: '7px 10px', fontSize: 13, fontFamily: 'Inter,sans-serif', outline: 'none', color: '#1a1208' }
 
@@ -33,7 +34,7 @@ export default function StatusSdeleni() {
 
   useEffect(() => {
     Promise.all([
-      supabase.from('kiosk_status').select('je_otevreno, oteviraci_cas, zaviraci_cas, poznamka, duvod, dnesni_vyjimka, rezim, brzy_otevre_min, brzy_zavre_min, vyhled_text').eq('pobocka_id', 'hlavni').maybeSingle(),
+      supabase.from('kiosk_status').select('je_otevreno, oteviraci_cas, zaviraci_cas, poznamka, duvod, dnesni_vyjimka, rezim, brzy_otevre_min, brzy_zavre_min, vyhled_text, vyhled_rezim').eq('pobocka_id', 'hlavni').maybeSingle(),
       supabase.from('rozvrh').select('den, zavreno, otevira, zavira').eq('pobocka_id', 'hlavni').order('den'),
       supabase.from('web_obsah').select('sdeleni1_zap, sdeleni1_text, sdeleni1_styl, sdeleni2_zap, sdeleni2_text, sdeleni2_styl, sdeleni3_zap, sdeleni3_text, sdeleni3_styl').eq('klic', 'hlavni').maybeSingle(),
     ]).then(([ks, rz, wo]) => {
@@ -88,6 +89,7 @@ export default function StatusSdeleni() {
         rezim: k.rezim, je_otevreno: k.je_otevreno, dnesni_vyjimka: k.dnesni_vyjimka,
         oteviraci_cas: k.oteviraci_cas || null, zaviraci_cas: k.zaviraci_cas || null, poznamka: k.poznamka || null,
         brzy_otevre_min: k.brzy_otevre_min, brzy_zavre_min: k.brzy_zavre_min, vyhled_text: k.vyhled_text || null,
+        vyhled_rezim: k.vyhled_rezim || 'plan',
       }).eq('pobocka_id', 'hlavni')).error
       for (const r of rozvrh) {
         await supabase.from('rozvrh').update({ zavreno: r.zavreno, otevira: r.otevira || null, zavira: r.zavira || null }).eq('pobocka_id', 'hlavni').eq('den', r.den)
@@ -168,7 +170,7 @@ export default function StatusSdeleni() {
         <div className="adm-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
             <p className="adm-card-h" style={{ margin: 0 }}>Dnešní stav (ruční)</p>
-            <button className="adm-seg" style={{ padding: '4px 10px', fontSize: 12 }} onClick={prevzitZPlanu}>↺ Převzít z plánu</button>
+            <button onClick={prevzitZPlanu} style={{ background: '#d4a96a', color: '#1a1208', border: 'none', borderRadius: 9, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer', boxShadow: '0 1px 4px rgba(140,100,40,0.25)' }}>↺ Převzít z plánu</button>
           </div>
           <div className="adm-row" style={{ marginBottom: 10 }}>
             {seg('Dnes otevřeno', !!k.je_otevreno, () => setKf('je_otevreno', true))}
@@ -189,8 +191,13 @@ export default function StatusSdeleni() {
 
       <div className="adm-card">
         <p className="adm-card-h">Výhled na zítřek</p>
-        <p className="adm-muted" style={{ marginBottom: 8 }}>Prázdné = spočítá se z rozvrhu a přeloží. Vyplněné = tvůj vlastní text (nepřekládá se).</p>
-        <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.vyhled_text || ''} onChange={e => setKf('vyhled_text', e.target.value)} placeholder="např. Zítra otevřeno 8–16" />
+        <div className="adm-row" style={{ marginBottom: 8 }}>
+          {seg('Podle plánu', (k.vyhled_rezim || 'plan') === 'plan', () => setKf('vyhled_rezim', 'plan'))}
+          {seg('Pravděpodobně otevřeno', k.vyhled_rezim === 'otevreno', () => setKf('vyhled_rezim', 'otevreno'))}
+          {seg('Pravděpodobně zavřeno', k.vyhled_rezim === 'zavreno', () => setKf('vyhled_rezim', 'zavreno'))}
+        </div>
+        <p className="adm-muted" style={{ marginBottom: 8 }}>Volba se přeloží do všech jazyků. „Podle plánu" bere zítřek z rozvrhu. Níže vlastní text = přepis (nepřekládá se).</p>
+        <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.vyhled_text || ''} onChange={e => setKf('vyhled_text', e.target.value)} placeholder="Vlastní text (nepovinné) — např. Zítra svátek" />
       </div>
 
       {/* SDĚLENÍ — 3 řádky (anglicky) + vzhled písma na 1/2/3 řádky současně */}

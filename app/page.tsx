@@ -65,7 +65,6 @@ export default function Home() {
           <div style={{background:"#fffdf8",borderRadius:"18px",border:"0.5px solid rgba(120,90,40,0.12)",overflow:"hidden",boxShadow:"0 1px 4px rgba(58,42,18,0.10), 0 4px 16px rgba(58,42,18,0.11)"}}>
             <div style={{padding:"14px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
               <div>
-                <p style={{fontSize:"10px",letterSpacing:"0.15em",color:"#8b7d66",margin:"0 0 6px"}}><T k="praveTed" /></p>
                 <KioskStatus />
               </div>
               <Pocasi />

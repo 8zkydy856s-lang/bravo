@@ -24,6 +24,15 @@ export const DICT: Record<string, Record<Lang, string>> = {
   dnesZavreno: {
     cz: "Dnes zavřeno", en: "Closed today", fr: "Fermé aujourd'hui", de: "Heute geschlossen", lu: "Haut zou",
   },
+  dnesUzZavreno: {
+    cz: "Dnes už zavřeno", en: "Closed for today", fr: "Fermé pour aujourd'hui", de: "Für heute geschlossen", lu: "Fir haut zou",
+  },
+  pravdepodobne: {
+    cz: "pravděpodobně", en: "likely", fr: "probablement", de: "voraussichtlich", lu: "warscheinlech",
+  },
+  otevrenoMale: {
+    cz: "otevřeno", en: "open", fr: "ouvert", de: "geöffnet", lu: "op",
+  },
   od: { cz: "od", en: "from", fr: "de", de: "ab", lu: "vun" },
   do: { cz: "do", en: "until", fr: "jusqu'à", de: "bis", lu: "bis" },
   brzyOtevreme: { cz: "Brzy otevřeme", en: "Opening soon", fr: "Bientôt ouvert", de: "Öffnet bald", lu: "Bal op" },

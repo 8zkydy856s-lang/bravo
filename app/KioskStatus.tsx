@@ -42,6 +42,7 @@ export default function KioskStatus() {
     otevreno: DICT.otevreno[lang], dnesZavreno: DICT.dnesZavreno[lang], od: DICT.od[lang], do: DICT.do[lang],
     brzyOtevreme: DICT.brzyOtevreme[lang], zatimZavreno: DICT.zatimZavreno[lang], brzyZavirame: DICT.brzyZavirame[lang],
     otevira: DICT.otevira[lang], vyuzijChvili: DICT.vyuzijChvili[lang], zitra: DICT.zitra[lang], zitraZavreno: DICT.zitraZavreno[lang], dnes: DICT.dnes[lang],
+    praveTed: DICT.praveTed[lang], dnesUzZavreno: DICT.dnesUzZavreno[lang], pravdepodobne: DICT.pravdepodobne[lang], otevrenoMale: DICT.otevrenoMale[lang],
   }
 
   return <KioskStatusView stav={stav} stavLabels={stavLabels} />

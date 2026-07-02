@@ -10,6 +10,7 @@ export type StatusLabels = { otevreno: string; dnesZavreno: string; od: string; 
 export type StavLabels = StatusLabels & {
   brzyOtevreme: string; zatimZavreno: string; brzyZavirame: string
   otevira: string; vyuzijChvili: string; zitra: string; zitraZavreno: string; dnes: string
+  praveTed: string; dnesUzZavreno: string; pravdepodobne: string; otevrenoMale: string
 }
 const DEFAULT_LABELS: StatusLabels = { otevreno: 'Otevřeno', dnesZavreno: 'Dnes zavřeno', od: 'od', do: 'do' }
 
@@ -34,35 +35,48 @@ function Kvet({ barva }: { barva: 'zelena' | 'jantar' | 'cervena' }) {
 }
 
 export default function KioskStatusView(props: Props) {
-  // (A) CHYTRÝ STATUS — úzký, max 3 řádky:
-  //  ř.1: STAV (tučně) + drobně „dnes 08:00–16:00"  ·  ř.2: výjimka (jen když je)  ·  ř.3: „Zítra: …"
+  // (A) CHYTRÝ STATUS — úzký, max 3 řádky. „PRÁVĚ TEĎ" nahoře, „ZÍTRA:" dole zarovnané s ním.
+  //  ř.1: STAV (tučně) + drobně „dnes 08:00–16:00"  ·  ř.2: výjimka (jen když je)  ·  ř.3: „ZÍTRA: pravděpodobně …"
   if (props.stav && props.stavLabels) {
     const s = props.stav, L = props.stavLabels
+    const zavrenoDnes = s.faze === 'zavreno' || s.faze === 'po_zavirace'
     let title = L.otevreno
     if (s.faze === 'brzy_zavre') title = L.brzyZavirame
     else if (s.faze === 'brzy_otevre') title = L.brzyOtevreme
     else if (s.faze === 'pred_otevrenim') title = L.zatimZavreno
+    else if (s.faze === 'po_zavirace') title = L.dnesUzZavreno
     else if (s.faze === 'zavreno') title = L.dnesZavreno
 
-    // dnešní hodiny inline (jen když je dnes otevřeno / bude otevírat)
-    const dnesCas = (s.faze !== 'zavreno' && s.otevira && s.zavira) ? `${L.dnes} ${s.otevira}–${s.zavira}` : ''
+    // dnešní hodiny inline (jen když je dnes otevřeno / bude teprve otevírat)
+    const dnesCas = (!zavrenoDnes && s.otevira && s.zavira) ? `${L.dnes} ${s.otevira}–${s.zavira}` : ''
     const note = s.poznamka?.trim() || ''
-    let vyhled = ''
-    if (s.vyhledText) vyhled = s.vyhledText
-    else if (s.vyhledOtevreno && s.vyhledOd && s.vyhledDo) vyhled = `${L.zitra}: ${s.vyhledOd}–${s.vyhledDo}`
-    else vyhled = `${L.zitra}: ${L.zitraZavreno}`
+
+    // výhled na zítřek: buď vlastní text, nebo „pravděpodobně otevřeno/zavřeno" (+ čas). Slovo jemně zeleně/červeně.
+    const otevrenoZitra = !!s.vyhledOtevreno
+    const slovoZitra = otevrenoZitra ? L.otevrenoMale : L.zitraZavreno
+    const barvaZitra = otevrenoZitra ? '#6f9350' : '#bd6a52'
+    const casZitra = otevrenoZitra && s.vyhledOd && s.vyhledDo ? ` ${s.vyhledOd}–${s.vyhledDo}` : ''
+    const zitraNadpis = <span style={{ letterSpacing: '0.06em', color: '#8a7f70' }}>{L.zitra.toUpperCase()}:</span>
 
     return (
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', transform: 'translate(3px, 3px)' }}>
-        <Kvet barva={s.barva} />
-        <div>
-          <p style={{ margin: 0, display: 'flex', alignItems: 'baseline', gap: '8px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '14px', fontWeight: 600, color: '#1a1208' }}>{title}</span>
-            {dnesCas && <span style={{ fontSize: '12px', color: '#8a7f70' }}>{dnesCas}</span>}
-          </p>
-          {note && <p style={{ fontSize: '12px', color: '#7c7162', margin: '4px 0 0', overflowWrap: 'anywhere' }}>{note}</p>}
-          {vyhled && <p style={{ fontSize: '11px', color: '#9b8d76', margin: '4px 0 0' }}>{vyhled}</p>}
+      <div style={{ transform: 'translate(3px, 3px)' }}>
+        <p style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#8b7d66', margin: '0 0 6px', textTransform: 'uppercase' }}>{L.praveTed}</p>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+          <Kvet barva={s.barva} />
+          <div>
+            <p style={{ margin: 0, display: 'flex', alignItems: 'baseline', gap: '8px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '14px', fontWeight: 600, color: '#1a1208' }}>{title}</span>
+              {dnesCas && <span style={{ fontSize: '12px', color: '#8a7f70' }}>{dnesCas}</span>}
+            </p>
+            {note && <p style={{ fontSize: '12px', color: '#7c7162', margin: '4px 0 0', overflowWrap: 'anywhere' }}>{note}</p>}
+          </div>
         </div>
+        <p style={{ fontSize: '11px', color: '#9b8d76', margin: '8px 0 0' }}>
+          {zitraNadpis}{' '}
+          {s.vyhledText
+            ? s.vyhledText
+            : <>{L.pravdepodobne} <span style={{ color: barvaZitra }}>{slovoZitra}</span>{casZitra}</>}
+        </p>
       </div>
     )
   }

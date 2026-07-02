@@ -1,14 +1,17 @@
 // CHYTRÝ STATUS — sdílený výpočet fáze kiosku z rozvrhu + režimu. Počítá se v čase Europe/Luxembourg.
 // Používá úvodní stránka (KioskStatus) i admin náhled. Fáze → barva květu (zelená/jantar/červená).
 
-export type Faze = 'otevreno' | 'brzy_zavre' | 'brzy_otevre' | 'pred_otevrenim' | 'zavreno'
+// 'po_zavirace' = dnes BYLO otevřeno, ale už je po zavírací době → „Dnes už zavřeno"
+// (odlišné od 'zavreno' = celý den zavřeno).
+export type Faze = 'otevreno' | 'brzy_zavre' | 'brzy_otevre' | 'pred_otevrenim' | 'po_zavirace' | 'zavreno'
 export type Barva = 'zelena' | 'jantar' | 'cervena'
 
 export type RozvrhDen = { den: number; zavreno: boolean; otevira: string | null; zavira: string | null }
 export type KioskRow = {
   je_otevreno: boolean; oteviraci_cas: string | null; zaviraci_cas: string | null
   poznamka: string | null; duvod: string | null; dnesni_vyjimka: boolean
-  rezim?: string; brzy_otevre_min?: number; brzy_zavre_min?: number; vyhled_text?: string | null
+  rezim?: string; brzy_otevre_min?: number; brzy_zavre_min?: number
+  vyhled_text?: string | null; vyhled_rezim?: string // 'plan' | 'otevreno' | 'zavreno'
 }
 export type Stav = {
   faze: Faze
@@ -44,18 +47,22 @@ function toMin(t?: string | null): number | null {
 function fazeZHodin(od: number, doo: number, min: number, brzyO: number, brzyZ: number): { faze: Faze; barva: Barva } {
   if (min < od) return { faze: min >= od - brzyO ? 'brzy_otevre' : 'pred_otevrenim', barva: 'jantar' }
   if (min < doo) return { faze: min >= doo - brzyZ ? 'brzy_zavre' : 'otevreno', barva: 'zelena' }
-  return { faze: 'zavreno', barva: 'cervena' }
+  return { faze: 'po_zavirace', barva: 'cervena' } // bylo dnes otevřeno, teď už po zavírací době
 }
 
 export function vypocetStav(rozvrh: RozvrhDen[], k: KioskRow, now: Date): Stav {
   const { den, min } = luxParts(now)
   const dnes = rozvrh.find(r => r.den === den)
   const zitra = rozvrh.find(r => r.den === (den + 1) % 7)
-  const vyhled = k.vyhled_text
-    ? { vyhledText: k.vyhled_text }
-    : (zitra && !zitra.zavreno && zitra.otevira && zitra.zavira
-      ? { vyhledOtevreno: true, vyhledOd: zitra.otevira, vyhledDo: zitra.zavira }
-      : { vyhledOtevreno: false })
+  // VÝHLED NA ZÍTŘEK: priorita vlastní text > rychlá volba (otevřeno/zavřeno) > podle plánu.
+  const vr = k.vyhled_rezim || 'plan'
+  let vyhled: Partial<Stav>
+  if (k.vyhled_text) vyhled = { vyhledText: k.vyhled_text }
+  else if (vr === 'zavreno') vyhled = { vyhledOtevreno: false }
+  else if (vr === 'otevreno') vyhled = { vyhledOtevreno: true, vyhledOd: zitra?.otevira || undefined, vyhledDo: zitra?.zavira || undefined }
+  else vyhled = (zitra && !zitra.zavreno && zitra.otevira && zitra.zavira)
+    ? { vyhledOtevreno: true, vyhledOd: zitra.otevira, vyhledDo: zitra.zavira }
+    : { vyhledOtevreno: false }
   const brzyO = k.brzy_otevre_min ?? 25
   const brzyZ = k.brzy_zavre_min ?? 30
   const rucni = (k.rezim || 'auto') === 'rucni'

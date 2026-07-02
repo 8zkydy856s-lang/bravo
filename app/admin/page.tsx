@@ -13,6 +13,7 @@ const CZ_LABELS = {
   otevreno: 'Otevřeno', dnesZavreno: 'Dnes zavřeno', od: 'od', do: 'do',
   brzyOtevreme: 'Brzy otevřeme', zatimZavreno: 'Zatím zavřeno', brzyZavirame: 'Brzy zavíráme',
   otevira: 'otevírá', vyuzijChvili: 'využij chvíli', zitra: 'Zítra', zitraZavreno: 'zavřeno', dnes: 'dnes',
+  praveTed: 'Právě teď', dnesUzZavreno: 'Dnes už zavřeno', pravdepodobne: 'pravděpodobně', otevrenoMale: 'otevřeno',
 }
 
 // BRAVO DASHBOARD — řídicí panel majitele (Etapa 1: KOSTRA). Přístup jen pro admina (allowlist e-mailů).
