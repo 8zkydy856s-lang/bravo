@@ -223,20 +223,19 @@ export default function StatusSdeleni() {
 
       <p style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#b0a595', margin: '16px 2px 6px', fontWeight: 500 }}>Stav — dnes a zítra</p>
 
-      {/* Režim — kompaktní jeden řádek */}
-      <div className="adm-card" style={{ padding: 12 }}>
+      {/* JEDNA karta „Stav — dnes a zítra": Režim · Dnes (ruční) · Výhled + Výjimka */}
+      <div className="adm-card">
+        {/* Blok 1 — Režim */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
           <span className="adm-card-h" style={{ margin: 0 }}>Režim:</span>
           {seg('Automatický', auto, () => prepnoutRezim('auto'), false)}
           {seg('Ruční', !auto, () => prepnoutRezim('rucni'), false)}
           <span className="adm-muted" style={{ flex: '1 1 180px' }}>{auto ? 'Vše běží podle rozvrhu — nemusíš nic dělat.' : 'Časy předvyplněné z plánu, uprav jen výjimku.'}</span>
         </div>
-      </div>
 
-      {/* Ruční: dnešní stav (jen v ručním režimu) */}
-      {!auto && (
-        <div className="adm-card" style={{ padding: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+        {/* Blok 2 — Dnes (jen ruční) */}
+        {!auto && (
+          <div style={{ marginTop: 12, paddingTop: 12, borderTop: '0.5px solid #eee5d8', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <span className="adm-card-h" style={{ margin: 0 }}>Dnes:</span>
             {seg('Otevřeno', !!k.je_otevreno, () => setKf('je_otevreno', true), false)}
             {seg('Zavřeno', !k.je_otevreno, () => setKf('je_otevreno', false), false)}
@@ -247,27 +246,28 @@ export default function StatusSdeleni() {
             </>}
             <button onClick={prevzitZPlanu} style={{ background: '#d4a96a', color: '#1a1208', border: 'none', borderRadius: 9, padding: '6px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', marginLeft: 'auto' }}>↺ Převzít z plánu</button>
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="adm-card">
-        <p className="adm-card-h">Výhled na zítřek</p>
-        <div className="adm-row" style={{ marginBottom: 8 }}>
-          {seg('Podle plánu', (k.vyhled_rezim || 'plan') === 'plan', () => setKf('vyhled_rezim', 'plan'))}
-          {seg('Pravděpodobně otevřeno', k.vyhled_rezim === 'otevreno', () => setKf('vyhled_rezim', 'otevreno'))}
-          {seg('Pravděpodobně zavřeno', k.vyhled_rezim === 'zavreno', () => setKf('vyhled_rezim', 'zavreno'))}
+        {/* Blok 3 — Výhled na zítřek + Výjimka vedle sebe */}
+        <div style={{ marginTop: 12, paddingTop: 12, borderTop: '0.5px solid #eee5d8', display: 'flex', gap: 18, flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 250px', minWidth: 0 }}>
+            <p className="adm-card-h">Výhled na zítřek</p>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
+              {seg('Podle plánu', (k.vyhled_rezim || 'plan') === 'plan', () => setKf('vyhled_rezim', 'plan'), false)}
+              {seg('Otevřeno', k.vyhled_rezim === 'otevreno', () => setKf('vyhled_rezim', 'otevreno'), false)}
+              {seg('Zavřeno', k.vyhled_rezim === 'zavreno', () => setKf('vyhled_rezim', 'zavreno'), false)}
+            </div>
+            <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.vyhled_text || ''} onChange={e => setKf('vyhled_text', e.target.value)} placeholder="Vlastní text (nepovinné, nepřekládá se)" />
+          </div>
+          <div style={{ flex: '1 1 250px', minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+              <p className="adm-card-h" style={{ margin: 0, flex: 1 }}>Výjimka <span className="adm-badge" style={{ color: '#8a7f70' }}>EN · přeloží se</span></p>
+              <VyberHlasky kat="vyjimka" onPick={t => setKf('poznamka', t)} />
+              <button className="adm-seg" style={{ padding: '4px 9px', fontSize: 12 }} onClick={() => setKf('poznamka', '')} disabled={!k.poznamka} title="Smazat výjimku">Vyčistit</button>
+            </div>
+            <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.poznamka || ''} onChange={e => setKf('poznamka', e.target.value)} placeholder="Text in English (e.g. Closed due to weather)" />
+          </div>
         </div>
-        <p className="adm-muted" style={{ marginBottom: 8 }}>Volba se přeloží do všech jazyků. „Podle plánu" bere zítřek z rozvrhu. Níže vlastní text = přepis (nepřekládá se).</p>
-        <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.vyhled_text || ''} onChange={e => setKf('vyhled_text', e.target.value)} placeholder="Vlastní text (nepovinné) — např. Zítra svátek" />
-      </div>
-
-      <div className="adm-card">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-          <p className="adm-card-h" style={{ margin: 0, flex: 1 }}>Výjimka u statusu <span className="adm-badge" style={{ color: '#8a7f70' }}>EN · přeloží se</span></p>
-          <VyberHlasky kat="vyjimka" onPick={t => setKf('poznamka', t)} />
-          <button className="adm-seg" style={{ padding: '5px 10px', fontSize: 12 }} onClick={() => setKf('poznamka', '')} disabled={!k.poznamka} title="Smazat výjimku">Vyčistit</button>
-        </div>
-        <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.poznamka || ''} onChange={e => setKf('poznamka', e.target.value)} placeholder="Text in English (e.g. Closed due to weather)" />
       </div>
 
       <p style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#b0a595', margin: '16px 2px 6px', fontWeight: 500 }}>Sdělení a vzkazy</p>
