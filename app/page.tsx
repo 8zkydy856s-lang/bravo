@@ -6,7 +6,7 @@ import Pocasi from "./Pocasi";
 import { LangProvider, T } from "./LangContext";
 import JazykPrepinac from "./JazykPrepinac";
 import { InstagramIkona, GoogleIkona } from "./Ikony";
-import { WebObsahProvider, Sdeleni, ZitraVyhled, PopisText, NavigujOdkaz } from "./WebObsah";
+import { WebObsahProvider, Sdeleni, PopisText, NavigujOdkaz } from "./WebObsah";
 import VozikZivot from "./VozikZivot";
 import ProvozZivot from "./ProvozZivot";
 import PodtitulStruna from "./PodtitulStruna";
@@ -67,7 +67,6 @@ export default function Home() {
               <div>
                 <p style={{fontSize:"10px",letterSpacing:"0.15em",color:"#8b7d66",margin:"0 0 6px"}}><T k="praveTed" /></p>
                 <KioskStatus />
-                <ZitraVyhled />
               </div>
               <Pocasi />
             </div>

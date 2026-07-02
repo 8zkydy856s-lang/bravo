@@ -41,7 +41,7 @@ export default function KioskStatus() {
   const stavLabels = {
     otevreno: DICT.otevreno[lang], dnesZavreno: DICT.dnesZavreno[lang], od: DICT.od[lang], do: DICT.do[lang],
     brzyOtevreme: DICT.brzyOtevreme[lang], zatimZavreno: DICT.zatimZavreno[lang], brzyZavirame: DICT.brzyZavirame[lang],
-    otevira: DICT.otevira[lang], vyuzijChvili: DICT.vyuzijChvili[lang], zitra: DICT.zitra[lang], zitraZavreno: DICT.zitraZavreno[lang],
+    otevira: DICT.otevira[lang], vyuzijChvili: DICT.vyuzijChvili[lang], zitra: DICT.zitra[lang], zitraZavreno: DICT.zitraZavreno[lang], dnes: DICT.dnes[lang],
   }
 
   return <KioskStatusView stav={stav} stavLabels={stavLabels} />

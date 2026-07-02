@@ -376,6 +376,13 @@ body {
 .adm-card-h { font-size: 13px; font-weight: 500; margin: 0 0 10px; }
 .adm-preview { background: #f7f3ec; border-radius: 12px; padding: 12px; }
 .adm-preview > div { background: #fff; border: 0.5px solid rgba(0,0,0,0.08); border-radius: 12px; padding: 12px 14px; }
+/* Náhled + Uložit nahoře, drží se při scrollu */
+.adm-sticky { position: sticky; top: 8px; z-index: 20; background: #f7f3ec; border: 0.5px solid rgba(0,0,0,0.08); border-radius: 16px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 10px rgba(40,30,15,0.10); }
+/* Náhled jako tlačítko (Přehled) */
+.adm-preview-btn { display: block; width: 100%; text-align: left; background: none; border: none; padding: 0; font: inherit; cursor: pointer; }
+.adm-preview-btn .adm-preview { transition: box-shadow .2s, transform .2s; }
+.adm-preview-btn:hover .adm-preview { box-shadow: 0 3px 12px rgba(40,30,15,0.12); }
+.adm-preview-hint { display: block; text-align: right; font-size: 12px; color: #b5732a; margin-top: 8px; }
 .adm-muted { font-size: 12px; color: #8a7f70; margin: 0; }
 .adm-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .adm-seg { border: 0.5px solid #e0d9d0; background: #fff; border-radius: 8px; padding: 8px 16px; font: inherit; font-size: 13px; color: #8a7f70; cursor: pointer; }

@@ -12,7 +12,7 @@ import { vypocetStav, type RozvrhDen, type KioskRow } from '../lib/stav'
 const CZ_LABELS = {
   otevreno: 'Otevřeno', dnesZavreno: 'Dnes zavřeno', od: 'od', do: 'do',
   brzyOtevreme: 'Brzy otevřeme', zatimZavreno: 'Zatím zavřeno', brzyZavirame: 'Brzy zavíráme',
-  otevira: 'otevírá', vyuzijChvili: 'využij chvíli', zitra: 'Zítra', zitraZavreno: 'zavřeno',
+  otevira: 'otevírá', vyuzijChvili: 'využij chvíli', zitra: 'Zítra', zitraZavreno: 'zavřeno', dnes: 'dnes',
 }
 
 // BRAVO DASHBOARD — řídicí panel majitele (Etapa 1: KOSTRA). Přístup jen pro admina (allowlist e-mailů).
@@ -132,31 +132,21 @@ export default function AdminDashboard() {
   const Preview = (
     <div className="adm-card">
       <p className="adm-card-h">Živý náhled — co teď vidí zákazník</p>
-      <div className="adm-preview">
-        {kiosk
-          ? <KioskStatusView stav={vypocetStav(rozvrh, kiosk, new Date())} stavLabels={CZ_LABELS} />
-          : <span className="adm-muted">načítám stav…</span>}
-      </div>
+      <button className="adm-preview-btn" onClick={() => setSection('status')} title="Otevřít Status & sdělení">
+        <div className="adm-preview">
+          {kiosk
+            ? <KioskStatusView stav={vypocetStav(rozvrh, kiosk, new Date())} stavLabels={CZ_LABELS} />
+            : <span className="adm-muted">načítám stav…</span>}
+        </div>
+        <span className="adm-preview-hint">Klikni pro úpravu → Status &amp; sdělení</span>
+      </button>
     </div>
   )
 
   function sectionBody(key: string) {
     const s = SECTIONS[key]
     if (key === 'home') {
-      return (
-        <>
-          {Preview}
-          <div className="adm-card">
-            <p className="adm-card-h">Rychlý status</p>
-            <div className="adm-row">
-              <button className="adm-seg on">Otevřeno</button>
-              <button className="adm-seg">Zavřeno</button>
-              <button className="adm-link" onClick={() => setSection('status')}>Otevřít Status &amp; sdělení →</button>
-            </div>
-            <p className="adm-muted" style={{ marginTop: 8 }}>Zatím náhled skeletu — plné ovládání přijde do sekce Status &amp; sdělení.</p>
-          </div>
-        </>
-      )
+      return Preview
     }
     if (key === 'status') {
       return <StatusSdeleni />

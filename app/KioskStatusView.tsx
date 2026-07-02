@@ -9,7 +9,7 @@ import { BARVY, type Stav } from './lib/stav'
 export type StatusLabels = { otevreno: string; dnesZavreno: string; od: string; do: string }
 export type StavLabels = StatusLabels & {
   brzyOtevreme: string; zatimZavreno: string; brzyZavirame: string
-  otevira: string; vyuzijChvili: string; zitra: string; zitraZavreno: string
+  otevira: string; vyuzijChvili: string; zitra: string; zitraZavreno: string; dnes: string
 }
 const DEFAULT_LABELS: StatusLabels = { otevreno: 'Otevřeno', dnesZavreno: 'Dnes zavřeno', od: 'od', do: 'do' }
 
@@ -34,31 +34,34 @@ function Kvet({ barva }: { barva: 'zelena' | 'jantar' | 'cervena' }) {
 }
 
 export default function KioskStatusView(props: Props) {
-  // (A) CHYTRÝ STATUS
+  // (A) CHYTRÝ STATUS — úzký, max 3 řádky:
+  //  ř.1: STAV (tučně) + drobně „dnes 08:00–16:00"  ·  ř.2: výjimka (jen když je)  ·  ř.3: „Zítra: …"
   if (props.stav && props.stavLabels) {
     const s = props.stav, L = props.stavLabels
     let title = L.otevreno
-    let casy = ''
-    if (s.faze === 'otevreno') { title = L.otevreno; if (s.otevira && s.zavira) casy = `${s.otevira} – ${s.zavira}` }
-    else if (s.faze === 'brzy_zavre') { title = L.otevreno; casy = `${L.brzyZavirame} · ${L.vyuzijChvili}` }
-    else if (s.faze === 'brzy_otevre') { title = L.brzyOtevreme; if (s.otevira) casy = `${L.otevira} ${s.otevira}` }
-    else if (s.faze === 'pred_otevrenim') { title = L.zatimZavreno; if (s.otevira && s.zavira) casy = `${s.otevira} – ${s.zavira}` }
-    else { title = L.dnesZavreno }
+    if (s.faze === 'brzy_zavre') title = L.brzyZavirame
+    else if (s.faze === 'brzy_otevre') title = L.brzyOtevreme
+    else if (s.faze === 'pred_otevrenim') title = L.zatimZavreno
+    else if (s.faze === 'zavreno') title = L.dnesZavreno
 
+    // dnešní hodiny inline (jen když je dnes otevřeno / bude otevírat)
+    const dnesCas = (s.faze !== 'zavreno' && s.otevira && s.zavira) ? `${L.dnes} ${s.otevira}–${s.zavira}` : ''
     const note = s.poznamka?.trim() || ''
     let vyhled = ''
     if (s.vyhledText) vyhled = s.vyhledText
-    else if (s.vyhledOtevreno && s.vyhledOd && s.vyhledDo) vyhled = `${L.zitra}: ${s.vyhledOd} – ${s.vyhledDo}`
+    else if (s.vyhledOtevreno && s.vyhledOd && s.vyhledDo) vyhled = `${L.zitra}: ${s.vyhledOd}–${s.vyhledDo}`
     else vyhled = `${L.zitra}: ${L.zitraZavreno}`
 
     return (
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', transform: 'translate(3px, 3px)' }}>
         <Kvet barva={s.barva} />
         <div>
-          <p style={{ fontSize: '14px', fontWeight: 500, color: '#1a1208', margin: 0 }}>{title}</p>
-          {casy && <p style={{ fontSize: '12px', color: '#7c7162', margin: '2px 0 0' }}>{casy}</p>}
-          {note && <p style={{ fontSize: '12px', color: '#7c7162', margin: '5px 0 0', overflowWrap: 'anywhere' }}>{note}</p>}
-          {vyhled && <p style={{ fontSize: '11px', color: '#9b8d76', margin: '5px 0 0' }}>{vyhled}</p>}
+          <p style={{ margin: 0, display: 'flex', alignItems: 'baseline', gap: '8px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '14px', fontWeight: 600, color: '#1a1208' }}>{title}</span>
+            {dnesCas && <span style={{ fontSize: '12px', color: '#8a7f70' }}>{dnesCas}</span>}
+          </p>
+          {note && <p style={{ fontSize: '12px', color: '#7c7162', margin: '4px 0 0', overflowWrap: 'anywhere' }}>{note}</p>}
+          {vyhled && <p style={{ fontSize: '11px', color: '#9b8d76', margin: '4px 0 0' }}>{vyhled}</p>}
         </div>
       </div>
     )

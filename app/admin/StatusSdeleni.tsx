@@ -2,25 +2,31 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import KioskStatusView from '../KioskStatusView'
-import { vypocetStav, type RozvrhDen, type KioskRow } from '../lib/stav'
+import { vypocetStav, luxDen, type RozvrhDen, type KioskRow } from '../lib/stav'
+import { SdeleniRadek } from '../WebObsahView'
+import { VELIKOSTI, FONTY, REZY, BARVY_SDELENI, DEFAULT_STYL, type StylSdeleni } from '../lib/sdeleniStyl'
 
-// Admin: STATUS & SDĚLENÍ na jednom místě (jeden typ aktivity — živá úvodní stránka).
-// Režim auto (rozvrh) / ruční (výjimka). Mezifáze, výhled na zítřek. Sdělení 1–3.
+// Admin: STATUS & SDĚLENÍ na jednom místě. Náhled + Uložit nahoře (nescrolluješ).
+// Režim auto (rozvrh) / ruční (potvrzený rozvrh — předvyplněno z plánu, mezifáze fungují i tady).
+// Sdělení 1–3: text (ANGLICKY, nepřekládá se) + vzhled (velikost/font/řez/barva/rámeček), úpravy na 1/2/3 řádky.
 
 const DNY = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne']
+const POZICE = ['nad statusem', 'mezi statusem a popisem', 'pod popisem']
 const CZ = {
   otevreno: 'Otevřeno', dnesZavreno: 'Dnes zavřeno', od: 'od', do: 'do',
   brzyOtevreme: 'Brzy otevřeme', zatimZavreno: 'Zatím zavřeno', brzyZavirame: 'Brzy zavíráme',
-  otevira: 'otevírá', vyuzijChvili: 'využij chvíli', zitra: 'Zítra', zitraZavreno: 'zavřeno',
+  otevira: 'otevírá', vyuzijChvili: 'využij chvíli', zitra: 'Zítra', zitraZavreno: 'zavřeno', dnes: 'dnes',
 }
-const inp: React.CSSProperties = { border: '0.5px solid #e0d9d0', borderRadius: 8, padding: '7px 10px', fontSize: 13, fontFamily: 'Inter,sans-serif', outline: 'none' }
+const inp: React.CSSProperties = { border: '0.5px solid #e0d9d0', borderRadius: 8, padding: '7px 10px', fontSize: 13, fontFamily: 'Inter,sans-serif', outline: 'none', color: '#1a1208' }
 
 type Kiosk = KioskRow & { viditelnost?: string }
+type Sdel = { zap: boolean; text: string; styl: StylSdeleni }
 
 export default function StatusSdeleni() {
   const [k, setK] = useState<Kiosk | null>(null)
   const [rozvrh, setRozvrh] = useState<RozvrhDen[]>([])
-  const [sd, setSd] = useState({ s1z: false, s1t: '', s2z: false, s2t: '', s3z: false, s3t: '' })
+  const [sd, setSd] = useState<Sdel[]>([])
+  const [cil, setCil] = useState<Record<number, boolean>>({ 0: true, 1: true, 2: true })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
@@ -29,14 +35,17 @@ export default function StatusSdeleni() {
     Promise.all([
       supabase.from('kiosk_status').select('je_otevreno, oteviraci_cas, zaviraci_cas, poznamka, duvod, dnesni_vyjimka, rezim, brzy_otevre_min, brzy_zavre_min, vyhled_text').eq('pobocka_id', 'hlavni').maybeSingle(),
       supabase.from('rozvrh').select('den, zavreno, otevira, zavira').eq('pobocka_id', 'hlavni').order('den'),
-      supabase.from('web_obsah').select('sdeleni1_zap, sdeleni1_text, sdeleni2_zap, sdeleni2_text, sdeleni3_zap, sdeleni3_text').eq('klic', 'hlavni').maybeSingle(),
+      supabase.from('web_obsah').select('sdeleni1_zap, sdeleni1_text, sdeleni1_styl, sdeleni2_zap, sdeleni2_text, sdeleni2_styl, sdeleni3_zap, sdeleni3_text, sdeleni3_styl').eq('klic', 'hlavni').maybeSingle(),
     ]).then(([ks, rz, wo]) => {
       const d = (ks.data as Kiosk) || null
       if (d) setK({ ...d, rezim: d.rezim || 'auto', brzy_otevre_min: d.brzy_otevre_min ?? 25, brzy_zavre_min: d.brzy_zavre_min ?? 30 })
       const rows = (rz.data as RozvrhDen[]) || []
       setRozvrh([0, 1, 2, 3, 4, 5, 6].map(den => rows.find(x => x.den === den) || { den, zavreno: den === 6, otevira: '08:00', zavira: '16:00' }))
       const w: any = wo.data || {}
-      setSd({ s1z: !!w.sdeleni1_zap, s1t: w.sdeleni1_text || '', s2z: !!w.sdeleni2_zap, s2t: w.sdeleni2_text || '', s3z: !!w.sdeleni3_zap, s3t: w.sdeleni3_text || '' })
+      setSd([1, 2, 3].map(n => ({
+        zap: !!w[`sdeleni${n}_zap`], text: w[`sdeleni${n}_text`] || '',
+        styl: { ...DEFAULT_STYL, ...(w[`sdeleni${n}_styl`] || {}) },
+      })))
       setLoading(false)
     })
   }, [])
@@ -46,6 +55,30 @@ export default function StatusSdeleni() {
   const setRf = (den: number, f: keyof RozvrhDen, v: any) => setRozvrh(rozvrh.map(r => r.den === den ? { ...r, [f]: v } : r))
   const auto = (k.rezim || 'auto') === 'auto'
   const stav = vypocetStav(rozvrh, k, new Date())
+
+  // Přepnutí režimu: do ručního předvyplníme dnešní čas z plánu (majitel jen potvrdí / upraví výjimku).
+  function prepnoutRezim(r: 'auto' | 'rucni') {
+    if (r !== 'rucni') { setKf('rezim', 'auto'); return }
+    const dnes = rozvrh.find(x => x.den === luxDen(new Date()))
+    setK(prev => prev ? {
+      ...prev, rezim: 'rucni',
+      je_otevreno: prev.je_otevreno ?? !(dnes?.zavreno),
+      oteviraci_cas: prev.oteviraci_cas || dnes?.otevira || '08:00',
+      zaviraci_cas: prev.zaviraci_cas || dnes?.zavira || '16:00',
+    } : prev)
+  }
+  function prevzitZPlanu() {
+    const dnes = rozvrh.find(x => x.den === luxDen(new Date()))
+    setK(prev => prev ? { ...prev, je_otevreno: !(dnes?.zavreno), oteviraci_cas: dnes?.otevira || '08:00', zaviraci_cas: dnes?.zavira || '16:00' } : prev)
+  }
+
+  // Úpravy vzhledu se propíšou do všech zaškrtnutých řádků (cíl).
+  const cilPos = [0, 1, 2].filter(i => cil[i])
+  const repr: StylSdeleni = { ...DEFAULT_STYL, ...(sd[cilPos[0] ?? 0]?.styl || {}) }
+  function upravStyl(f: keyof StylSdeleni, v: any) {
+    setSd(sd.map((s, i) => cil[i] ? { ...s, styl: { ...s.styl, [f]: v } } : s))
+  }
+  const setSdF = (i: number, f: keyof Sdel, v: any) => setSd(sd.map((s, j) => j === i ? { ...s, [f]: v } : s))
 
   async function ulozit() {
     if (!k) return
@@ -60,34 +93,47 @@ export default function StatusSdeleni() {
         await supabase.from('rozvrh').update({ zavreno: r.zavreno, otevira: r.otevira || null, zavira: r.zavira || null }).eq('pobocka_id', 'hlavni').eq('den', r.den)
       }
       const e3 = (await supabase.from('web_obsah').update({
-        sdeleni1_zap: sd.s1z, sdeleni1_text: sd.s1t || null, sdeleni2_zap: sd.s2z, sdeleni2_text: sd.s2t || null, sdeleni3_zap: sd.s3z, sdeleni3_text: sd.s3t || null,
+        sdeleni1_zap: sd[0].zap, sdeleni1_text: sd[0].text || null, sdeleni1_styl: sd[0].styl,
+        sdeleni2_zap: sd[1].zap, sdeleni2_text: sd[1].text || null, sdeleni2_styl: sd[1].styl,
+        sdeleni3_zap: sd[2].zap, sdeleni3_text: sd[2].text || null, sdeleni3_styl: sd[2].styl,
       }).eq('klic', 'hlavni')).error
-      if (e1 || e3) setMsg('Chyba: ' + ((e1 || e3)?.message))
-      else setMsg('Uloženo ✓')
+      setMsg(e1 || e3 ? 'Chyba: ' + ((e1 || e3)?.message) : 'Uloženo ✓')
     } catch (e: any) { setMsg('Chyba: ' + e.message) }
     finally { setSaving(false) }
   }
 
-  const seg = (label: string, on: boolean, onClick: () => void) => (
-    <button className={'adm-seg' + (on ? ' on' : '')} onClick={onClick} style={{ flex: 1 }}>{label}</button>
+  const seg = (label: string, on: boolean, onClick: () => void, flex = true) => (
+    <button className={'adm-seg' + (on ? ' on' : '')} onClick={onClick} style={flex ? { flex: 1 } : undefined}>{label}</button>
+  )
+  const UlozitBtn = (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <button className="adm-btn" onClick={ulozit} disabled={saving} style={{ background: '#1a1208', color: '#d4a96a', border: 'none', whiteSpace: 'nowrap' }}>{saving ? 'Ukládám…' : 'Uložit'}</button>
+      {msg && <span style={{ fontSize: 13, color: msg.startsWith('Chyba') ? '#c0392b' : '#3b7d3b' }}>{msg}</span>}
+    </div>
   )
 
   return (
     <>
-      <div className="adm-card">
-        <p className="adm-card-h">Režim statusu</p>
-        <div className="adm-row" style={{ marginBottom: 10 }}>
-          {seg('Automatický', auto, () => setKf('rezim', 'auto'))}
-          {seg('Ruční', !auto, () => setKf('rezim', 'rucni'))}
-        </div>
-        <div style={{ background: auto ? '#eef6ea' : '#faf1e0', borderRadius: 8, padding: '10px 12px', fontSize: 12, color: auto ? '#3b6d2a' : '#8a5a1a' }}>
-          {auto ? 'Vše běží podle rozvrhu — teď nemusíš nic dělat. Přepni na Ruční, když je výjimka.' : 'Ruční režim — automat je vypnutý, stavy měníš a hlídáš sám.'}
+      {/* NÁHLED + ULOŽIT nahoře — vidíš změnu a rovnou uložíš, bez scrollování */}
+      <div className="adm-sticky">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 260px', minWidth: 0 }}>
+            <p className="adm-card-h" style={{ margin: '0 0 6px' }}>Živý náhled — co teď vidí zákazník</p>
+            <div className="adm-preview"><KioskStatusView stav={stav} stavLabels={CZ} /></div>
+          </div>
+          {UlozitBtn}
         </div>
       </div>
 
       <div className="adm-card">
-        <p className="adm-card-h">Živý náhled — co teď vidí zákazník</p>
-        <div className="adm-preview"><KioskStatusView stav={stav} stavLabels={CZ} /></div>
+        <p className="adm-card-h">Režim statusu</p>
+        <div className="adm-row" style={{ marginBottom: 10 }}>
+          {seg('Automatický', auto, () => prepnoutRezim('auto'))}
+          {seg('Ruční', !auto, () => prepnoutRezim('rucni'))}
+        </div>
+        <div style={{ background: auto ? '#eef6ea' : '#faf1e0', borderRadius: 8, padding: '10px 12px', fontSize: 12, color: auto ? '#3b6d2a' : '#8a5a1a' }}>
+          {auto ? 'Vše běží podle rozvrhu — teď nemusíš nic dělat. Přepni na Ruční, když je výjimka.' : 'Ruční = potvrzený rozvrh. Časy jsou předvyplněné z plánu, uprav jen výjimku. Status (i „brzy otevře/zavře") se dopočítá sám.'}
+        </div>
       </div>
 
       {auto ? (
@@ -117,46 +163,84 @@ export default function StatusSdeleni() {
               <input style={{ ...inp, width: 60 }} type="number" value={k.brzy_zavre_min ?? 30} onChange={e => setKf('brzy_zavre_min', +e.target.value)} />
             </div>
           </div>
-          <div className="adm-card">
-            <p className="adm-card-h">Výhled na zítřek</p>
-            <p className="adm-muted" style={{ marginBottom: 8 }}>Prázdné = spočítá se z rozvrhu. Vyplněné = tvůj vlastní text.</p>
-            <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.vyhled_text || ''} onChange={e => setKf('vyhled_text', e.target.value)} placeholder="např. Zítra otevřeno 8–16" />
-          </div>
         </>
       ) : (
         <div className="adm-card">
-          <p className="adm-card-h">Dnešní stav (ruční)</p>
-          <div className="adm-row" style={{ marginBottom: 10 }}>
-            {seg('Otevřeno', !!k.je_otevreno, () => setKf('je_otevreno', true))}
-            {seg('Zavřeno', !k.je_otevreno, () => setKf('je_otevreno', false))}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+            <p className="adm-card-h" style={{ margin: 0 }}>Dnešní stav (ruční)</p>
+            <button className="adm-seg" style={{ padding: '4px 10px', fontSize: 12 }} onClick={prevzitZPlanu}>↺ Převzít z plánu</button>
           </div>
           <div className="adm-row" style={{ marginBottom: 10 }}>
+            {seg('Dnes otevřeno', !!k.je_otevreno, () => setKf('je_otevreno', true))}
+            {seg('Dnes zavřeno', !k.je_otevreno, () => setKf('je_otevreno', false))}
+          </div>
+          {k.je_otevreno && <div className="adm-row" style={{ marginBottom: 10 }}>
             <input style={{ ...inp, flex: 1 }} value={k.oteviraci_cas || ''} onChange={e => setKf('oteviraci_cas', e.target.value)} placeholder="Otevírá 08:00" />
             <input style={{ ...inp, flex: 1 }} value={k.zaviraci_cas || ''} onChange={e => setKf('zaviraci_cas', e.target.value)} placeholder="Zavírá 16:00" />
+          </div>}
+          <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.poznamka || ''} onChange={e => setKf('poznamka', e.target.value)} placeholder="Výjimka / poznámka (např. Zavřeno kvůli počasí)" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10, fontSize: 13 }}>
+            <span style={{ flex: 1 }}>Mezifáze „brzy otevře / zavře" — minut předem</span>
+            <input style={{ ...inp, width: 56 }} type="number" value={k.brzy_otevre_min ?? 25} onChange={e => setKf('brzy_otevre_min', +e.target.value)} />
+            <input style={{ ...inp, width: 56 }} type="number" value={k.brzy_zavre_min ?? 30} onChange={e => setKf('brzy_zavre_min', +e.target.value)} />
           </div>
-          <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.poznamka || ''} onChange={e => setKf('poznamka', e.target.value)} placeholder="Poznámka (např. Zavřeno kvůli počasí)" />
         </div>
       )}
 
       <div className="adm-card">
-        <p className="adm-card-h">Sdělení na web (živé vzkazy pro zákazníky)</p>
-        {[
-          ['nad statusem', sd.s1z, sd.s1t, (z: boolean) => setSd({ ...sd, s1z: z }), (t: string) => setSd({ ...sd, s1t: t })],
-          ['mezi statusem a popisem', sd.s2z, sd.s2t, (z: boolean) => setSd({ ...sd, s2z: z }), (t: string) => setSd({ ...sd, s2t: t })],
-          ['pod popisem', sd.s3z, sd.s3t, (z: boolean) => setSd({ ...sd, s3z: z }), (t: string) => setSd({ ...sd, s3t: t })],
-        ].map(([label, zap, text, setZ, setT]: any, i) => (
-          <div key={i} style={{ marginBottom: 10 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-              <button className={'adm-seg' + (zap ? ' on' : '')} style={{ padding: '4px 10px', fontSize: 12 }} onClick={() => setZ(!zap)}>{zap ? 'Zap' : 'Vyp'}</button>
-              <span className="adm-muted">Sdělení {i + 1} · {label}</span>
-            </div>
-            <input style={{ ...inp, width: '100%', boxSizing: 'border-box', opacity: zap ? 1 : 0.5 }} value={text} onChange={e => setT(e.target.value)} placeholder="např. Dnes čerstvé tulipány" />
-          </div>
-        ))}
+        <p className="adm-card-h">Výhled na zítřek</p>
+        <p className="adm-muted" style={{ marginBottom: 8 }}>Prázdné = spočítá se z rozvrhu a přeloží. Vyplněné = tvůj vlastní text (nepřekládá se).</p>
+        <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.vyhled_text || ''} onChange={e => setKf('vyhled_text', e.target.value)} placeholder="např. Zítra otevřeno 8–16" />
       </div>
 
-      <button className="adm-btn" onClick={ulozit} disabled={saving} style={{ background: '#1a1208', color: '#d4a96a', border: 'none' }}>{saving ? 'Ukládám…' : 'Uložit'}</button>
-      {msg && <span style={{ marginLeft: 10, fontSize: 13, color: msg.startsWith('Chyba') ? '#c0392b' : '#3b7d3b' }}>{msg}</span>}
+      {/* SDĚLENÍ — 3 řádky (anglicky) + vzhled písma na 1/2/3 řádky současně */}
+      <div className="adm-card">
+        <p className="adm-card-h">Sdělení na web <span className="adm-badge" style={{ color: '#8a7f70' }}>EN · nepřekládá se</span></p>
+        {sd.map((s, i) => (
+          <div key={i} style={{ marginBottom: 12, paddingBottom: 12, borderBottom: i < 2 ? '0.5px solid #eee5d8' : 'none' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <button className={'adm-seg' + (s.zap ? ' on' : '')} style={{ padding: '4px 10px', fontSize: 12 }} onClick={() => setSdF(i, 'zap', !s.zap)}>{s.zap ? 'Zap' : 'Vyp'}</button>
+              <span className="adm-muted" style={{ flex: 1 }}>Sdělení {i + 1} · {POZICE[i]}</span>
+              <label style={{ fontSize: 12, color: '#8a7f70', display: 'flex', alignItems: 'center', gap: 5, cursor: 'pointer' }}>
+                <input type="checkbox" checked={!!cil[i]} onChange={e => setCil({ ...cil, [i]: e.target.checked })} /> upravovat vzhled
+              </label>
+            </div>
+            <textarea style={{ ...inp, width: '100%', boxSizing: 'border-box', resize: 'vertical', minHeight: 40 }} value={s.text} onChange={e => setSdF(i, 'text', e.target.value)} placeholder="Text in English…" />
+            {s.text.trim() && <div className="adm-preview" style={{ marginTop: 8 }}><SdeleniRadek text={s.text} styl={s.styl} /></div>}
+          </div>
+        ))}
+
+        {/* Ovladač vzhledu — aplikuje na zaškrtnuté řádky */}
+        <div style={{ background: '#faf7f1', borderRadius: 10, padding: 12, marginTop: 4 }}>
+          <p style={{ margin: '0 0 8px', fontSize: 12, color: '#8a7f70' }}>Vzhled písma — použije se na zaškrtnuté řádky ({cilPos.length ? cilPos.map(i => i + 1).join(', ') : 'žádný'})</p>
+          <div style={{ opacity: cilPos.length ? 1 : 0.4, pointerEvents: cilPos.length ? 'auto' : 'none' }}>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
+              {VELIKOSTI.map(v => <button key={v.id} className={'adm-seg' + (repr.velikost === v.id ? ' on' : '')} style={{ padding: '4px 9px', fontSize: 12 }} onClick={() => upravStyl('velikost', v.id)}>{v.label}</button>)}
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 8 }}>
+              <select style={{ ...inp, flex: '1 1 180px' }} value={repr.font} onChange={e => upravStyl('font', e.target.value)}>
+                {FONTY.map(f => <option key={f.id} value={f.id}>{f.label}</option>)}
+              </select>
+              {REZY.map(r => <button key={r.id} className={'adm-seg' + (repr.rez === r.id ? ' on' : '')} style={{ padding: '4px 9px', fontSize: 12 }} onClick={() => upravStyl('rez', r.id)}>{r.label}</button>)}
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+              <span style={{ fontSize: 12, color: '#8a7f70' }}>Barva:</span>
+              {BARVY_SDELENI.map(b => (
+                <button key={b.hex} title={b.label} onClick={() => upravStyl('barva', b.hex)}
+                  style={{ width: 22, height: 22, borderRadius: '50%', background: b.hex, cursor: 'pointer', border: repr.barva === b.hex ? '2px solid #1a1208' : '1px solid rgba(0,0,0,0.15)' }} />
+              ))}
+              <label style={{ fontSize: 12, color: '#8a7f70', display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
+                vlastní <input type="color" value={/^#[0-9a-fA-F]{6}$/.test(repr.barva || '') ? repr.barva : '#6f6253'} onChange={e => upravStyl('barva', e.target.value)} style={{ width: 26, height: 22, padding: 0, border: 'none', background: 'none', cursor: 'pointer' }} />
+              </label>
+              <label style={{ fontSize: 12, color: '#8a7f70', display: 'flex', alignItems: 'center', gap: 5, marginLeft: 'auto', cursor: 'pointer' }}>
+                <input type="checkbox" checked={!!repr.ram} onChange={e => upravStyl('ram', e.target.checked)} /> rámeček
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ marginTop: 4 }}>{UlozitBtn}</div>
     </>
   )
 }

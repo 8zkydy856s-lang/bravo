@@ -31,6 +31,7 @@ export const DICT: Record<string, Record<Lang, string>> = {
   brzyZavirame: { cz: "Brzy zavíráme", en: "Closing soon", fr: "Bientôt fermé", de: "Schließt bald", lu: "Bal zou" },
   otevira: { cz: "otevírá", en: "opens", fr: "ouvre", de: "öffnet", lu: "mécht op" },
   vyuzijChvili: { cz: "využij chvíli", en: "enjoy the moment", fr: "profite de l'instant", de: "nutze den Moment", lu: "genéiss de Moment" },
+  dnes: { cz: "dnes", en: "today", fr: "aujourd'hui", de: "heute", lu: "haut" },
   zitra: { cz: "Zítra", en: "Tomorrow", fr: "Demain", de: "Morgen", lu: "Muer" },
   zitraZavreno: { cz: "zavřeno", en: "closed", fr: "fermé", de: "geschlossen", lu: "zou" },
   // Hvězdičky *…* označují slova kurzívou (renderuje ProvozText, uživateli se nezobrazí).

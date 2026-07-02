@@ -29,11 +29,22 @@ function luxParts(now: Date): { den: number; min: number } {
   const [h, m] = hm.split(':').map(Number)
   return { den: map[wd] ?? 0, min: h * 60 + m }
 }
+// Dnešní den v Lucembursku (0=Po … 6=Ne) — pro předvyplnění ručního režimu z plánu.
+export function luxDen(now: Date): number { return luxParts(now).den }
+
 function toMin(t?: string | null): number | null {
   if (!t) return null
   const [h, m] = t.split(':').map(Number)
   if (isNaN(h) || isNaN(m)) return null
   return h * 60 + m
+}
+
+// JEDEN motor fáze z efektivních hodin dne (od–do v minutách) + prahů mezifází.
+// Používá se v automatickém i ručním režimu → mezifáze „brzy otevře/zavře" fungují v obou.
+function fazeZHodin(od: number, doo: number, min: number, brzyO: number, brzyZ: number): { faze: Faze; barva: Barva } {
+  if (min < od) return { faze: min >= od - brzyO ? 'brzy_otevre' : 'pred_otevrenim', barva: 'jantar' }
+  if (min < doo) return { faze: min >= doo - brzyZ ? 'brzy_zavre' : 'otevreno', barva: 'zelena' }
+  return { faze: 'zavreno', barva: 'cervena' }
 }
 
 export function vypocetStav(rozvrh: RozvrhDen[], k: KioskRow, now: Date): Stav {
@@ -45,29 +56,36 @@ export function vypocetStav(rozvrh: RozvrhDen[], k: KioskRow, now: Date): Stav {
     : (zitra && !zitra.zavreno && zitra.otevira && zitra.zavira
       ? { vyhledOtevreno: true, vyhledOd: zitra.otevira, vyhledDo: zitra.zavira }
       : { vyhledOtevreno: false })
+  const brzyO = k.brzy_otevre_min ?? 25
+  const brzyZ = k.brzy_zavre_min ?? 30
+  const rucni = (k.rezim || 'auto') === 'rucni'
+  const pozn = (k.poznamka || (rucni ? k.duvod : '') || '') || undefined
 
-  // RUČNÍ režim — majitel řídí přímo (automat vypnutý)
-  if ((k.rezim || 'auto') === 'rucni') {
-    const pozn = (k.poznamka || k.duvod || '') || undefined
-    if (k.je_otevreno) return { faze: 'otevreno', barva: 'zelena', otevira: k.oteviraci_cas || undefined, zavira: k.zaviraci_cas || undefined, poznamka: pozn, ...vyhled }
-    return { faze: 'zavreno', barva: 'cervena', poznamka: pozn, ...vyhled }
+  // EFEKTIVNÍ hodiny dne + je-li dnes vůbec otevřeno:
+  //  - RUČNÍ: majitel dá souhlas „dnes otevřeno" + čas (předvyplněný z plánu, editovatelný jako výjimka);
+  //           když časy nevyplní, spadneme zpět na plán, ať mezifáze počítají z něčeho.
+  //  - AUTO:  hodiny čistě z rozvrhu.
+  let otevrenoDnes: boolean
+  let otStr: string | null, zaStr: string | null
+  if (rucni) {
+    otevrenoDnes = !!k.je_otevreno
+    otStr = k.oteviraci_cas || dnes?.otevira || null
+    zaStr = k.zaviraci_cas || dnes?.zavira || null
+  } else {
+    otevrenoDnes = !!(dnes && !dnes.zavreno)
+    otStr = dnes?.otevira || null
+    zaStr = dnes?.zavira || null
   }
 
-  // AUTOMATICKÝ režim — podle rozvrhu
-  const pozn = (k.poznamka || '') || undefined
-  const od = toMin(dnes?.otevira), doo = toMin(dnes?.zavira)
-  if (!dnes || dnes.zavreno || od == null || doo == null) {
-    return { faze: 'zavreno', barva: 'cervena', poznamka: pozn, ...vyhled }
+  if (!otevrenoDnes) return { faze: 'zavreno', barva: 'cervena', poznamka: pozn, ...vyhled }
+
+  const od = toMin(otStr), doo = toMin(zaStr)
+  if (od == null || doo == null) {
+    // otevřeno bez známých hodin (ruční bez času) — prostě otevřeno, bez mezifází
+    return { faze: 'otevreno', barva: 'zelena', poznamka: pozn, ...vyhled }
   }
-  if (min < od) {
-    const faze: Faze = min >= od - (k.brzy_otevre_min ?? 25) ? 'brzy_otevre' : 'pred_otevrenim'
-    return { faze, barva: 'jantar', otevira: dnes.otevira!, zavira: dnes.zavira!, poznamka: pozn, ...vyhled }
-  }
-  if (min < doo) {
-    const faze: Faze = min >= doo - (k.brzy_zavre_min ?? 30) ? 'brzy_zavre' : 'otevreno'
-    return { faze, barva: 'zelena', otevira: dnes.otevira!, zavira: dnes.zavira!, poznamka: pozn, ...vyhled }
-  }
-  return { faze: 'zavreno', barva: 'cervena', poznamka: pozn, ...vyhled }
+  const f = fazeZHodin(od, doo, min, brzyO, brzyZ)
+  return { faze: f.faze, barva: f.barva, otevira: otStr || undefined, zavira: zaStr || undefined, poznamka: pozn, ...vyhled }
 }
 
 // barva → hex + rgba záře (pro stavový květ)

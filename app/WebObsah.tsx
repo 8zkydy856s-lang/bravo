@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from './lib/supabase'
 import { SdeleniRadek, ZitraRadek, SdeleniVzhled } from './WebObsahView'
+import type { StylSdeleni } from './lib/sdeleniStyl'
 import { useLang } from './LangContext'
 import { DICT } from './i18n'
 import { PinIkona } from './Ikony'
@@ -16,13 +17,19 @@ export const DEFAULT_POPIS = 'Speciální káva, čaj, květiny a klasická hudb
 export const DEFAULT_MAPS = 'https://maps.app.goo.gl/2gwzhh7xnpfEp7Lt9'
 
 type WebObsahData = {
-  sdeleni1_zap: boolean; sdeleni1_text: string | null; sdeleni1_vzhled: SdeleniVzhled
-  sdeleni2_zap: boolean; sdeleni2_text: string | null; sdeleni2_vzhled: SdeleniVzhled
-  sdeleni3_zap: boolean; sdeleni3_text: string | null; sdeleni3_vzhled: SdeleniVzhled
+  sdeleni1_zap: boolean; sdeleni1_text: string | null; sdeleni1_vzhled: SdeleniVzhled; sdeleni1_styl: StylSdeleni | null
+  sdeleni2_zap: boolean; sdeleni2_text: string | null; sdeleni2_vzhled: SdeleniVzhled; sdeleni2_styl: StylSdeleni | null
+  sdeleni3_zap: boolean; sdeleni3_text: string | null; sdeleni3_vzhled: SdeleniVzhled; sdeleni3_styl: StylSdeleni | null
   zitra_zap: boolean; zitra_text: string | null
   maps_odkaz: string | null
   provoz_text: string | null
   popis_text: string | null
+}
+
+// styl z DB + fallback rámečku ze starého vzhledu (zpětná kompatibilita)
+function stylZDat(styl: StylSdeleni | null, vzhled: SdeleniVzhled): StylSdeleni {
+  const s = styl || {}
+  return s.ram === undefined ? { ...s, ram: vzhled === 'zvyraznit' } : s
 }
 
 const Ctx = createContext<WebObsahData | null>(null)
@@ -33,7 +40,7 @@ export function WebObsahProvider({ children }: { children: React.ReactNode }) {
     let active = true
     supabase
       .from('web_obsah')
-      .select('sdeleni1_zap, sdeleni1_text, sdeleni1_vzhled, sdeleni2_zap, sdeleni2_text, sdeleni2_vzhled, sdeleni3_zap, sdeleni3_text, sdeleni3_vzhled, zitra_zap, zitra_text, maps_odkaz, provoz_text, popis_text')
+      .select('sdeleni1_zap, sdeleni1_text, sdeleni1_vzhled, sdeleni1_styl, sdeleni2_zap, sdeleni2_text, sdeleni2_vzhled, sdeleni2_styl, sdeleni3_zap, sdeleni3_text, sdeleni3_vzhled, sdeleni3_styl, zitra_zap, zitra_text, maps_odkaz, provoz_text, popis_text')
       .eq('klic', 'hlavni')
       .maybeSingle()
       .then(({ data }) => { if (active) setData((data as WebObsahData | null) ?? null) })
@@ -49,9 +56,10 @@ export function Sdeleni({ pozice, className, style }: { pozice: 1 | 2 | 3; class
   const zap = pozice === 1 ? data.sdeleni1_zap : pozice === 2 ? data.sdeleni2_zap : data.sdeleni3_zap
   const raw = pozice === 1 ? data.sdeleni1_text : pozice === 2 ? data.sdeleni2_text : data.sdeleni3_text
   const vzhled = pozice === 1 ? data.sdeleni1_vzhled : pozice === 2 ? data.sdeleni2_vzhled : data.sdeleni3_vzhled
+  const stylRaw = pozice === 1 ? data.sdeleni1_styl : pozice === 2 ? data.sdeleni2_styl : data.sdeleni3_styl
   const text = raw?.trim() || ''
   if (!zap || !text) return null
-  return <div className={className} style={style}><SdeleniRadek text={text} vzhled={vzhled === 'zvyraznit' ? 'zvyraznit' : 'splynout'} /></div>
+  return <div className={className} style={style}><SdeleniRadek text={text} styl={stylZDat(stylRaw, vzhled)} /></div>
 }
 
 // Výhled na zítřek uvnitř karty stavu.
