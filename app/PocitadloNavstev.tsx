@@ -14,7 +14,8 @@ export default function PocitadloNavstev() {
       const posledni = localStorage.getItem('bravo-navsteva-den')
       const novy = posledni !== dnes
       if (novy) localStorage.setItem('bravo-navsteva-den', dnes)
-      supabase.rpc('zaznamenat_navstevu', { p_novy: novy })
+      // .then() je nutné — supabase.rpc je „líný" a bez něj se dotaz vůbec neodešle
+      supabase.rpc('zaznamenat_navstevu', { p_novy: novy }).then(() => { }, () => { })
     } catch { /* tiché — počítadlo nikdy nesmí rozbít stránku */ }
   }, [])
   return null
