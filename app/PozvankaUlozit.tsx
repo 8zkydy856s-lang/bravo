@@ -16,7 +16,7 @@ const svaz = (s: string) => s.replace(new RegExp(' (' + KRATKA.join('|') + ') ',
 
 const TXT: Record<string, { nadpis: string; t1: string; akce: string; dekuji: string; pridat: string; tedNe: string; rozumim: string; ios: string; zalozka: string }> = {
   cz: { nadpis: 'Ať příště nejsi zklamán a OBA se potkáme', t1: 'Otevírací doba je proměnlivá a ovlivněná počasím.', akce: 'Ulož si BRAVO na plochu — jedním klepnutím tak hned uvidíš, zda tu pro Tebe dnes jsem…', dekuji: 'Děkuji', pridat: 'Přidat na plochu', tedNe: 'Teď ne', rozumim: 'Rozumím', ios: 'Klepni na Sdílet, pak „Přidat na plochu".', zalozka: 'Ulož do oblíbených: ⌘/Ctrl + D.' },
-  en: { nadpis: 'So next time you’re not let down — and we BOTH meet', t1: 'Opening hours are changeable, shaped by the weather.', akce: 'Add BRAVO to your home screen — one tap and you’ll instantly see if I’m here for You today…', dekuji: 'thank you', pridat: 'Add to home screen', tedNe: 'Not now', rozumim: 'Got it', ios: 'Tap Share, then “Add to Home Screen”.', zalozka: 'Bookmark it: ⌘/Ctrl + D.' },
+  en: { nadpis: 'So next time you’re not let down and we BOTH meet', t1: 'Opening hours are changeable, shaped by the weather.', akce: 'Add BRAVO to your home screen — one tap and you’ll instantly see if I’m here for You today…', dekuji: 'thank You', pridat: 'Add to home screen', tedNe: 'Not now', rozumim: 'Got it', ios: 'Tap Share, then “Add to Home Screen”.', zalozka: 'Bookmark it: ⌘/Ctrl + D.' },
   fr: { nadpis: 'Pour ne pas être déçu, et qu’on se retrouve TOUS LES DEUX', t1: 'Les horaires sont changeants, au gré de la météo.', akce: 'Ajoute BRAVO à ton écran d’accueil — un geste et tu vois tout de suite si je suis là pour Toi aujourd’hui…', dekuji: 'merci', pridat: 'Sur l’écran d’accueil', tedNe: 'Plus tard', rozumim: 'Compris', ios: 'Touche Partager, puis « Sur l’écran d’accueil ».', zalozka: 'En favori : ⌘/Ctrl + D.' },
   de: { nadpis: 'Damit du nicht enttäuscht wirst und wir uns BEIDE treffen', t1: 'Die Öffnungszeiten sind wechselhaft, je nach Wetter.', akce: 'Füge BRAVO zum Startbildschirm hinzu — ein Tipp und du siehst sofort, ob ich heute für Dich da bin…', dekuji: 'danke', pridat: 'Zum Startbildschirm', tedNe: 'Später', rozumim: 'Verstanden', ios: 'Tippe auf Teilen, dann „Zum Home-Bildschirm".', zalozka: 'Lesezeichen: ⌘/Strg + D.' },
   lu: { nadpis: 'Fir datts du net enttäuscht bass a mir eis BEID treffen', t1: 'D’Zäite si wiesselhaft, no Wieder.', akce: 'Setz BRAVO op däin Startbildschirm — ee Klick a s’gesäis direkt, ob ech haut fir Dech do sinn…', dekuji: 'merci', pridat: 'Op de Startbildschirm', tedNe: 'Méi spéit', rozumim: 'Verstanen', ios: 'Klick op Deelen, dann „Op den Home-Bildschirm".', zalozka: 'Lieszeeche: ⌘/Ctrl + D.' },
@@ -60,7 +60,12 @@ export default function PozvankaUlozit() {
       window.addEventListener('appinstalled', () => { try { localStorage.setItem(KLIC, 'nikdy') } catch { }; setShow(false) })
 
       let zobrazeno = false
-      const zobraz = () => { if (!zobrazeno) { zobrazeno = true; setShow(true) } }
+      const zobraz = () => {
+        if (zobrazeno) return
+        zobrazeno = true
+        try { setT(TXT[localStorage.getItem('bravo-lang') || 'en'] || TXT.cz) } catch { } // aktuální jazyk v moment zobrazení
+        setShow(true)
+      }
       if (force) zobraz()
       const casovac = setTimeout(zobraz, 70000) // po ~70 s
       const onLeave = (e: MouseEvent) => { if (e.clientY <= 0) zobraz() } // odchod myší nahoru (desktop)
@@ -92,7 +97,7 @@ export default function PozvankaUlozit() {
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
               <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: '#3d3123', flex: 1, lineHeight: 1.4, ...wrap }}>
                 {svaz(t.nadpis)}
-                <span className="veta-blok" aria-hidden="true" style={{ display: 'inline-block', width: 34, height: 46, verticalAlign: 'middle', marginLeft: 16 }}>
+                <span className="veta-blok" aria-hidden="true" style={{ display: 'inline-block', width: 34, height: 46, verticalAlign: 'middle', marginLeft: 24 }}>
                   <span className="fx-symbol go" style={{ display: 'block', width: '100%', height: '100%', transform: 'none', opacity: 1, marginLeft: 0 }} dangerouslySetInnerHTML={{ __html: SYMBOL_SVG }} />
                 </span>
               </p>
