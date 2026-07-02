@@ -14,8 +14,16 @@ export default function PocitadloNavstev() {
       const posledni = localStorage.getItem('bravo-navsteva-den')
       const novy = posledni !== dnes
       if (novy) localStorage.setItem('bravo-navsteva-den', dnes)
+
+      // ZDROJ návštěvy z označeného odkazu (?zdroj=instagram / ?zdroj=google); drží se po celou session
+      const p = (new URLSearchParams(location.search).get('zdroj') || '').toLowerCase()
+      let zdroj = ['instagram', 'ig', 'insta'].includes(p) ? 'instagram'
+        : ['google', 'gbp', 'maps'].includes(p) ? 'google'
+          : (sessionStorage.getItem('bravo-zdroj') || 'primo')
+      if (p) { try { sessionStorage.setItem('bravo-zdroj', zdroj) } catch { } }
+
       // .then() je nutné — supabase.rpc je „líný" a bez něj se dotaz vůbec neodešle
-      supabase.rpc('zaznamenat_navstevu', { p_novy: novy }).then(() => { }, () => { })
+      supabase.rpc('zaznamenat_navstevu', { p_novy: novy, p_zdroj: zdroj }).then(() => { }, () => { })
     } catch { /* tiché — počítadlo nikdy nesmí rozbít stránku */ }
   }, [])
   return null
