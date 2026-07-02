@@ -3,8 +3,8 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import BravoNapis from '../BravoNapis'
 
-// Fáze 1: veřejná registrace skrytá. Registrační kód zůstává, jen na něj nevede odkaz.
-const ZOBRAZIT_REGISTRACI = false
+// Registrace zapnuta (2.7.) — Vojtěch se registruje oficiálním e-mailem; admin přístup řeší allowlist v app/admin.
+const ZOBRAZIT_REGISTRACI = true
 
 // Hodnoty se ukládají do stejnojmenných sloupců v public.profiles (ověřeno proti DB).
 // Ukládání řeší VÝHRADNĚ databázový trigger handle_new_user z metadat (options.data) -
