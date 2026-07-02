@@ -11,6 +11,7 @@ const DNY_ZKR = ['ne', 'po', 'út', 'st', 'čt', 'pá', 'so']
 
 export default function NavstevnostView() {
   const [data, setData] = useState<Den[] | null>(null)
+  const [dny, setDny] = useState(7)
 
   useEffect(() => {
     supabase.from('navstevnost').select('den, navstevy, navstevnici').order('den', { ascending: false }).limit(30)
@@ -33,8 +34,8 @@ export default function NavstevnostView() {
   const navMinuly = suma(minuly, d => d.navstevnici)
   const trend = navMinuly > 0 ? Math.round(((navTento - navMinuly) / navMinuly) * 100) : null
 
-  const graf = poslednich(14)
-  const max = Math.max(1, ...graf.map(d => d.navstevnici))
+  const graf = poslednich(dny)
+  const max = Math.max(1, ...graf.map(d => d.navstevy)) // načtení bývají výš → podle nich škálujeme
 
   const Metric = ({ label, val, sub }: { label: string; val: string | number; sub?: React.ReactNode }) => (
     <div style={{ background: '#f7f3ec', borderRadius: 10, padding: '10px 14px', flex: '1 1 120px', minWidth: 0 }}>
@@ -57,18 +58,30 @@ export default function NavstevnostView() {
         <Metric label="Celkem návštěvníků" val={suma(data, d => d.navstevnici)} sub={<span className="adm-muted">{suma(data, d => d.navstevy)} načtení</span>} />
       </div>
 
-      {/* Sloupcový graf — návštěvníci za posledních 14 dní */}
-      <p className="adm-muted" style={{ marginBottom: 6 }}>Návštěvníci za den (posledních {graf.length} dní):</p>
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 130, padding: '0 2px' }}>
+      {/* Graf — návštěvníci i načtení za den; přepínač rozsahu + legenda */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
+        <span className="adm-muted">Graf za:</span>
+        {[7, 14, 30].map(n => (
+          <button key={n} className={'adm-seg' + (dny === n ? ' on' : '')} style={{ padding: '3px 10px', fontSize: 12 }} onClick={() => setDny(n)}>{n} dní</button>
+        ))}
+        <span style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, color: '#8a7f70' }}>
+          <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 2, background: '#b8894a', marginRight: 4, verticalAlign: -1 }} />návštěvníci</span>
+          <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 2, background: '#e6cfa0', marginRight: 4, verticalAlign: -1 }} />načtení</span>
+        </span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: dny > 14 ? 3 : 6, height: 140, padding: '0 2px' }}>
         {graf.map(d => {
-          const h = Math.round((d.navstevnici / max) * 110)
+          const hN = Math.max(3, Math.round((d.navstevnici / max) * 108))
+          const hL = Math.max(3, Math.round((d.navstevy / max) * 108))
           const dt = new Date(d.den + 'T12:00:00')
           return (
-            <div key={d.den} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}
+            <div key={d.den} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, minWidth: 0 }}
               title={`${d.den}: ${d.navstevnici} návštěvníků · ${d.navstevy} načtení`}>
-              <span style={{ fontSize: 10, color: '#8a7f70' }}>{d.navstevnici}</span>
-              <div style={{ width: '100%', maxWidth: 26, height: Math.max(3, h), background: 'linear-gradient(#d4a96a,#b8894a)', borderRadius: '5px 5px 0 0' }} />
-              <span style={{ fontSize: 10, color: '#b0a595' }}>{DNY_ZKR[dt.getDay()]} {dt.getDate()}.</span>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 112, width: '100%', justifyContent: 'center' }}>
+                <div style={{ width: '42%', maxWidth: 14, height: hN, background: '#b8894a', borderRadius: '4px 4px 0 0' }} />
+                <div style={{ width: '42%', maxWidth: 14, height: hL, background: '#e6cfa0', borderRadius: '4px 4px 0 0' }} />
+              </div>
+              {dny <= 14 && <span style={{ fontSize: 10, color: '#b0a595', whiteSpace: 'nowrap' }}>{DNY_ZKR[dt.getDay()]} {dt.getDate()}.</span>}
             </div>
           )
         })}
