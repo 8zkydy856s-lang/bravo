@@ -385,9 +385,9 @@ export default function StatusSdeleni() {
               <p className="adm-card-h" style={{ margin: 0, flex: 1 }}>Náhled úvodní stránky <span className="adm-muted">— po uložení</span></p>
               <button className="adm-seg" style={{ padding: '4px 10px', fontSize: 12 }} onClick={() => setNahledKey(x => x + 1)}>↻ Obnovit</button>
             </div>
-            <div style={{ width: 320, height: 470, overflow: 'hidden', borderRadius: 12, border: '0.5px solid #e0d9d0', background: '#efe7d6' }}>
-              <iframe key={nahledKey} src={`/?nahled=${nahledKey}`} title="Náhled úvodní stránky"
-                style={{ width: 1067, height: 1567, border: 0, transform: 'scale(0.3)', transformOrigin: 'top left' }} />
+            <div style={{ width: 224, height: 520, overflow: 'hidden', borderRadius: 20, border: '0.5px solid #e0d9d0', background: '#efe7d6' }}>
+              <iframe key={nahledKey} src={`/?nahled=${nahledKey}`} title="Náhled úvodní stránky (telefon)"
+                style={{ width: 400, height: 1560, border: 0, transform: 'scale(0.56)', transformOrigin: 'top left' }} />
             </div>
           </div>
         </div>
