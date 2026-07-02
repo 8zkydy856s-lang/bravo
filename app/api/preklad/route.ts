@@ -1,14 +1,14 @@
-// Server-side překlad krátkých hlášek/výjimek do 5 jazyků BRAVO. Zdroj = angličtina.
-// Zdarma přes veřejný Google endpoint (žádný klíč), volá se JEN při ukládání v adminu → výsledek se
-// uloží do DB, takže na webu se už nepřekládá. Selže-li překlad, spadne elegantně na angličtinu.
-// Jazyky BRAVO → Google kódy: cz→cs, lu(lucemburština)→lb.
+// Server-side překlad krátkých hlášek/výjimek do 5 jazyků BRAVO. Zdrojový jazyk se ROZPOZNÁ SÁM
+// (sl=auto) — je jedno, jestli majitel napíše česky nebo anglicky. Zdarma přes veřejný Google endpoint
+// (žádný klíč), volá se JEN při ukládání v adminu → uloží se do DB, na webu se už nepřekládá.
+// Selže-li překlad, spadne elegantně na původní text. Jazyky BRAVO → Google kódy: cz→cs, lu→lb.
 
 export const runtime = 'nodejs'
 
-const CILE: Record<string, string> = { cz: 'cs', fr: 'fr', de: 'de', lu: 'lb' }
+const CILE: Record<string, string> = { en: 'en', cz: 'cs', fr: 'fr', de: 'de', lu: 'lb' }
 
 async function prelozit1(text: string, tl: string): Promise<string> {
-  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${tl}&dt=t&q=${encodeURIComponent(text)}`
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${tl}&dt=t&q=${encodeURIComponent(text)}`
   const ctrl = new AbortController()
   const t = setTimeout(() => ctrl.abort(), 8000)
   try {
@@ -31,10 +31,10 @@ export async function POST(request: Request) {
 
   if (!text) return Response.json({ en: '', cz: '', fr: '', de: '', lu: '' })
 
-  const out: Record<string, string> = { en: text }
+  const out: Record<string, string> = {}
   await Promise.all(Object.entries(CILE).map(async ([app, g]) => {
     try { out[app] = await prelozit1(text, g) }
-    catch { out[app] = text } // fallback = angličtina
+    catch { out[app] = text } // fallback = původní text
   }))
   return Response.json(out)
 }

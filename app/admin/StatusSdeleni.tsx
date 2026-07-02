@@ -43,6 +43,7 @@ export default function StatusSdeleni() {
   const [hlasky, setHlasky] = useState<Hlaska[]>([])
   const [novaHlaska, setNovaHlaska] = useState({ text: '', kategorie: 'sdeleni' })
   const [hlaskaBusy, setHlaskaBusy] = useState(false)
+  const [zkop, setZkop] = useState(false)
 
   useEffect(() => {
     Promise.all([
@@ -110,6 +111,22 @@ export default function StatusSdeleni() {
     setHlasky(hlasky.filter(h => h.id !== id))
   }
 
+  // Text pro Instagram bio (anglicky): 🟢 Den: čas–čas · Tomorrow: likely open/closed
+  function instagramText(): string {
+    const den = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Luxembourg', weekday: 'long' }).format(new Date())
+    const kruh = stav.barva === 'zelena' ? '🟢' : stav.barva === 'jantar' ? '🟠' : '🔴'
+    const dnesHodiny = stav.otevira && stav.zavira ? `${stav.otevira}–${stav.zavira}` : 'closed'
+    let t = `${kruh} ${den}: ${dnesHodiny}`
+    const zOpen = !!stav.vyhledOtevreno
+    t += ` · Tomorrow: likely ${zOpen ? 'open' : 'closed'}`
+    if (zOpen && stav.vyhledOd && stav.vyhledDo) t += ` ${stav.vyhledOd}–${stav.vyhledDo}`
+    return t
+  }
+  async function kopirovatIG() {
+    try { await navigator.clipboard.writeText(instagramText()); setZkop(true); setTimeout(() => setZkop(false), 2000) }
+    catch { setMsg('Nepodařilo se zkopírovat do schránky') }
+  }
+
   async function ulozit() {
     if (!k) return
     setSaving(true); setMsg('Ukládám a překládám…')
@@ -117,12 +134,13 @@ export default function StatusSdeleni() {
       // překlady (angličtina → 5 jazyků) pro sdělení + výjimku; volá se jen tady, uloží se do DB
       const [p0, p1, p2] = await Promise.all(sd.map(s => s.text.trim() ? prelozit(s.text.trim()) : Promise.resolve({})))
       const poznPrek = k.poznamka?.trim() ? await prelozit(k.poznamka.trim()) : {}
+      const vhPrek = k.vyhled_text?.trim() ? await prelozit(k.vyhled_text.trim()) : {}
       const e1 = (await supabase.from('kiosk_status').update({
         rezim: k.rezim, je_otevreno: k.je_otevreno, dnesni_vyjimka: k.dnesni_vyjimka,
         oteviraci_cas: k.oteviraci_cas || null, zaviraci_cas: k.zaviraci_cas || null, poznamka: k.poznamka || null,
         poznamka_preklady: poznPrek,
         brzy_otevre_min: k.brzy_otevre_min, brzy_zavre_min: k.brzy_zavre_min, vyhled_text: k.vyhled_text || null,
-        vyhled_rezim: k.vyhled_rezim || 'plan',
+        vyhled_text_preklady: vhPrek, vyhled_rezim: k.vyhled_rezim || 'plan',
       }).eq('pobocka_id', 'hlavni')).error
       for (const r of rozvrh) {
         await supabase.from('rozvrh').update({ zavreno: r.zavreno, otevira: r.otevira || null, zavira: r.zavira || null }).eq('pobocka_id', 'hlavni').eq('den', r.den)
@@ -249,6 +267,13 @@ export default function StatusSdeleni() {
           <VyberHlasky kat="vyjimka" onPick={t => setKf('poznamka', t)} />
         </div>
         <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.poznamka || ''} onChange={e => setKf('poznamka', e.target.value)} placeholder="Text in English (e.g. Closed due to weather)" />
+      </div>
+
+      <div className="adm-card">
+        <p className="adm-card-h">Text pro Instagram bio <span className="adm-badge" style={{ color: '#8a7f70' }}>anglicky</span></p>
+        <p className="adm-muted" style={{ marginBottom: 8 }}>Zkopíruje aktuální status anglicky — vložíš ho ručně do bio na Instagramu.</p>
+        <div style={{ background: '#f7f3ec', borderRadius: 10, padding: '10px 12px', fontSize: 14, color: '#1a1208', marginBottom: 10, overflowWrap: 'anywhere' }}>{instagramText()}</div>
+        <button className="adm-btn" onClick={kopirovatIG} style={{ background: zkop ? '#3b7d3b' : '#1a1208', color: '#fff', border: 'none', fontWeight: 600 }}>{zkop ? 'Zkopírováno ✓' : '📋 Zkopírovat'}</button>
       </div>
 
       {/* SDĚLENÍ — 3 řádky (anglicky) + vzhled písma na 1/2/3 řádky současně */}

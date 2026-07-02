@@ -92,10 +92,12 @@ export function stylNaCss(s?: StylSdeleni): { text: CSSProperties; obal: CSSProp
     ? {
         display: 'inline-block', maxWidth: '100%', boxSizing: 'border-box',
         border: '1px solid rgba(120,90,40,0.30)',
-        borderRadius: `${Math.round(px * 0.7)}px`,
-        padding: `${Math.round(px * 0.42)}px ${Math.round(px * 0.85)}px`,
+        borderRadius: `${Math.round(px * 0.38)}px`,
+        // těsně obepne text, odstup roste s velikostí písma
+        padding: `${Math.max(1, Math.round(px * 0.14))}px ${Math.round(px * 0.32)}px`,
         background: 'rgba(184,149,74,0.06)',
+        lineHeight: 1.2,
       }
-    : { display: 'inline-block', maxWidth: '100%', boxSizing: 'border-box', padding: `${Math.round(px * 0.18)}px ${Math.round(px * 0.3)}px` }
+    : { display: 'inline-block', maxWidth: '100%', boxSizing: 'border-box', padding: `${Math.round(px * 0.12)}px ${Math.round(px * 0.2)}px` }
   return { text, obal }
 }
