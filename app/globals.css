@@ -54,6 +54,8 @@ body {
 /* Živý text provozu (ProvozZivot) — záměrné řádkování + morf věty 2. Kotva drží, řádek navíc nevzniká. */
 .veta-blok { white-space: normal; }
 .veta-blok .veta { display: block; margin: 0; line-height: 1.45; }
+/* „přibližná" a „počasí" (jen em v 1. větě) — tmavší, aby víc vystoupily. Kurzíva zůstává. */
+.veta-blok em { color: #2c2317; font-style: italic; }
 /* Prostřední věta má nahoře i dole STEJNOU (symetrickou) mezeru, VĚTŠÍ než mezery mezi jejími 3 dechy. */
 .veta-blok .veta2 { margin: 5px 0; }
 .veta-blok .cast { display: block; margin: 0; line-height: 1.45; }
