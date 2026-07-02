@@ -135,7 +135,8 @@ export default function StatusSdeleni() {
     const dnesCast = denOtevreny ? `open ${stav.otevira}–${stav.zavira}` : 'closed'
     const kruh = denOtevreny ? '🟢' : '🔴'
     const zOpen = !!stav.vyhledOtevreno
-    return `${kruh} ${den}: ${dnesCast}  tomorrow: likely ${zOpen ? 'open' : 'closed'}`
+    // dnešní verdikt oddělen ČÁRKOU + dvě mezery od zítřejšího → přehledné, nesplývá to
+    return `${kruh} ${den}: ${dnesCast},  tomorrow: likely ${zOpen ? 'open' : 'closed'}`
   }
   async function kopirovatIG() {
     try { await navigator.clipboard.writeText(instagramText()); setZkop(true); setTimeout(() => setZkop(false), 2000) }
@@ -196,16 +197,24 @@ export default function StatusSdeleni() {
       {/* NÁHLED + ULOŽIT vlevo, INSTAGRAM vpravo — obojí nahoře, poslední kroky vedle sebe */}
       <div className="adm-sticky">
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'stretch' }}>
-          <div style={{ flex: '1 1 240px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: '1 1 200px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
             <p className="adm-card-h" style={{ margin: '0 0 6px' }}>Živý náhled — co teď vidí zákazník</p>
             <div className="adm-preview" style={{ flex: 1 }}><KioskStatusView stav={stav} stavLabels={CZ} /></div>
             <div style={{ marginTop: 8 }}>{UlozitBtn}</div>
           </div>
-          <div style={{ flex: '1 1 240px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: '1 1 200px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
             <p className="adm-card-h" style={{ margin: '0 0 6px' }}>Text pro Instagram bio <span className="adm-badge" style={{ color: '#8a7f70' }}>anglicky</span></p>
             <div className="adm-preview" style={{ flex: 1, display: 'flex', alignItems: 'center' }}><span style={{ fontSize: 14, color: '#1a1208', overflowWrap: 'anywhere' }}>{instagramText()}</span></div>
             <div style={{ marginTop: 8 }}>
               <button className="adm-btn" onClick={kopirovatIG} style={{ background: zkop ? '#3b7d3b' : '#1a1208', color: '#fff', border: 'none', fontWeight: 600 }}>{zkop ? 'Zkopírováno ✓' : '📋 Zkopírovat'}</button>
+            </div>
+          </div>
+          <div style={{ flex: '1 1 200px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+            <p className="adm-card-h" style={{ margin: '0 0 6px' }}>Obrázek pro story <span className="adm-badge" style={{ color: '#8a7f70' }}>anglicky</span></p>
+            <div className="adm-preview" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}><span className="adm-muted">Vždy aktuální obrázek 9:16 na Instagram story.</span></div>
+            <div style={{ marginTop: 8, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <a className="adm-btn" href="/stav-obrazek" download="bravo-status.png" style={{ background: '#1a1208', color: '#fff', border: 'none', fontWeight: 600 }}>⬇ Stáhnout</a>
+              <a className="adm-btn" href="/stav-obrazek" target="_blank" rel="noopener noreferrer">Otevřít</a>
             </div>
           </div>
         </div>
