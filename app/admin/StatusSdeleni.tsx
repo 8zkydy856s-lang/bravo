@@ -221,6 +221,8 @@ export default function StatusSdeleni() {
         </div>
       </div>
 
+      <p style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#b0a595', margin: '16px 2px 6px', fontWeight: 500 }}>Stav — dnes a zítra</p>
+
       {/* Režim — kompaktní jeden řádek */}
       <div className="adm-card" style={{ padding: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
@@ -248,19 +250,6 @@ export default function StatusSdeleni() {
         </div>
       )}
 
-      {/* Mezifáze — kompaktní jeden řádek */}
-      <div className="adm-card" style={{ padding: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', fontSize: 13 }}>
-          <span className="adm-card-h" style={{ margin: 0 }}>Mezifáze:</span>
-          <span>brzy otevře</span>
-          <input style={{ ...inp, width: 54 }} type="number" value={k.brzy_otevre_min ?? 25} onChange={e => setKf('brzy_otevre_min', +e.target.value)} />
-          <span className="adm-muted">min ·</span>
-          <span>brzy zavře</span>
-          <input style={{ ...inp, width: 54 }} type="number" value={k.brzy_zavre_min ?? 30} onChange={e => setKf('brzy_zavre_min', +e.target.value)} />
-          <span className="adm-muted">min předem</span>
-        </div>
-      </div>
-
       <div className="adm-card">
         <p className="adm-card-h">Výhled na zítřek</p>
         <div className="adm-row" style={{ marginBottom: 8 }}>
@@ -280,6 +269,8 @@ export default function StatusSdeleni() {
         </div>
         <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.poznamka || ''} onChange={e => setKf('poznamka', e.target.value)} placeholder="Text in English (e.g. Closed due to weather)" />
       </div>
+
+      <p style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#b0a595', margin: '16px 2px 6px', fontWeight: 500 }}>Sdělení a vzkazy</p>
 
       {/* SDĚLENÍ — 3 řádky (anglicky) + vzhled písma na 1/2/3 řádky současně */}
       <div className="adm-card">
@@ -363,7 +354,9 @@ export default function StatusSdeleni() {
         {!hlasky.length && <p className="adm-muted">Zatím žádné hlášky. Přidej si vzkazy, které používáš často — pak je jen vybíráš nahoře.</p>}
       </div>
 
-      {/* DOLE: týdenní rozvrh (měníš zřídka) + mini živý náhled celé úvodní stránky */}
+      <p style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#b0a595', margin: '16px 2px 6px', fontWeight: 500 }}>Nastavení — měníš zřídka · náhled stránky</p>
+
+      {/* DOLE: týdenní rozvrh + mezifáze (měníš zřídka) + mini živý náhled telefonu */}
       <div className="adm-card">
         <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
           <div style={{ flex: '1 1 300px', minWidth: 0 }}>
@@ -379,6 +372,17 @@ export default function StatusSdeleni() {
                 </>}
               </div>
             ))}
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '0.5px solid #eee5d8' }}>
+              <p className="adm-card-h" style={{ margin: '0 0 6px' }}>Mezifáze <span className="adm-muted">— „brzy otevře/zavře"</span></p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', fontSize: 13 }}>
+                <span>brzy otevře</span>
+                <input style={{ ...inp, width: 54 }} type="number" value={k.brzy_otevre_min ?? 25} onChange={e => setKf('brzy_otevre_min', +e.target.value)} />
+                <span className="adm-muted">min ·</span>
+                <span>brzy zavře</span>
+                <input style={{ ...inp, width: 54 }} type="number" value={k.brzy_zavre_min ?? 30} onChange={e => setKf('brzy_zavre_min', +e.target.value)} />
+                <span className="adm-muted">min předem</span>
+              </div>
+            </div>
           </div>
           <div style={{ flex: '1 1 300px', minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>

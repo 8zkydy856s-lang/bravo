@@ -39,24 +39,24 @@ export async function GET() {
 
   return new ImageResponse(
     (
-      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', padding: 24, fontFamily: 'Cormorant' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', background: '#f4efe4', border: '3px solid #e4d9c2', borderRadius: 56, padding: '44px 60px' }}>
-          <div style={{ display: 'flex', fontSize: 46, fontWeight: 600, color: ink, letterSpacing: 1, marginBottom: 26 }}>BraVo</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-            <svg width="66" height="66" viewBox="0 0 100 100">
+      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', padding: 16, fontFamily: 'Cormorant' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', background: 'transparent', border: '3px solid rgba(122,96,54,0.6)', borderRadius: 40, padding: '30px 44px' }}>
+          <div style={{ display: 'flex', fontSize: 38, fontWeight: 600, color: ink, letterSpacing: 1, marginBottom: 18 }}>BraVo</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+            <svg width="52" height="52" viewBox="0 0 100 100">
               {petals.map(a => <ellipse key={a} cx="50" cy="27" rx="15" ry="24" fill={kv} transform={`rotate(${a} 50 50)`} />)}
               <circle cx="50" cy="50" r="12" fill={kvStred} />
             </svg>
-            <div style={{ display: 'flex', fontSize: 64, fontWeight: 600, color: ink }}>{title}</div>
-            {hours ? <div style={{ display: 'flex', fontSize: 50, color: muted, marginLeft: 8 }}>{hours}</div> : <div style={{ display: 'flex' }} />}
+            <div style={{ display: 'flex', fontSize: 50, fontWeight: 600, color: ink }}>{title}</div>
+            {hours ? <div style={{ display: 'flex', fontSize: 40, color: muted, marginLeft: 6 }}>{hours}</div> : <div style={{ display: 'flex' }} />}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 22 }}>
-            <div style={{ display: 'flex', fontSize: 34, color: muted, letterSpacing: 1 }}>{tomorrow}</div>
-            <div style={{ display: 'flex', fontSize: 30, color: muted, letterSpacing: 3, marginLeft: 48 }}>bra-vo.com</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 16 }}>
+            <div style={{ display: 'flex', fontSize: 28, color: muted, letterSpacing: 1 }}>{tomorrow}</div>
+            <div style={{ display: 'flex', fontSize: 24, color: muted, letterSpacing: 3, marginLeft: 40 }}>bra-vo.com</div>
           </div>
         </div>
       </div>
     ),
-    { width: 960, height: 380, fonts: fonts.length ? fonts : undefined, headers: { 'cache-control': 'no-store, max-age=0, must-revalidate' } }
+    { width: 720, height: 300, fonts: fonts.length ? fonts : undefined, headers: { 'cache-control': 'no-store, max-age=0, must-revalidate' } }
   )
 }
