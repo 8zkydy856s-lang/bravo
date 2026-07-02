@@ -5,6 +5,15 @@ import { supabase } from '../lib/supabase'
 import KioskStatusView from '../KioskStatusView'
 import BravoNapis from '../BravoNapis'
 import { isAdminEmail } from '../lib/admin'
+import StatusSdeleni from './StatusSdeleni'
+import { vypocetStav, type RozvrhDen, type KioskRow } from '../lib/stav'
+
+// Popisky náhledu (admin je vždy v češtině)
+const CZ_LABELS = {
+  otevreno: 'Otevřeno', dnesZavreno: 'Dnes zavřeno', od: 'od', do: 'do',
+  brzyOtevreme: 'Brzy otevřeme', zatimZavreno: 'Zatím zavřeno', brzyZavirame: 'Brzy zavíráme',
+  otevira: 'otevírá', vyuzijChvili: 'využij chvíli', zitra: 'Zítra', zitraZavreno: 'zavřeno',
+}
 
 // BRAVO DASHBOARD — řídicí panel majitele (Etapa 1: KOSTRA). Přístup jen pro admina (allowlist e-mailů).
 // Principy (dle dohody + reference PayPerPot): levý panel = tematické SBALITELNÉ skupiny, panel jde
@@ -20,7 +29,7 @@ const HATS: [string, string][] = [
 type Sec = { label: string; badge?: string; sub?: string }
 const SECTIONS: Record<string, Sec> = {
   home: { label: 'Přehled', sub: 'Živý náhled + rychlé volby' },
-  status: { label: 'Status & sdělení', badge: 'rozpracované', sub: 'Živý stav kiosku + vzkazy pro web' },
+  status: { label: 'Status & sdělení', badge: 'hotové', sub: 'Živý stav kiosku + vzkazy pro web' },
   listek: { label: 'Lístek & produkty', badge: 'plánované', sub: 'Ceny, 3 typy A/B/C, květiny zvlášť' },
   zak: { label: 'Zákazníci & věrnost', badge: 'plánované', sub: 'Profily, body, odměny, Wallet' },
   doch: { label: 'Docházka / čepice', badge: 'plánované', sub: 'Kolik času podle čepic, reporty' },
@@ -40,7 +49,7 @@ const GROUPS: { label: string; keys: string[] }[] = [
   { label: 'Nastavení', keys: ['pob', 'prekl', 'nast'] },
 ]
 const badgeColor: Record<string, string> = {
-  'rozpracované': '#b5732a', 'plánované': '#8a7f70', 'základ hotový': '#3b7d3b',
+  'rozpracované': '#b5732a', 'plánované': '#8a7f70', 'základ hotový': '#3b7d3b', 'hotové': '#3b7d3b',
 }
 
 export default function AdminDashboard() {
@@ -54,7 +63,8 @@ export default function AdminDashboard() {
     () => Object.fromEntries(GROUPS.map(g => [g.label, true]))
   )
   const [hats, setHats] = useState<Record<string, boolean>>({})
-  const [stav, setStav] = useState<any>(null)
+  const [kiosk, setKiosk] = useState<KioskRow | null>(null)
+  const [rozvrh, setRozvrh] = useState<RozvrhDen[]>([])
 
   // auth gate (allowlist e-mailů; dev bypass jen mimo produkci pro náhled)
   useEffect(() => {
@@ -67,20 +77,27 @@ export default function AdminDashboard() {
     })
   }, [router])
 
-  // responzivita
+  // responzivita + deep-link na sekci (?sec=status)
   useEffect(() => {
     setMounted(true)
+    const sec = new URLSearchParams(window.location.search).get('sec')
+    if (sec && SECTIONS[sec]) setSection(sec)
     const f = () => setDesktop(window.innerWidth >= 860)
     f(); window.addEventListener('resize', f)
     return () => window.removeEventListener('resize', f)
   }, [])
 
-  // živý náhled stavu (co teď vidí zákazník)
+  // živý náhled stavu (co teď vidí zákazník — chytrý status z rozvrhu)
   useEffect(() => {
-    supabase.from('kiosk_status')
-      .select('je_otevreno, oteviraci_cas, zaviraci_cas, poznamka, duvod, dnesni_vyjimka')
-      .eq('pobocka_id', 'hlavni').maybeSingle()
-      .then(({ data }) => setStav(data))
+    Promise.all([
+      supabase.from('kiosk_status')
+        .select('je_otevreno, oteviraci_cas, zaviraci_cas, poznamka, duvod, dnesni_vyjimka, rezim, brzy_otevre_min, brzy_zavre_min, vyhled_text')
+        .eq('pobocka_id', 'hlavni').maybeSingle(),
+      supabase.from('rozvrh').select('den, zavreno, otevira, zavira').eq('pobocka_id', 'hlavni'),
+    ]).then(([k, r]) => {
+      setKiosk((k.data as KioskRow) ?? null)
+      setRozvrh((r.data as RozvrhDen[]) ?? [])
+    })
   }, [])
 
   function toggleHat(k: string) {
@@ -116,9 +133,8 @@ export default function AdminDashboard() {
     <div className="adm-card">
       <p className="adm-card-h">Živý náhled — co teď vidí zákazník</p>
       <div className="adm-preview">
-        {stav
-          ? <KioskStatusView je_otevreno={!!stav.je_otevreno} oteviraci_cas={stav.oteviraci_cas}
-              zaviraci_cas={stav.zaviraci_cas} poznamka={stav.poznamka ?? stav.duvod} dnesni_vyjimka={!!stav.dnesni_vyjimka} />
+        {kiosk
+          ? <KioskStatusView stav={vypocetStav(rozvrh, kiosk, new Date())} stavLabels={CZ_LABELS} />
           : <span className="adm-muted">načítám stav…</span>}
       </div>
     </div>
@@ -143,19 +159,7 @@ export default function AdminDashboard() {
       )
     }
     if (key === 'status') {
-      return (
-        <>
-          <div className="adm-card">
-            <p className="adm-card-h">Status &amp; sdělení <span className="adm-badge" style={{ color: badgeColor[s.badge!] }}>{s.badge}</span></p>
-            <p className="adm-muted">Sem sloučíme živý stav kiosku i vzkazy pro web (jeden typ aktivity — živá úvodní stránka). Chytrý status (auto/ruční, mezifáze) postavíme jako další krok.</p>
-            <div className="adm-row" style={{ marginTop: 12 }}>
-              <a className="adm-btn" href="/admin/stav">Otevřít stav (dočasné)</a>
-              <a className="adm-btn" href="/admin/sdeleni">Otevřít sdělení (dočasné)</a>
-            </div>
-          </div>
-          {Preview}
-        </>
-      )
+      return <StatusSdeleni />
     }
     return (
       <div className="adm-card">

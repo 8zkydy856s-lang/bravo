@@ -26,6 +26,13 @@ export const DICT: Record<string, Record<Lang, string>> = {
   },
   od: { cz: "od", en: "from", fr: "de", de: "ab", lu: "vun" },
   do: { cz: "do", en: "until", fr: "jusqu'à", de: "bis", lu: "bis" },
+  brzyOtevreme: { cz: "Brzy otevřeme", en: "Opening soon", fr: "Bientôt ouvert", de: "Öffnet bald", lu: "Bal op" },
+  zatimZavreno: { cz: "Zatím zavřeno", en: "Not open yet", fr: "Pas encore ouvert", de: "Noch geschlossen", lu: "Nach net op" },
+  brzyZavirame: { cz: "Brzy zavíráme", en: "Closing soon", fr: "Bientôt fermé", de: "Schließt bald", lu: "Bal zou" },
+  otevira: { cz: "otevírá", en: "opens", fr: "ouvre", de: "öffnet", lu: "mécht op" },
+  vyuzijChvili: { cz: "využij chvíli", en: "enjoy the moment", fr: "profite de l'instant", de: "nutze den Moment", lu: "genéiss de Moment" },
+  zitra: { cz: "Zítra", en: "Tomorrow", fr: "Demain", de: "Morgen", lu: "Muer" },
+  zitraZavreno: { cz: "zavřeno", en: "closed", fr: "fermé", de: "geschlossen", lu: "zou" },
   // Hvězdičky *…* označují slova kurzívou (renderuje ProvozText, uživateli se nezobrazí).
   provozText: {
     cz: "Otevírací doba je *přibližná* a závisí na *počasí*. Než se vydám za chvílí k BraVo, vždy nejdřív spočinu ZDE a naladím se, abychom se skutečně sešli OBA připraveni. Těším se, děkuji TOBĚ za pochopení ❀",
