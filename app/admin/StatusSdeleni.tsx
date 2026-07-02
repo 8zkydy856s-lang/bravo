@@ -145,7 +145,8 @@ export default function StatusSdeleni() {
   function instagramText(): string {
     const den = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Luxembourg', weekday: 'long' }).format(new Date())
     const denOtevreny = !!(stav.otevira && stav.zavira) // dnešek je otevírací den (má hodiny)
-    const dnesCast = denOtevreny ? `open ${stav.otevira}–${stav.zavira}` : 'closed'
+    // „approx." = hodiny jsou přibližné (v duchu webu); jen když je otevřeno
+    const dnesCast = denOtevreny ? `open approx. ${stav.otevira}–${stav.zavira}` : 'closed'
     const kruh = denOtevreny ? '🟢' : '🔴'
     const zOpen = !!stav.vyhledOtevreno
     // dnešní verdikt oddělen ČÁRKOU + dvě mezery od zítřejšího → přehledné, nesplývá to
