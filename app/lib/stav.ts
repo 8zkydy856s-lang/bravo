@@ -11,7 +11,7 @@ export type KioskRow = {
   je_otevreno: boolean; oteviraci_cas: string | null; zaviraci_cas: string | null
   poznamka: string | null; duvod: string | null; dnesni_vyjimka: boolean
   rezim?: string; brzy_otevre_min?: number; brzy_zavre_min?: number
-  vyhled_text?: string | null; vyhled_rezim?: string // 'plan' | 'otevreno' | 'zavreno'
+  vyhled_text?: string | null; vyhled_rezim?: string // 'plan' | 'otevreno' | 'zavreno' | 'skryto'
 }
 export type Stav = {
   faze: Faze
@@ -23,6 +23,7 @@ export type Stav = {
   vyhledOd?: string
   vyhledDo?: string
   vyhledText?: string
+  vyhledSkryto?: boolean
 }
 
 function luxParts(now: Date): { den: number; min: number } {
@@ -54,10 +55,11 @@ export function vypocetStav(rozvrh: RozvrhDen[], k: KioskRow, now: Date): Stav {
   const { den, min } = luxParts(now)
   const dnes = rozvrh.find(r => r.den === den)
   const zitra = rozvrh.find(r => r.den === (den + 1) % 7)
-  // VÝHLED NA ZÍTŘEK: priorita vlastní text > rychlá volba (otevřeno/zavřeno) > podle plánu.
+  // VÝHLED NA ZÍTŘEK: skryto > vlastní text > rychlá volba (otevřeno/zavřeno) > podle plánu.
   const vr = k.vyhled_rezim || 'plan'
   let vyhled: Partial<Stav>
-  if (k.vyhled_text) vyhled = { vyhledText: k.vyhled_text }
+  if (vr === 'skryto') vyhled = { vyhledSkryto: true } // zítřek se vůbec nezobrazí
+  else if (k.vyhled_text) vyhled = { vyhledText: k.vyhled_text }
   else if (vr === 'zavreno') vyhled = { vyhledOtevreno: false }
   else if (vr === 'otevreno') vyhled = { vyhledOtevreno: true, vyhledOd: zitra?.otevira || undefined, vyhledDo: zitra?.zavira || undefined }
   else vyhled = (zitra && !zitra.zavreno && zitra.otevira && zitra.zavira)

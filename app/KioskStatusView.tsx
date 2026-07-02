@@ -71,12 +71,14 @@ export default function KioskStatusView(props: Props) {
             {note && <p style={{ fontSize: '12px', color: '#7c7162', margin: '4px 0 0', overflowWrap: 'anywhere' }}>{note}</p>}
           </div>
         </div>
-        <p style={{ fontSize: '11px', color: '#9b8d76', margin: '8px 0 0' }}>
-          {zitraNadpis}{' '}
-          {s.vyhledText
-            ? s.vyhledText
-            : <>{L.pravdepodobne} <span style={{ color: barvaZitra }}>{slovoZitra}</span>{casZitra}</>}
-        </p>
+        {!s.vyhledSkryto && (
+          <p style={{ fontSize: '11px', color: '#9b8d76', margin: '8px 0 0' }}>
+            {zitraNadpis}{' '}
+            {s.vyhledText
+              ? s.vyhledText
+              : <>{L.pravdepodobne} <span style={{ color: barvaZitra }}>{slovoZitra}</span>{casZitra}</>}
+          </p>
+        )}
       </div>
     )
   }

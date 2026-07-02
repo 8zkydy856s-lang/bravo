@@ -274,8 +274,11 @@ export default function StatusSdeleni() {
               {seg('Podle plánu', (k.vyhled_rezim || 'plan') === 'plan', () => setKf('vyhled_rezim', 'plan'), false)}
               {seg('Otevřeno', k.vyhled_rezim === 'otevreno', () => setKf('vyhled_rezim', 'otevreno'), false)}
               {seg('Zavřeno', k.vyhled_rezim === 'zavreno', () => setKf('vyhled_rezim', 'zavreno'), false)}
+              {seg('🚫 Skrýt', k.vyhled_rezim === 'skryto', () => setKf('vyhled_rezim', 'skryto'), false)}
             </div>
-            <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.vyhled_text || ''} onChange={e => setKf('vyhled_text', e.target.value)} placeholder="Vlastní text (nepovinné, nepřekládá se)" />
+            {k.vyhled_rezim === 'skryto'
+              ? <p className="adm-muted">Zítřek se v statusu vůbec nezobrazí (ani ty ostatní volby / text). Kdykoli přepneš zpět.</p>
+              : <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.vyhled_text || ''} onChange={e => setKf('vyhled_text', e.target.value)} placeholder="Vlastní text (nepovinné, nepřekládá se)" />}
           </div>
           <div style={{ flex: '1 1 250px', minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
