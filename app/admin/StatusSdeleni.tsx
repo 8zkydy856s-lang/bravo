@@ -45,6 +45,18 @@ export default function StatusSdeleni() {
   const [hlaskaBusy, setHlaskaBusy] = useState(false)
   const [zkop, setZkop] = useState(false)
   const [nahledKey, setNahledKey] = useState(0) // vynucené obnovení mini náhledu úvodní stránky
+  const [sbaleno, setSbaleno] = useState<Record<string, boolean>>({}) // rozbaleno/sbaleno karet, pamatuje se
+
+  useEffect(() => {
+    try { const s = localStorage.getItem('bravo-adm-sbaleno'); if (s) setSbaleno(JSON.parse(s)) } catch { /* ignore */ }
+  }, [])
+  function toggleSbal(id: string) {
+    setSbaleno(prev => {
+      const n = { ...prev, [id]: !prev[id] }
+      try { localStorage.setItem('bravo-adm-sbaleno', JSON.stringify(n)) } catch { /* ignore */ }
+      return n
+    })
+  }
 
   useEffect(() => {
     Promise.all([
@@ -176,6 +188,20 @@ export default function StatusSdeleni() {
   const seg = (label: string, on: boolean, onClick: () => void, flex = true) => (
     <button className={'adm-seg' + (on ? ' on' : '')} onClick={onClick} style={flex ? { flex: 1 } : undefined}>{label}</button>
   )
+  // Rozklikávací karta: klik na nadpis rozbalí/sbalí, stav se pamatuje (localStorage)
+  const KartaSbal = ({ id, titul, badge, children }: { id: string; titul: string; badge?: React.ReactNode; children: React.ReactNode }) => {
+    const zavr = !!sbaleno[id]
+    return (
+      <div className="adm-card">
+        <button onClick={() => toggleSbal(id)} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }}>
+          <span className="adm-card-h" style={{ margin: 0 }}>{titul}</span>
+          {badge}
+          <span style={{ marginLeft: 'auto', color: '#b0a595', fontSize: 13 }}>{zavr ? '▸ rozbalit' : '▾ sbalit'}</span>
+        </button>
+        {!zavr && <div style={{ marginTop: 12 }}>{children}</div>}
+      </div>
+    )
+  }
   // Výběr hlášky z knihovny → vloží její (anglický) text do pole
   const VyberHlasky = ({ kat, onPick }: { kat: string; onPick: (t: string) => void }) => {
     const list = hlasky.filter(h => h.kategorie === kat).sort((a, b) => a.poradi - b.poradi || a.id - b.id)
@@ -211,20 +237,11 @@ export default function StatusSdeleni() {
               <button className="adm-btn" onClick={kopirovatIG} style={{ background: zkop ? '#3b7d3b' : '#1a1208', color: '#fff', border: 'none', fontWeight: 600 }}>{zkop ? 'Zkopírováno ✓' : '📋 Zkopírovat'}</button>
             </div>
           </div>
-          <div style={{ flex: '0 1 130px', minWidth: 0 }}>
-            <p className="adm-card-h" style={{ margin: '0 0 5px', fontSize: 12 }}>Story sticker</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <a className="adm-btn" href="/stav-obrazek" download="bravo-status.png" style={{ background: '#1a1208', color: '#fff', border: 'none', fontWeight: 600, textAlign: 'center', fontSize: 12, padding: '7px 8px' }}>⬇ Stáhnout</a>
-              <a className="adm-btn" href="/stav-obrazek" target="_blank" rel="noopener noreferrer" style={{ textAlign: 'center', fontSize: 12, padding: '6px 8px' }}>Otevřít</a>
-            </div>
-          </div>
         </div>
       </div>
 
-      <p style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#b0a595', margin: '16px 2px 6px', fontWeight: 500 }}>Stav — dnes a zítra</p>
-
-      {/* JEDNA karta „Stav — dnes a zítra": Režim · Dnes (ruční) · Výhled + Výjimka */}
-      <div className="adm-card">
+      {/* Rozklikávací karta „Stav — dnes a zítra": Režim · Dnes (ruční) · Výhled + Výjimka */}
+      <KartaSbal id="stav" titul="Stav — dnes a zítra">
         {/* Blok 1 — Režim */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
           <span className="adm-card-h" style={{ margin: 0 }}>Režim:</span>
@@ -268,13 +285,10 @@ export default function StatusSdeleni() {
             <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.poznamka || ''} onChange={e => setKf('poznamka', e.target.value)} placeholder="Text in English (e.g. Closed due to weather)" />
           </div>
         </div>
-      </div>
-
-      <p style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#b0a595', margin: '16px 2px 6px', fontWeight: 500 }}>Sdělení a vzkazy</p>
+      </KartaSbal>
 
       {/* SDĚLENÍ — 3 řádky (anglicky) + vzhled písma na 1/2/3 řádky současně */}
-      <div className="adm-card">
-        <p className="adm-card-h">Sdělení na web <span className="adm-badge" style={{ color: '#8a7f70' }}>EN · přeloží se</span></p>
+      <KartaSbal id="sdeleni" titul="Sdělení na web" badge={<span className="adm-badge" style={{ color: '#8a7f70' }}>EN · přeloží se</span>}>
         {sd.map((s, i) => (
           <div key={i} style={{ marginBottom: 12, paddingBottom: 12, borderBottom: i < 2 ? '0.5px solid #eee5d8' : 'none' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
@@ -320,11 +334,10 @@ export default function StatusSdeleni() {
             </div>
           </div>
         </div>
-      </div>
+      </KartaSbal>
 
       {/* KNIHOVNA HLÁŠEK — přednastavené vzkazy (přeloží se jednou), vybíráš je výše z „Vložit hlášku…" */}
-      <div className="adm-card">
-        <p className="adm-card-h">Knihovna hlášek <span className="adm-badge" style={{ color: '#8a7f70' }}>napiš anglicky, přeloží se</span></p>
+      <KartaSbal id="knihovna" titul="Knihovna hlášek" badge={<span className="adm-badge" style={{ color: '#8a7f70' }}>napiš anglicky, přeloží se</span>}>
         <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
           <select style={{ ...inp, width: 130 }} value={novaHlaska.kategorie} onChange={e => setNovaHlaska({ ...novaHlaska, kategorie: e.target.value })}>
             <option value="sdeleni">pro sdělení</option>
@@ -352,12 +365,10 @@ export default function StatusSdeleni() {
           )
         })}
         {!hlasky.length && <p className="adm-muted">Zatím žádné hlášky. Přidej si vzkazy, které používáš často — pak je jen vybíráš nahoře.</p>}
-      </div>
-
-      <p style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#b0a595', margin: '16px 2px 6px', fontWeight: 500 }}>Nastavení — měníš zřídka · náhled stránky</p>
+      </KartaSbal>
 
       {/* DOLE: týdenní rozvrh + mezifáze (měníš zřídka) + mini živý náhled telefonu */}
-      <div className="adm-card">
+      <KartaSbal id="nastaveni" titul="Týdenní rozvrh · mezifáze · náhled stránky">
         <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
           <div style={{ flex: '1 1 300px', minWidth: 0 }}>
             <p className="adm-card-h">Týdenní rozvrh <span className="adm-muted">— měníš zřídka</span></p>
@@ -395,7 +406,7 @@ export default function StatusSdeleni() {
             </div>
           </div>
         </div>
-      </div>
+      </KartaSbal>
 
       <div style={{ marginTop: 4 }}>{UlozitBtn}</div>
     </>
