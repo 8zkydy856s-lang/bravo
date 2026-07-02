@@ -9,7 +9,7 @@ type Den = { den: string; navstevy: number; navstevnici: number }
 
 const DNY_ZKR = ['ne', 'po', 'út', 'st', 'čt', 'pá', 'so']
 
-type Zdroj = { den: string; zdroj: string; pocet: number }
+type Zdroj = { den: string; zdroj: string; navstevy: number; navstevnici: number }
 
 export default function NavstevnostView() {
   const [data, setData] = useState<Den[] | null>(null)
@@ -19,7 +19,7 @@ export default function NavstevnostView() {
   useEffect(() => {
     supabase.from('navstevnost').select('den, navstevy, navstevnici').order('den', { ascending: false }).limit(30)
       .then(({ data }) => setData(((data as Den[]) || []).slice().reverse()))
-    supabase.from('navstevy_zdroj').select('den, zdroj, pocet').order('den', { ascending: false }).limit(200)
+    supabase.from('navstevy_zdroj').select('den, zdroj, navstevy, navstevnici').order('den', { ascending: false }).limit(200)
       .then(({ data }) => setZdroje((data as Zdroj[]) || []))
   }, [])
 
@@ -42,14 +42,17 @@ export default function NavstevnostView() {
   const graf = poslednich(dny)
   const max = Math.max(1, ...graf.map(d => d.navstevy)) // načtení bývají výš → podle nich škálujeme
 
-  // rozpad zdrojů za vybraný rozsah
+  // rozpad zdrojů za vybraný rozsah — návštěvníci (lidé) i načtení zvlášť
   const dnyGraf = new Set(graf.map(d => d.den))
-  const zdrojSum = (z: string) => zdroje.filter(x => dnyGraf.has(x.den) && x.zdroj === z).reduce((a, x) => a + x.pocet, 0)
+  const zdrojSum = (z: string) => zdroje.filter(x => dnyGraf.has(x.den) && x.zdroj === z)
+    .reduce((a, x) => ({ lidi: a.lidi + x.navstevnici, nact: a.nact + x.navstevy }), { lidi: 0, nact: 0 })
   const zInsta = zdrojSum('instagram'), zGoogle = zdrojSum('google'), zPrimo = zdrojSum('primo')
-  const zMa = zInsta + zGoogle + zPrimo > 0
-  const Chip = ({ ikona, label, val, barva }: { ikona: string; label: string; val: number; barva: string }) => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#f7f3ec', borderRadius: 20, padding: '5px 12px', fontSize: 13 }}>
-      <span>{ikona}</span><span style={{ color: '#8a7f70' }}>{label}</span><span style={{ fontWeight: 600, color: barva }}>{val}</span>
+  const zCelkem = { lidi: zInsta.lidi + zGoogle.lidi + zPrimo.lidi, nact: zInsta.nact + zGoogle.nact + zPrimo.nact }
+  const zMa = zCelkem.nact > 0
+  const Chip = ({ ikona, label, val, barva, silny }: { ikona: string; label: string; val: { lidi: number; nact: number }; barva: string; silny?: boolean }) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 7, background: silny ? '#efe7d6' : '#f7f3ec', borderRadius: 20, padding: '5px 13px', fontSize: 13 }}>
+      <span>{ikona}</span><span style={{ color: '#8a7f70' }}>{label}</span>
+      <span style={{ fontWeight: 600, color: barva }}>{val.lidi}</span><span className="adm-muted" style={{ fontSize: 11 }}>lidí · {val.nact} načt.</span>
     </div>
   )
 
@@ -110,7 +113,8 @@ export default function NavstevnostView() {
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <Chip ikona="📷" label="Instagram" val={zInsta} barva="#c13584" />
             <Chip ikona="🔍" label="Google" val={zGoogle} barva="#3f7a34" />
-            <Chip ikona="↗" label="Přímo" val={zPrimo} barva="#1a1208" />
+            <Chip ikona="↗" label="Přímo" val={zPrimo} barva="#8a6a2a" />
+            <Chip ikona="Σ" label="Celkem" val={zCelkem} barva="#1a1208" silny />
           </div>
         ) : <p className="adm-muted">Zatím nerozlišeno — začne se plnit, jakmile použiješ označené odkazy.</p>}
         <p className="adm-muted" style={{ marginTop: 8, fontSize: 11 }}>Do profilů dej odkazy: <b>bra-vo.com/?zdroj=instagram</b> (do IG bia) a <b>bra-vo.com/?zdroj=google</b> (do Google profilu).</p>
