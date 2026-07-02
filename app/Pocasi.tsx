@@ -38,8 +38,9 @@ export default function Pocasi() {
   }, [])
 
   if (!w) return null
+  // ikona a stupně vyrovnané na střed vůči sobě; celek o 3px doleva (větší mezera od okraje okna)
   return (
-    <div style={{ textAlign: 'right' }}>
+    <div style={{ textAlign: 'center', marginRight: '3px' }}>
       <p style={{ fontSize: '23px', margin: 0, lineHeight: 1 }}>{ikona(w.code)}</p>
       <p style={{ fontSize: '12px', color: '#8a7f70', margin: '2px 0 0' }}>{w.temp} °C</p>
     </div>
