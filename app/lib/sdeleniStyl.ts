@@ -78,7 +78,6 @@ export function stylNaCss(s?: StylSdeleni): { text: CSSProperties; obal: CSSProp
   const text: CSSProperties = {
     fontFamily: cssFontu(st.font),
     fontSize: `${px}px`,
-    lineHeight: 1.5,
     fontWeight: bold ? 700 : 400,
     fontStyle: italic ? 'italic' : 'normal',
     color: st.barva,
@@ -86,17 +85,17 @@ export function stylNaCss(s?: StylSdeleni): { text: CSSProperties; obal: CSSProp
     textAlign: 'center',
     overflowWrap: 'anywhere',
     whiteSpace: 'pre-wrap',
+    lineHeight: st.ram ? 1 : 1.5, // v rámečku těsně, ať je odstup nahoře/dole = po stranách
   }
   // rámeček těsně obepne text a reaguje na velikost písma
   const obal: CSSProperties = st.ram
     ? {
         display: 'inline-block', maxWidth: '100%', boxSizing: 'border-box',
         border: '1px solid rgba(120,90,40,0.30)',
-        borderRadius: `${Math.round(px * 0.38)}px`,
-        // těsně obepne text, odstup roste s velikostí písma
-        padding: `${Math.max(1, Math.round(px * 0.14))}px ${Math.round(px * 0.32)}px`,
+        borderRadius: `${Math.round(px * 0.34)}px`,
+        // STEJNÝ odstup ze všech stran (roste s velikostí písma)
+        padding: `${Math.round(px * 0.3)}px`,
         background: 'rgba(184,149,74,0.06)',
-        lineHeight: 1.2,
       }
     : { display: 'inline-block', maxWidth: '100%', boxSizing: 'border-box', padding: `${Math.round(px * 0.12)}px ${Math.round(px * 0.2)}px` }
   return { text, obal }

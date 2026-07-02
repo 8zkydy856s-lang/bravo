@@ -22,7 +22,7 @@ const inp: React.CSSProperties = { border: '0.5px solid #e0d9d0', borderRadius: 
 
 type Kiosk = KioskRow & { viditelnost?: string; poznamka_preklady?: Record<string, string> | null }
 type Sdel = { zap: boolean; text: string; styl: StylSdeleni }
-type Hlaska = { id: number; kategorie: string; text: string; preklady: Record<string, string> }
+type Hlaska = { id: number; kategorie: string; text: string; preklady: Record<string, string>; poradi: number }
 
 // Přeloží anglický text do 5 jazyků přes /api/preklad (fallback = angličtina).
 async function prelozit(text: string): Promise<Record<string, string>> {
@@ -50,7 +50,7 @@ export default function StatusSdeleni() {
       supabase.from('kiosk_status').select('je_otevreno, oteviraci_cas, zaviraci_cas, poznamka, poznamka_preklady, duvod, dnesni_vyjimka, rezim, brzy_otevre_min, brzy_zavre_min, vyhled_text, vyhled_rezim').eq('pobocka_id', 'hlavni').maybeSingle(),
       supabase.from('rozvrh').select('den, zavreno, otevira, zavira').eq('pobocka_id', 'hlavni').order('den'),
       supabase.from('web_obsah').select('sdeleni1_zap, sdeleni1_text, sdeleni1_styl, sdeleni2_zap, sdeleni2_text, sdeleni2_styl, sdeleni3_zap, sdeleni3_text, sdeleni3_styl').eq('klic', 'hlavni').maybeSingle(),
-      supabase.from('hlasky').select('id, kategorie, text, preklady').order('created_at', { ascending: false }),
+      supabase.from('hlasky').select('id, kategorie, text, preklady, poradi').order('poradi', { ascending: true }).order('id', { ascending: true }),
     ]).then(([ks, rz, wo, hl]) => {
       setHlasky((hl.data as Hlaska[]) || [])
       const d = (ks.data as Kiosk) || null
@@ -101,14 +101,28 @@ export default function StatusSdeleni() {
     if (!novaHlaska.text.trim()) return
     setHlaskaBusy(true)
     const prek = await prelozit(novaHlaska.text.trim())
-    const { data, error } = await supabase.from('hlasky').insert({ kategorie: novaHlaska.kategorie, text: novaHlaska.text.trim(), preklady: prek }).select('id, kategorie, text, preklady').maybeSingle()
-    if (!error && data) { setHlasky([data as Hlaska, ...hlasky]); setNovaHlaska({ ...novaHlaska, text: '' }) }
+    const maxP = Math.max(0, ...hlasky.filter(h => h.kategorie === novaHlaska.kategorie).map(h => h.poradi))
+    const { data, error } = await supabase.from('hlasky').insert({ kategorie: novaHlaska.kategorie, text: novaHlaska.text.trim(), preklady: prek, poradi: maxP + 1 }).select('id, kategorie, text, preklady, poradi').maybeSingle()
+    if (!error && data) { setHlasky([...hlasky, data as Hlaska]); setNovaHlaska({ ...novaHlaska, text: '' }) }
     else setMsg('Chyba hlášky: ' + (error?.message || ''))
     setHlaskaBusy(false)
   }
   async function smazatHlasku(id: number) {
     await supabase.from('hlasky').delete().eq('id', id)
     setHlasky(hlasky.filter(h => h.id !== id))
+  }
+  // Přesun nahoru/dolů = prohození pořadí se sousedem ve stejné kategorii
+  async function presunHlasku(h: Hlaska, dir: -1 | 1) {
+    const skupina = hlasky.filter(x => x.kategorie === h.kategorie).sort((a, b) => a.poradi - b.poradi || a.id - b.id)
+    const idx = skupina.findIndex(x => x.id === h.id)
+    const soused = skupina[idx + dir]
+    if (!soused) return
+    const pa = h.poradi, pb = soused.poradi
+    await Promise.all([
+      supabase.from('hlasky').update({ poradi: pb }).eq('id', h.id),
+      supabase.from('hlasky').update({ poradi: pa }).eq('id', soused.id),
+    ])
+    setHlasky(hlasky.map(x => x.id === h.id ? { ...x, poradi: pb } : x.id === soused.id ? { ...x, poradi: pa } : x))
   }
 
   // Text pro Instagram bio (anglicky): 🟢 Den: čas–čas · Tomorrow: likely open/closed
@@ -160,7 +174,7 @@ export default function StatusSdeleni() {
   )
   // Výběr hlášky z knihovny → vloží její (anglický) text do pole
   const VyberHlasky = ({ kat, onPick }: { kat: string; onPick: (t: string) => void }) => {
-    const list = hlasky.filter(h => h.kategorie === kat)
+    const list = hlasky.filter(h => h.kategorie === kat).sort((a, b) => a.poradi - b.poradi || a.id - b.id)
     if (!list.length) return null
     return (
       <select style={{ ...inp, maxWidth: 220 }} value="" onChange={e => { const h = list.find(x => x.id === +e.target.value); if (h) onPick(h.text) }}>
@@ -178,14 +192,21 @@ export default function StatusSdeleni() {
 
   return (
     <>
-      {/* NÁHLED + ULOŽIT nahoře — vidíš změnu a rovnou uložíš, bez scrollování */}
+      {/* NÁHLED + ULOŽIT vlevo, INSTAGRAM vpravo — obojí nahoře, poslední kroky vedle sebe */}
       <div className="adm-sticky">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-          <div style={{ flex: '1 1 260px', minWidth: 0 }}>
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'stretch' }}>
+          <div style={{ flex: '1 1 240px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
             <p className="adm-card-h" style={{ margin: '0 0 6px' }}>Živý náhled — co teď vidí zákazník</p>
-            <div className="adm-preview"><KioskStatusView stav={stav} stavLabels={CZ} /></div>
+            <div className="adm-preview" style={{ flex: 1 }}><KioskStatusView stav={stav} stavLabels={CZ} /></div>
+            <div style={{ marginTop: 8 }}>{UlozitBtn}</div>
           </div>
-          {UlozitBtn}
+          <div style={{ flex: '1 1 240px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+            <p className="adm-card-h" style={{ margin: '0 0 6px' }}>Text pro Instagram bio <span className="adm-badge" style={{ color: '#8a7f70' }}>anglicky</span></p>
+            <div className="adm-preview" style={{ flex: 1, display: 'flex', alignItems: 'center' }}><span style={{ fontSize: 14, color: '#1a1208', overflowWrap: 'anywhere' }}>{instagramText()}</span></div>
+            <div style={{ marginTop: 8 }}>
+              <button className="adm-btn" onClick={kopirovatIG} style={{ background: zkop ? '#3b7d3b' : '#1a1208', color: '#fff', border: 'none', fontWeight: 600 }}>{zkop ? 'Zkopírováno ✓' : '📋 Zkopírovat'}</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -269,13 +290,6 @@ export default function StatusSdeleni() {
         <input style={{ ...inp, width: '100%', boxSizing: 'border-box' }} value={k.poznamka || ''} onChange={e => setKf('poznamka', e.target.value)} placeholder="Text in English (e.g. Closed due to weather)" />
       </div>
 
-      <div className="adm-card">
-        <p className="adm-card-h">Text pro Instagram bio <span className="adm-badge" style={{ color: '#8a7f70' }}>anglicky</span></p>
-        <p className="adm-muted" style={{ marginBottom: 8 }}>Zkopíruje aktuální status anglicky — vložíš ho ručně do bio na Instagramu.</p>
-        <div style={{ background: '#f7f3ec', borderRadius: 10, padding: '10px 12px', fontSize: 14, color: '#1a1208', marginBottom: 10, overflowWrap: 'anywhere' }}>{instagramText()}</div>
-        <button className="adm-btn" onClick={kopirovatIG} style={{ background: zkop ? '#3b7d3b' : '#1a1208', color: '#fff', border: 'none', fontWeight: 600 }}>{zkop ? 'Zkopírováno ✓' : '📋 Zkopírovat'}</button>
-      </div>
-
       {/* SDĚLENÍ — 3 řádky (anglicky) + vzhled písma na 1/2/3 řádky současně */}
       <div className="adm-card">
         <p className="adm-card-h">Sdělení na web <span className="adm-badge" style={{ color: '#8a7f70' }}>EN · přeloží se</span></p>
@@ -337,15 +351,17 @@ export default function StatusSdeleni() {
           <button className="adm-btn" onClick={pridatHlasku} disabled={hlaskaBusy || !novaHlaska.text.trim()} style={{ background: '#d4a96a', color: '#1a1208', border: 'none', fontWeight: 600 }}>{hlaskaBusy ? 'Překládám…' : '+ Přidat'}</button>
         </div>
         {(['sdeleni', 'vyjimka'] as const).map(kat => {
-          const list = hlasky.filter(h => h.kategorie === kat)
+          const list = hlasky.filter(h => h.kategorie === kat).sort((a, b) => a.poradi - b.poradi || a.id - b.id)
           if (!list.length) return null
           return (
             <div key={kat} style={{ marginBottom: 8 }}>
-              <p className="adm-muted" style={{ marginBottom: 4 }}>{kat === 'sdeleni' ? 'Sdělení' : 'Výjimky'}:</p>
-              {list.map(h => (
-                <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0' }}>
+              <p className="adm-muted" style={{ marginBottom: 4 }}>{kat === 'sdeleni' ? 'Sdělení' : 'Výjimky'} (pořadí = jak se nabízejí):</p>
+              {list.map((h, i) => (
+                <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0' }}>
+                  <button className="adm-seg" style={{ padding: '2px 7px', fontSize: 12, opacity: i === 0 ? 0.3 : 1 }} disabled={i === 0} onClick={() => presunHlasku(h, -1)} title="Nahoru">↑</button>
+                  <button className="adm-seg" style={{ padding: '2px 7px', fontSize: 12, opacity: i === list.length - 1 ? 0.3 : 1 }} disabled={i === list.length - 1} onClick={() => presunHlasku(h, 1)} title="Dolů">↓</button>
                   <span style={{ flex: 1, fontSize: 13, color: '#1a1208' }}>{h.text}</span>
-                  <span className="adm-muted" title={`cz: ${h.preklady?.cz || ''}\nfr: ${h.preklady?.fr || ''}\nde: ${h.preklady?.de || ''}\nlu: ${h.preklady?.lu || ''}`} style={{ cursor: 'help' }}>5 jazyků ⓘ</span>
+                  <span className="adm-muted" title={`cz: ${h.preklady?.cz || ''}\nfr: ${h.preklady?.fr || ''}\nde: ${h.preklady?.de || ''}\nlu: ${h.preklady?.lu || ''}`} style={{ cursor: 'help' }}>5 jaz. ⓘ</span>
                   <button className="adm-seg" style={{ padding: '2px 8px', fontSize: 12 }} onClick={() => smazatHlasku(h.id)}>Smazat</button>
                 </div>
               ))}
