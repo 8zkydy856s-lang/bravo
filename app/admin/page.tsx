@@ -6,6 +6,7 @@ import KioskStatusView from '../KioskStatusView'
 import BravoNapis from '../BravoNapis'
 import { isAdminEmail } from '../lib/admin'
 import StatusSdeleni from './StatusSdeleni'
+import NavstevnostView from './NavstevnostView'
 import { vypocetStav, type RozvrhDen, type KioskRow } from '../lib/stav'
 
 // Popisky náhledu (admin je vždy v češtině)
@@ -35,7 +36,7 @@ const SECTIONS: Record<string, Sec> = {
   zak: { label: 'Zákazníci & věrnost', badge: 'plánované', sub: 'Profily, body, odměny, Wallet' },
   doch: { label: 'Docházka / čepice', badge: 'plánované', sub: 'Kolik času podle čepic, reporty' },
   prop: { label: 'Propojení', badge: 'plánované', sub: 'Google · Instagram · e-mail' },
-  stat: { label: 'Přehledy & statistiky', badge: 'plánované', sub: 'Návštěvy, oblíbené, trendy' },
+  stat: { label: 'Přehledy & statistiky', badge: 'hotové', sub: 'Návštěvnost, trendy, graf' },
   prekl: { label: 'Překlady & obsah', badge: 'základ hotový', sub: 'Texty webu v 5 jazycích' },
   pob: { label: 'Pobočky', badge: 'plánované', sub: 'Víc kiosků, každý svůj stav' },
   tym: { label: 'Můj tým', badge: 'plánované', sub: 'Registrace baristy/manažera + role' },
@@ -161,6 +162,7 @@ export default function AdminDashboard() {
       return (
         <>
           {Preview}
+          <NavstevnostView />
           <div className="adm-card">
             <p className="adm-card-h">Změnit heslo</p>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -175,6 +177,9 @@ export default function AdminDashboard() {
     }
     if (key === 'status') {
       return <StatusSdeleni />
+    }
+    if (key === 'stat') {
+      return <NavstevnostView />
     }
     return (
       <div className="adm-card">

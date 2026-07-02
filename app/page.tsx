@@ -12,6 +12,7 @@ import ProvozZivot from "./ProvozZivot";
 import PodtitulStruna from "./PodtitulStruna";
 import Orchestrace from "./Orchestrace";
 import LayoutEditor from "./LayoutEditor";
+import PocitadloNavstev from "./PocitadloNavstev";
 // Fáze 1: AuthBar a TrustCard zůstávají v projektu, na veřejné úvodní stránce se zatím nevykreslují.
 // import AuthBar from "./AuthBar";
 // import TrustCard from "./TrustCard";
@@ -140,6 +141,7 @@ export default function Home() {
 
       <Orchestrace />
       <LayoutEditor />
+      <PocitadloNavstev />
 
       </WebObsahProvider>
       </LangProvider>
