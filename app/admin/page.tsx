@@ -4,14 +4,13 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabase'
 import KioskStatusView from '../KioskStatusView'
 import BravoNapis from '../BravoNapis'
+import { isAdminEmail } from '../lib/admin'
 
 // BRAVO DASHBOARD — řídicí panel majitele (Etapa 1: KOSTRA). Přístup jen pro admina (allowlist e-mailů).
 // Principy (dle dohody + reference PayPerPot): levý panel = tematické SBALITELNÉ skupiny, panel jde
 // SBALIT na ikony, nahoře HORNÍ PRUH rychlých voleb (čepice + rychlý status + živý náhled).
 // Responzivita: TELEFON = dlaždice otevřou stránku (+zpět); VELKÉ OKNO = levý panel + obsah vedle.
 // Sekce jsou zatím PLACEHOLDERY („připravujeme"), Status & sdělení dočasně odkazuje na stávající stránky.
-
-const ADMIN_EMAILS = ['vbratrsovsky@seznam.cz']
 
 const HATS: [string, string][] = [
   ['sklad', 'Skladník'], ['flor', 'Florista'], ['barista', 'Barista'],
@@ -60,10 +59,10 @@ export default function AdminDashboard() {
   // auth gate (allowlist e-mailů; dev bypass jen mimo produkci pro náhled)
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      const email = data.session?.user?.email?.toLowerCase()
+      const email = data.session?.user?.email
       const dev = process.env.NODE_ENV !== 'production' &&
         new URLSearchParams(window.location.search).get('dev') === '1'
-      if ((email && ADMIN_EMAILS.includes(email)) || dev) setReady(true)
+      if (isAdminEmail(email) || dev) setReady(true)
       else router.replace('/login')
     })
   }, [router])

@@ -2,9 +2,11 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import BravoNapis from '../BravoNapis'
+import { isAdminEmail } from '../lib/admin'
 
-// Registrace zapnuta (2.7.) — Vojtěch se registruje oficiálním e-mailem; admin přístup řeší allowlist v app/admin.
-const ZOBRAZIT_REGISTRACI = true
+// Veřejná registrace VYPNUTA (2.7.) — zákaznické funkce nejsou hotové; přihlásí se jen majitel (má účet).
+// Jediná brána vede z úvodní stránky přes „vstup pro majitele" → /login. Po přihlášení admin → /admin.
+const ZOBRAZIT_REGISTRACI = false
 
 // Hodnoty se ukládají do stejnojmenných sloupců v public.profiles (ověřeno proti DB).
 // Ukládání řeší VÝHRADNĚ databázový trigger handle_new_user z metadat (options.data) -
@@ -103,7 +105,7 @@ export default function LoginPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: form.email, password: form.password })
         if (error) fail('Nesprávný e-mail nebo heslo.')
-        else window.location.href = '/'
+        else window.location.href = isAdminEmail(form.email) ? '/admin' : '/'
       }
     } catch (e) {
       fail(describeError(e))
