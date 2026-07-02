@@ -125,16 +125,11 @@ export default function StatusSdeleni() {
     setHlasky(hlasky.map(x => x.id === h.id ? { ...x, poradi: pb } : x.id === soused.id ? { ...x, poradi: pa } : x))
   }
 
-  // Text pro Instagram bio (anglicky): 🟢 Den: čas–čas · Tomorrow: likely open/closed
+  // Text pro Instagram bio (anglicky) — POUZE zítřek, bez času, jen otevřeno/zavřeno:
+  //  🟢 Tomorrow: likely open  /  🔴 Tomorrow: likely closed
   function instagramText(): string {
-    const den = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Luxembourg', weekday: 'long' }).format(new Date())
-    const kruh = stav.barva === 'zelena' ? '🟢' : stav.barva === 'jantar' ? '🟠' : '🔴'
-    const dnesHodiny = stav.otevira && stav.zavira ? `${stav.otevira}–${stav.zavira}` : 'closed'
-    let t = `${kruh} ${den}: ${dnesHodiny}`
     const zOpen = !!stav.vyhledOtevreno
-    t += ` · Tomorrow: likely ${zOpen ? 'open' : 'closed'}`
-    if (zOpen && stav.vyhledOd && stav.vyhledDo) t += ` ${stav.vyhledOd}–${stav.vyhledDo}`
-    return t
+    return `${zOpen ? '🟢' : '🔴'} Tomorrow: likely ${zOpen ? 'open' : 'closed'}`
   }
   async function kopirovatIG() {
     try { await navigator.clipboard.writeText(instagramText()); setZkop(true); setTimeout(() => setZkop(false), 2000) }

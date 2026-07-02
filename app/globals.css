@@ -24,8 +24,9 @@ body {
 /* Fáze 1 - responzivní úvodní vizitka.
    Mobil = úzký sloupec jako dřív; desktop (od 860px) = širší, vzdušnější. */
 .landing {
-  /* VSTUP: první zobrazení = chvilku zamlžená/poloprůhledná stránka → zaostří a oživne (pak teprve orchestrace). */
-  animation: bravo-prichod .9s ease-out backwards;
+  /* VSTUP: jemné rozjasnění (plynulé, GPU-friendly). Dřív blur 7px → na desktopu (velká plocha)
+     to sharpening působilo jako „zoom" a sekalo. Teď jen opacity — hladké na desktopu i mobilu. */
+  animation: bravo-prichod .8s ease-out backwards;
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
@@ -35,8 +36,8 @@ body {
   box-sizing: border-box;
 }
 @keyframes bravo-prichod {
-  from { filter: blur(7px); opacity: 0.35; }
-  to   { filter: blur(0); opacity: 1; }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .landing { animation: none; }
