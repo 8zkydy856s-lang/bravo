@@ -93,8 +93,8 @@ export function stylNaCss(s?: StylSdeleni): { text: CSSProperties; obal: CSSProp
         display: 'inline-block', maxWidth: '100%', boxSizing: 'border-box',
         border: '1px solid rgba(120,90,40,0.30)',
         borderRadius: `${Math.round(px * 0.34)}px`,
-        // STEJNÝ odstup ze všech stran (roste s velikostí písma)
-        padding: `${Math.round(px * 0.3)}px`,
+        // odstup: po stranách opticky o kousek širší než nahoře/dole (roste s velikostí písma)
+        padding: `${Math.round(px * 0.3)}px ${Math.round(px * 0.5)}px`,
         background: 'rgba(184,149,74,0.06)',
       }
     : { display: 'inline-block', maxWidth: '100%', boxSizing: 'border-box', padding: `${Math.round(px * 0.12)}px ${Math.round(px * 0.2)}px` }
